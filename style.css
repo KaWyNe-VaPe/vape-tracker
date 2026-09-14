@@ -208,3 +208,280 @@ input, select {
 
 .item-objectif { display: flex; justify-content: space-between; align-items: center; }
 .btn-suppr { background: none; border: none; color: #f85149; cursor: pointer; font-size: 1.1rem; padding: 0 5px; width: auto; }
+/* ECRAN DE LANCEMENT (SPLASH SCREEN) */
+#splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #0b0e14;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+#splash-screen.fondu-sortie {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.splash-contenu {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.splash-logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 24px;
+    box-shadow: 0 0 25px rgba(255, 183, 197, 0.4);
+    margin-bottom: 20px;
+    animation: zoomDouceur 2s ease-in-out infinite alternate;
+}
+
+@keyframes zoomDouceur {
+    0% { transform: scale(0.95); }
+    100% { transform: scale(1.05); }
+}
+
+.splash-titre-japonais {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.1rem;
+    letter-spacing: 6px;
+    color: #ffb7c5;
+    opacity: 0.9;
+}
+
+.splash-titre {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 2rem;
+    color: #f0f6fc;
+    margin: 5px 0 25px 0;
+    font-weight: 700;
+}
+
+.splash-chargement {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 183, 197, 0.2);
+    border-top-color: #ffb7c5;
+    border-radius: 50%;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* LE RESTE DE TON CODE CSS EXISTANT */
+* {
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+}
+
+body {
+    background-color: #0b0e14;
+    color: #e6edf3;
+    margin: 0;
+    padding: 15px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.titre-japonais {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.9rem;
+    letter-spacing: 4px;
+    color: #ffb7c5;
+    opacity: 0.8;
+    margin-bottom: -4px;
+}
+
+h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.5rem;
+    color: #f0f6fc;
+    margin: 0 0 15px 0;
+    font-weight: 600;
+}
+
+nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+
+.btn-nav {
+    background-color: #161b22;
+    color: #8b949e;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    border: 1px solid #30363d;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-nav.actif {
+    background-color: #ffb7c5;
+    color: #0b0e14;
+    font-weight: 700;
+    border-color: #ffb7c5;
+    box-shadow: 0 0 12px rgba(255, 183, 197, 0.4);
+}
+
+.carte {
+    background: #161b22;
+    padding: 18px;
+    border-radius: 16px;
+    border: 1px solid #30363d;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    margin-bottom: 15px;
+}
+
+.carte-arbre-feerique {
+    position: relative;
+    height: 270px;
+    background: #0b0e14;
+    border-radius: 16px;
+    border: 1px solid #2d3548;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+#conteneur-svg-arbre {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+#conteneur-svg-arbre svg {
+    width: 100%;
+    height: 100%;
+}
+
+.vent-branches {
+    transform-origin: 150px 240px;
+    animation: briseFumee 6s ease-in-out infinite alternate;
+}
+
+@keyframes briseFumee {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(2deg) skewX(1deg); }
+}
+
+.conteneur-particules {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.petale-lumineux {
+    position: absolute;
+    background: radial-gradient(circle, #ffb7c5 0%, #ff4081 100%);
+    border-radius: 50% 0 50% 50%;
+    opacity: 0.8;
+    animation: chuteVent 6s linear infinite;
+}
+
+@keyframes chuteVent {
+    0% { transform: translate(0, -10px) rotate(0deg); opacity: 0; }
+    20% { opacity: 0.9; }
+    100% { transform: translate(-100px, 280px) rotate(360deg); opacity: 0; }
+}
+
+.badge-stade {
+    z-index: 3;
+    background: rgba(11, 14, 20, 0.85);
+    border: 1px solid rgba(255, 183, 197, 0.5);
+    color: #ffb7c5;
+    padding: 5px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    backdrop-filter: blur(4px);
+    margin-top: auto;
+}
+
+.info-arrêt {
+    background: linear-gradient(135deg, #1b2e2b, #161b22);
+    border-left: 4px solid #3fb950;
+    font-size: 1.05rem;
+    text-align: center;
+    color: #3fb950;
+}
+
+.carte-economie-rapide {
+    background-color: #1f242d;
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+.masque { display: none !important; }
+
+button {
+    width: 100%;
+    background: #ffb7c5;
+    color: #0b0e14;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-secondaire { background: #238636; color: white; margin-top: 10px; }
+.btn-annuler { background: #21262d; color: #8b949e; border: 1px solid #30363d; margin-top: 8px; }
+
+label { display: block; margin-top: 12px; font-weight: 600; font-size: 0.85rem; color: #8b949e; }
+input, select {
+    width: 100%;
+    padding: 11px;
+    margin-top: 6px;
+    background: #0b0e14;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    color: #e6edf3;
+    font-size: 0.95rem;
+}
+
+.texte-vide { color: #6e7681; font-style: italic; font-size: 0.9rem; }
+
+.carte-bienveillance {
+    background-color: #21262d;
+    border-left: 4px solid #d29922;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #c9d1d9;
+}
+
+.jalon-sante { border-left: 3px solid #30363d; padding-left: 12px; margin-bottom: 12px; }
+.jalon-sante.atteint { border-left-color: #3fb950; }
+.jalon-sante h4 { margin: 0; font-size: 0.95rem; color: #f0f6fc; }
+.jalon-sante p { margin: 4px 0 0 0; font-size: 0.85rem; color: #8b949e; }
+
+.item-objectif { display: flex; justify-content: space-between; align-items: center; }
+.btn-suppr { background: none; border: none; color: #f85149; cursor: pointer; font-size: 1.1rem; padding: 0 5px; width: auto; }
