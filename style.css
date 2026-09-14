@@ -60,7 +60,7 @@ nav {
     box-shadow: 0 0 12px rgba(255, 183, 197, 0.4);
 }
 
-/* Cadre Féérique Cerisier & Décor */
+/* Cadre Féérique Estampe */
 .carte {
     background: #161b22;
     padding: 18px;
@@ -72,91 +72,41 @@ nav {
 
 .carte-arbre-feerique {
     position: relative;
-    height: 250px;
-    background: radial-gradient(circle at 75% 30%, #1e2638 0%, #0b0e14 70%);
+    height: 270px;
+    background: #0b0e14;
     border-radius: 16px;
     border: 1px solid #2d3548;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
-    padding-bottom: 12px;
+    padding: 10px;
 }
 
 #conteneur-svg-arbre {
-    z-index: 2;
     width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px;
-}
-
-.arbre-hd-anime {
-    max-height: 180px;
-    width: auto;
-    z-index: 2;
-    filter: drop-shadow(0 0 15px rgba(255, 183, 197, 0.3));
-    transform-origin: bottom center;
-    animation: ventDansLesBranches 7s ease-in-out infinite alternate;
-}
-
-@keyframes ventDansLesBranches {
-    0% { transform: rotate(0deg) scale(1); }
-    50% { transform: rotate(1.8deg) scale(1.01) skewX(0.8deg); }
-    100% { transform: rotate(-1.2deg) scale(0.99) skewX(-0.5deg); }
-}
-
-/* Rivière au pied de l'arbre */
-.riviere-japonaisse {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 45px;
-    background: linear-gradient(180deg, rgba(20, 35, 60, 0.2) 0%, rgba(15, 45, 80, 0.8) 100%);
-    border-top: 1px solid rgba(116, 198, 250, 0.3);
-    z-index: 1;
-    overflow: hidden;
-}
-
-.reflets-eau {
-    width: 200%;
     height: 100%;
-    background: repeating-linear-gradient(
-        90deg,
-        transparent,
-        transparent 20px,
-        rgba(255, 183, 197, 0.15) 40px,
-        rgba(116, 198, 250, 0.2) 60px
-    );
-    animation: courantEau 8s linear infinite;
-}
-
-@keyframes courantEau {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-}
-
-/* Effets Visuels (Lune, Particules, Brume) */
-.halo-lune {
     position: absolute;
-    top: 20px;
-    right: 30px;
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255, 236, 210, 0.9) 0%, rgba(255, 183, 197, 0.2) 60%, transparent 100%);
-    box-shadow: 0 0 25px rgba(255, 236, 210, 0.4);
+    top: 0;
+    left: 0;
+    z-index: 1;
 }
 
-.brume-doree {
-    position: absolute;
-    bottom: 0;
+#conteneur-svg-arbre svg {
     width: 100%;
-    height: 40px;
-    background: linear-gradient(to top, rgba(11, 14, 20, 0.9), transparent);
-    z-index: 3;
-    pointer-events: none;
+    height: 100%;
+}
+
+/* Animation du vent dans l'arbre */
+.vent-branches {
+    transform-origin: 150px 240px;
+    animation: briseFumee 6s ease-in-out infinite alternate;
+}
+
+@keyframes briseFumee {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(2deg) skewX(1deg); }
 }
 
 .conteneur-particules {
@@ -165,7 +115,7 @@ nav {
     height: 100%;
     top: 0;
     left: 0;
-    z-index: 1;
+    z-index: 2;
     pointer-events: none;
 }
 
@@ -178,19 +128,13 @@ nav {
 }
 
 @keyframes chuteVent {
-    0% {
-        transform: translate(0, -10px) rotate(0deg);
-        opacity: 0;
-    }
+    0% { transform: translate(0, -10px) rotate(0deg); opacity: 0; }
     20% { opacity: 0.9; }
-    100% {
-        transform: translate(-100px, 260px) rotate(360deg);
-        opacity: 0;
-    }
+    100% { transform: translate(-100px, 280px) rotate(360deg); opacity: 0; }
 }
 
 .badge-stade {
-    z-index: 4;
+    z-index: 3;
     background: rgba(11, 14, 20, 0.85);
     border: 1px solid rgba(255, 183, 197, 0.5);
     color: #ffb7c5;
@@ -199,10 +143,10 @@ nav {
     font-size: 0.8rem;
     font-weight: 600;
     backdrop-filter: blur(4px);
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    margin-top: auto;
 }
 
-/* Formulaires & Saisies */
+/* Interfaces & Cartes */
 .info-arrêt {
     background: linear-gradient(135deg, #1b2e2b, #161b22);
     border-left: 4px solid #3fb950;
