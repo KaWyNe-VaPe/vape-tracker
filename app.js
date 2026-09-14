@@ -1,8 +1,18 @@
 // =============================================================
+// FERMETURE GARANTIE DU SPLASH SCREEN (2.5 SECONDES)
+// =============================================================
+function fermerSplashScreen() {
+    const splash = document.getElementById('splash-screen');
+    if (splash) {
+        splash.classList.add('masque-splash');
+    }
+}
+setTimeout(fermerSplashScreen, 2500);
+
+// =============================================================
 // VAPE TRACKER PWA - CODE PRINCIPAL APPLICATION
 // =============================================================
 
-// DONNÉES DE SANTÉ
 const JALONS_SANTE = [
     { delaiHeures: 20, titre: "Pression sanguine", desc: "La pression sanguine et le pouls redeviennent normaux." },
     { delaiHeures: 8, titre: "Oxygénation", desc: "La quantité de monoxyde de carbone dans le sang diminue de moitié." },
@@ -16,31 +26,17 @@ const JALONS_SANTE = [
     { delaiHeures: 8760, titre: "Risque cardiaque (-50%)", desc: "Le risque de maladie cardiovasculaire est réduit de moitié." }
 ];
 
-// INITIALISATION DU STOCKAGE LOCAL
 let configUser = JSON.parse(localStorage.getItem('vt_config')) || null;
 let flacons = JSON.parse(localStorage.getItem('vt_flacons')) || [];
 let recettes = JSON.parse(localStorage.getItem('vt_recettes')) || [];
 let depenses = JSON.parse(localStorage.getItem('vt_depenses')) || [];
 let objectifs = JSON.parse(localStorage.getItem('vt_objectifs')) || [];
 
-// -------------------------------------------------------------
-// DEMARRAGE ET GESTION DU SPLASH SCREEN (2.5 SECONDES)
-// -------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
-    // Masquage du Splash Screen après 2.5s
-    setTimeout(() => {
-        const splash = document.getElementById('splash-screen');
-        if (splash) {
-            splash.classList.add('masque-splash');
-        }
-    }, 2500);
-
-    // Initialisation du Service Worker pour les notifications PWA
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error:', err));
     }
 
-    // Vérification de l'Onboarding
     if (!configUser || !configUser.dateArret) {
         afficherEcran('ecran-onboarding');
         document.getElementById('entete-app').style.display = 'none';
@@ -52,14 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
     configurerEcouteurs();
 });
 
-// -------------------------------------------------------------
-// INITIALISATION DE L'INTERFACE
-// -------------------------------------------------------------
 function initialiserInterface() {
     document.getElementById('entete-app').style.display = 'flex';
     document.querySelector('nav').style.display = 'flex';
     
-    // Remplir les champs de config finances
     document.getElementById('cigs-jour').value = configUser.cigsJour || 15;
     document.getElementById('prix-paquet').value = configUser.prixPaquet || 12.5;
 
@@ -79,9 +71,6 @@ function mettreAJourTout() {
     remplirSelectRecettes();
 }
 
-// -------------------------------------------------------------
-// CALCULS & DASHBOARD
-// -------------------------------------------------------------
 function getJoursEcoules() {
     if (!configUser || !configUser.dateArret) return 0;
     const debut = new Date(configUser.dateArret);
@@ -111,13 +100,11 @@ function mettreAJourDashboard() {
     const totalDepensesVape = depenses.reduce((acc, d) => acc + d.montant, 0);
     const economieNette = economieBrute - totalDepensesVape;
 
-    // Mise à jour des cartes du Dashboard
     document.getElementById('card-jours').textContent = jours;
     document.getElementById('prenom-accueil').textContent = configUser.prenom ? `Bravo ${configUser.prenom} !` : 'Jours d\'arrêt';
     document.getElementById('card-cigs').textContent = cigsEvitees;
     document.getElementById('card-economies').textContent = `${economieNette.toFixed(2)} €`;
 
-    // Prochain Jalon Santé
     const prochainJalon = JALONS_SANTE.find(j => j.delaiHeures > heures);
     if (prochainJalon) {
         document.getElementById('card-jalon-titre').textContent = prochainJalon.titre;
@@ -128,9 +115,6 @@ function mettreAJourDashboard() {
     }
 }
 
-// -------------------------------------------------------------
-// GESTION DU CERISIER (AFFICHAGE DIRECT DES IMAGES PNG)
-// -------------------------------------------------------------
 function mettreAJourCerisierHD() {
     const jours = getJoursEcoules();
     const badge = document.getElementById('nom-stade-arbre');
@@ -192,9 +176,6 @@ function genererParticules() {
     }
 }
 
-// -------------------------------------------------------------
-// FLACONS & HISTORIQUE
-// -------------------------------------------------------------
 function afficherFlaconActif() {
     const actif = flacons.find(f => f.actif);
     const btnTerminer = document.getElementById('btn-terminer');
@@ -246,9 +227,6 @@ function supprimerFlacon(id) {
     mettreAJourTout();
 }
 
-// -------------------------------------------------------------
-// RECETTES
-// -------------------------------------------------------------
 function afficherRecettes() {
     const conteneur = document.getElementById('liste-recettes');
     if (recettes.length === 0) {
@@ -281,9 +259,6 @@ function supprimerRecette(id) {
     mettreAJourTout();
 }
 
-// -------------------------------------------------------------
-// SANTÉ
-// -------------------------------------------------------------
 function afficherTimelineSante() {
     const conteneur = document.getElementById('timeline-sante');
     const heures = getHeuresEcoulees();
@@ -302,9 +277,6 @@ function afficherTimelineSante() {
     }).join('');
 }
 
-// -------------------------------------------------------------
-// FINANCES & OBJECTIFS
-// -------------------------------------------------------------
 function afficherFinances() {
     const jours = getJoursEcoules();
     const cigsParJour = configUser.cigsJour || 15;
@@ -369,29 +341,23 @@ function supprimerObjectif(id) {
     mettreAJourTout();
 }
 
-// -------------------------------------------------------------
-// NAVIGATION & ÉCOUTEURS D'ÉVÉNEMENTS
-// -------------------------------------------------------------
 function afficherEcran(idEcran) {
     document.querySelectorAll('.ecran').forEach(e => e.classList.add('masque'));
     const ecranCible = document.getElementById(idEcran);
     if (ecranCible) ecranCible.classList.remove('masque');
 
-    // Mise à jour de la barre de nav basse
     document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('actif'));
     const navAssociee = document.getElementById(`nav-${idEcran.replace('ecran-', '')}`);
     if (navAssociee) navAssociee.classList.add('actif');
 }
 
 function configurerEcouteurs() {
-    // Navigation basse
     document.getElementById('nav-accueil').onclick = () => afficherEcran('ecran-accueil');
     document.getElementById('nav-recettes').onclick = () => afficherEcran('ecran-recettes');
     document.getElementById('nav-sante').onclick = () => afficherEcran('ecran-sante');
     document.getElementById('nav-finances').onclick = () => afficherEcran('ecran-finances');
     document.getElementById('nav-objectifs').onclick = () => afficherEcran('ecran-objectifs');
 
-    // Onboarding Form
     document.getElementById('form-onboarding').onsubmit = (e) => {
         e.preventDefault();
         configUser = {
@@ -405,7 +371,6 @@ function configurerEcouteurs() {
         initialiserInterface();
     };
 
-    // Configuration Tabac Form (Finances)
     document.getElementById('form-config-tabac').onsubmit = (e) => {
         e.preventDefault();
         configUser.cigsJour = parseFloat(document.getElementById('cigs-jour').value);
@@ -416,7 +381,6 @@ function configurerEcouteurs() {
         alert('Configuration enregistrée !');
     };
 
-    // Formulaire Flacon (Ajout / Ouverture)
     document.getElementById('btn-ouvrir-ajout').onclick = () => afficherEcran('ecran-ajout');
     document.getElementById('btn-annuler').onclick = () => afficherEcran('ecran-accueil');
 
@@ -435,7 +399,6 @@ function configurerEcouteurs() {
 
     document.getElementById('form-flacon').onsubmit = (e) => {
         e.preventDefault();
-        // Clôturer l'ancien flacon s'il y en avait un
         flacons.forEach(f => f.actif = false);
 
         const nouveauFlacon = {
@@ -465,7 +428,6 @@ function configurerEcouteurs() {
         }
     };
 
-    // Formulaire Recettes
     document.getElementById('btn-ouvrir-ajout-recette').onclick = () => {
         document.getElementById('form-recette').classList.remove('masque');
     };
@@ -489,7 +451,6 @@ function configurerEcouteurs() {
         mettreAJourTout();
     };
 
-    // Formulaire Dépenses
     document.getElementById('btn-ouvrir-depense').onclick = () => {
         document.getElementById('form-depense').classList.remove('masque');
     };
@@ -513,7 +474,6 @@ function configurerEcouteurs() {
         mettreAJourTout();
     };
 
-    // Formulaire Objectifs
     document.getElementById('btn-ouvrir-ajout-objectif').onclick = () => {
         document.getElementById('form-objectif').classList.remove('masque');
     };
@@ -535,7 +495,6 @@ function configurerEcouteurs() {
         mettreAJourTout();
     };
 
-    // Notifications Push
     document.getElementById('btn-notifications').onclick = () => {
         if ('Notification' in window) {
             Notification.requestPermission().then(permission => {
