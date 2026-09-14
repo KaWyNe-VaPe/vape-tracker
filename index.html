@@ -3,288 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vape Tracker</title>
+    <title>Vape Tracker 🌸</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json?v=999">
-    <link rel="icon" type="image/png" sizes="192x192" href="icon.png?v=2">
-    <link rel="apple-touch-icon" href="icon.png?v=2">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#0b0e14">
 </head>
 <body>
-
-    <!-- ÉCRAN DE LANCEMENT AUTONOME -->
-    <div id="splash-screen">
-        <div class="splash-contenu">
-            <img src="icon.png" alt="Vape Tracker Logo" class="splash-logo">
-            <h1 class="splash-titre">Vape Tracker</h1>
-        </div>
-    </div>
-
-    <script>
-        setTimeout(function() {
-            var splash = document.getElementById('splash-screen');
-            if (splash) {
-                splash.style.opacity = '0';
-                splash.style.visibility = 'hidden';
-                setTimeout(function() { splash.style.display = 'none'; }, 500);
-            }
-        }, 2500);
-    </script>
-
-    <!-- ÉCRAN PREMIÈRE CONNEXION (ONBOARDING) -->
-    <section id="ecran-onboarding" class="masque">
-        <div class="carte carte-onboarding">
-            <img src="icon.png" alt="Logo" class="logo-onboarding">
-            <h2>Bienvenue sur Vape Tracker</h2>
-            <p style="color: #8b949e; font-size: 0.9rem; text-align: center;">Configuration initiale pour personnaliser ton suivi !</p>
-            
-            <form id="form-onboarding">
-                <label for="ob-prenom">Ton Prénom / Pseudo *</label>
-                <input type="text" id="ob-prenom" required placeholder="ex: Alex">
-
-                <label for="ob-date-arret">Date d'arrêt du tabac *</label>
-                <input type="date" id="ob-date-arret" required>
-
-                <label for="ob-cigs-jour">Cigarettes par jour avant l'arrêt *</label>
-                <input type="number" id="ob-cigs-jour" required placeholder="ex: 15" value="15">
-
-                <label for="ob-prix-paquet">Prix du paquet de cigarettes (€) *</label>
-                <input type="number" id="ob-prix-paquet" required placeholder="ex: 12.5" step="0.1" value="12.5">
-
-                <button type="submit" style="margin-top: 20px;">Commencer mon aventure 🌸</button>
+    <div id="app-container">
+        
+        <!-- ÉCRAN DE BIENVENUE (ONBOARDING) -->
+        <div id="ecran-onboarding" class="ecran masque">
+            <h2>Bienvenue sur Vape Tracker 🌸</h2>
+            <p class="texte-secondaire" style="margin-bottom: 20px;">Configure tes informations pour commencer le suivi de ton sevrage et faire grandir ton cerisier.</p>
+            <form id="form-onboarding" class="form-card">
+                <div class="groupe-champ">
+                    <label>Ton prénom</label>
+                    <input type="text" id="ob-prenom" placeholder="Ex: Alex" required>
+                </div>
+                <div class="groupe-champ">
+                    <label>Date de la dernière cigarette</label>
+                    <input type="date" id="ob-date-arret" required>
+                </div>
+                <div class="groupe-champ">
+                    <label>Cigarettes fumées par jour autrefois</label>
+                    <input type="number" id="ob-cigs-jour" placeholder="Ex: 15" value="15" required>
+                </div>
+                <div class="groupe-champ">
+                    <label>Prix moyen du paquet (€)</label>
+                    <input type="number" step="0.1" id="ob-prix-paquet" placeholder="Ex: 12.50" value="12.5" required>
+                </div>
+                <button type="submit" class="btn-primaire">Commencer l'aventure ⛩️</button>
             </form>
         </div>
-    </section>
 
-    <header id="entete-app">
-        <h1>Mon Suivi Vape</h1>
-        <button id="btn-notifications" class="btn-notif-header">🔔 Activer les notifications</button>
-        <nav>
-            <button id="nav-accueil" class="btn-nav actif">Accueil</button>
-            <button id="nav-recettes" class="btn-nav">Mes Liquides</button>
-            <button id="nav-sante" class="btn-nav">Santé</button>
-            <button id="nav-finances" class="btn-nav">Budget</button>
-            <button id="nav-objectifs" class="btn-nav">Progression</button>
-        </nav>
-    </header>
+        <!-- EN-TÊTE PRINCIPAL -->
+        <header id="entete-app">
+            <h1>Vape Tracker 🌸</h1>
+            <button id="btn-notifications">🔔 Activer notifs</button>
+        </header>
 
-    <main id="contenu-principal">
-        <!-- ÉCRAN 1 : ACCUEIL -->
-        <section id="ecran-accueil">
-            <div class="carte carte-arbre-feerique">
-                <div class="conteneur-particules" id="particules"></div>
-                <div id="conteneur-svg-arbre"></div>
-                <div id="nom-stade-arbre" class="badge-stade">Jeune pousse</div>
-            </div>
-
-            <!-- GRILLE DES 4 CARTES STATISTIQUES STYLÉES -->
-            <div class="grille-dashboards">
-                <div class="carte-stat stat-verte">
-                    <span class="stat-icone">⛩️</span>
-                    <span class="stat-titre">Jours sans tabac</span>
-                    <strong class="stat-valeur" id="card-jours">0</strong>
-                    <span class="stat-unite" id="prenom-accueil">jours d'arrêt</span>
+        <!-- CONTENU PRINCIPAL -->
+        <main id="contenu-principal">
+            
+            <!-- ÉCRAN 1 : ACCUEIL -->
+            <section id="ecran-accueil" class="ecran">
+                <div class="cadre-arbre">
+                    <div id="particules"></div>
+                    <div id="conteneur-svg-arbre"></div>
+                    <div id="nom-stade-arbre" class="badge-stade">Jeune pousse</div>
                 </div>
 
-                <div class="carte-stat stat-bleue">
-                    <span class="stat-icone">🚭</span>
-                    <span class="stat-titre">Cigarettes évitées</span>
-                    <strong class="stat-valeur" id="card-cigs">0</strong>
-                    <span class="stat-unite">non fumées</span>
+                <!-- GRILLE DES 4 CARTES DASHBOARD -->
+                <div class="grille-dashboards">
+                    <div class="carte-stat stat-verte">
+                        <div class="stat-icone">🌿</div>
+                        <div>
+                            <div class="stat-titre">Jours sans tabac</div>
+                            <div class="stat-valeur" id="card-jours">0</div>
+                        </div>
+                        <div class="stat-unite" id="prenom-accueil">bravo !</div>
+                    </div>
+
+                    <div class="carte-stat stat-bleue">
+                        <div class="stat-icone">🚭</div>
+                        <div>
+                            <div class="stat-titre">Cigarettes évitées</div>
+                            <div class="stat-valeur" id="card-cigs">0</div>
+                        </div>
+                        <div class="stat-unite">non fumées</div>
+                    </div>
+
+                    <div class="carte-stat stat-doree">
+                        <div class="stat-icone">💰</div>
+                        <div>
+                            <div class="stat-titre">Économie nette</div>
+                            <div class="stat-valeur" id="card-economies">0,00 €</div>
+                        </div>
+                        <div class="stat-unite">net d'achats vape</div>
+                    </div>
+
+                    <div class="carte-stat stat-rose">
+                        <div class="stat-icone">🫁</div>
+                        <div>
+                            <div class="stat-titre">Prochain Jalon</div>
+                            <div class="stat-valeur-texte" id="card-jalon-titre">...</div>
+                        </div>
+                        <div class="stat-unite" id="card-jalon-desc">...</div>
+                    </div>
                 </div>
 
-                <div class="carte-stat stat-doree">
-                    <span class="stat-icone">💰</span>
-                    <span class="stat-titre">Économie nette</span>
-                    <strong class="stat-valeur" id="card-economies">0.00 €</strong>
-                    <span class="stat-unite">économisés</span>
+                <!-- CARTE FLACON EN COURS -->
+                <div class="carte carte-flacon-actif">
+                    <h2>Flacon en cours 🧪</h2>
+                    <div class="contenu-flacon">
+                        <h3 id="nom-liquide">Aucun flacon actif</h3>
+                        <p id="details-nicotine" class="texte-secondaire"></p>
+                        <p id="details-flacon" class="texte-secondaire"></p>
+                    </div>
+                    <button id="btn-terminer" class="btn-secondaire" style="display:none;">Terminer ce flacon 🏁</button>
+                    <button id="btn-ouvrir-ajout" class="btn-primaire" style="margin-top:10px;">Enregistrer un flacon ➕</button>
                 </div>
 
-                <div class="carte-stat stat-rose">
-                    <span class="stat-icone">🫁</span>
-                    <span class="stat-titre">Prochain jalon</span>
-                    <strong class="stat-valeur-texte" id="card-jalon-titre">24h</strong>
-                    <span class="stat-unite" id="card-jalon-desc">Monoxyde éliminé</span>
-                </div>
-            </div>
-
-            <h2>Flacon en cours</h2>
-            <div class="carte flacon-actif">
-                <h3 id="nom-liquide">Aucun flacon actif</h3>
-                <p id="details-nicotine"></p>
-                <p id="details-flacon"></p>
-                <button id="btn-terminer" style="display:none;">FLACON TERMINÉ</button>
-            </div>
-
-            <button id="btn-ouvrir-ajout" class="btn-secondaire">+ Entamer un flacon</button>
-
-            <section id="section-historique">
-                <h2>Historique des flacons</h2>
-                <div id="liste-historique">
-                    <p class="texte-vide">Aucun flacon terminé pour le moment.</p>
+                <!-- HISTORIQUE -->
+                <div style="margin-top: 20px;">
+                    <h2>Historique des flacons 📊</h2>
+                    <div id="liste-historique"></div>
                 </div>
             </section>
-        </section>
 
-        <!-- ÉCRAN 2 : MES LIQUIDES -->
-        <section id="ecran-recettes" class="masque">
-            <h2>Mes Recettes / Liquides</h2>
-            <button id="btn-ouvrir-ajout-recette" class="btn-secondaire">+ Créer un nouveau liquide</button>
+            <!-- ÉCRAN 2 : RECETTES -->
+            <section id="ecran-recettes" class="ecran masque">
+                <h2>Mes recettes DIY & E-liquides 🧪</h2>
+                <button id="btn-ouvrir-ajout-recette" class="btn-primaire" style="margin-bottom: 14px;">Créer une recette ➕</button>
+                
+                <form id="form-recette" class="form-card masque">
+                    <div class="groupe-champ">
+                        <label>Nom du liquide</label>
+                        <input type="text" id="recette-nom" placeholder="Ex: Red Astaire Mix" required>
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Type</label>
+                        <select id="recette-type">
+                            <option value="DIY">DIY (Fait maison)</option>
+                            <option value="Prêt à vaper">Prêt à vaper</option>
+                        </select>
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Nicotine (mg/ml)</label>
+                        <input type="number" step="0.5" id="recette-nicotine" placeholder="6" required>
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Arôme (%)</label>
+                        <input type="number" step="0.5" id="recette-arome" placeholder="15">
+                    </div>
+                    <button type="submit" class="btn-primaire">Sauvegarder</button>
+                    <button type="button" id="btn-annuler-recette" class="btn-secondaire">Annuler</button>
+                </form>
 
-            <div id="liste-recettes" style="margin-top: 15px;">
-                <p class="texte-vide">Aucun liquide enregistré.</p>
-            </div>
+                <div id="liste-recettes"></div>
+            </section>
 
-            <form id="form-recette" class="carte masque" style="margin-top: 15px;">
-                <h3>Nouveau liquide réutilisable</h3>
-                <label for="recette-nom">Nom du liquide *</label>
-                <input type="text" id="recette-nom" required placeholder="ex: KAMI">
+            <!-- ÉCRAN 3 : SANTÉ -->
+            <section id="ecran-sante" class="ecran masque">
+                <h2>Jalons de Santé 🫁</h2>
+                <div id="timeline-sante"></div>
+            </section>
 
-                <label for="recette-type">Type</label>
-                <select id="recette-type">
-                    <option value="DIY">DIY</option>
-                    <option value="Commercial">Commercial</option>
-                </select>
+            <!-- ÉCRAN 4 : FINANCES -->
+            <section id="ecran-finances" class="ecran masque">
+                <h2>Suivi Financier 💰</h2>
+                <div class="carte" style="margin-bottom: 16px;">
+                    <p>Tabac évité : <strong id="tabac-evite-total">0,00 €</strong></p>
+                    <p>Dépenses vape : <strong id="dépenses-vape-total" style="color:#f85149;">0,00 €</strong></p>
+                    <hr style="border-color: rgba(255,255,255,0.1); margin: 8px 0;">
+                    <p>Économie réelle : <strong id="economie-nette-detail" style="color:#3fb950; font-size:1.1rem;">0,00 €</strong></p>
+                </div>
 
-                <label for="recette-nicotine">Nicotine (mg/ml) *</label>
-                <input type="number" id="recette-nicotine" required placeholder="ex: 10" step="0.1">
+                <button id="btn-ouvrir-depense" class="btn-primaire" style="margin-bottom: 14px;">Ajouter un achat vape ➕</button>
 
-                <label for="recette-arome">Dosage d'arôme (%)</label>
-                <input type="number" id="recette-arome" placeholder="ex: 9" step="0.1">
+                <form id="form-depense" class="form-card masque">
+                    <div class="groupe-champ">
+                        <label>Catégorie</label>
+                        <select id="dep-cat">
+                            <option value="E-liquide">E-liquide</option>
+                            <option value="Matériel/Résistance">Matériel / Résistance</option>
+                            <option value="Base/Booster/Arôme">Base / Booster / Arôme</option>
+                        </select>
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Nom de l'achat</label>
+                        <input type="text" id="dep-nom" placeholder="Ex: Paquet de résistances">
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Montant (€)</label>
+                        <input type="number" step="0.01" id="dep-montant" placeholder="15.90" required>
+                    </div>
+                    <button type="submit" class="btn-primaire">Enregistrer la dépense</button>
+                    <button type="button" id="btn-annuler-depense" class="btn-secondaire">Annuler</button>
+                </form>
 
-                <button type="submit">Enregistrer le liquide</button>
-                <button type="button" id="btn-annuler-recette" class="btn-annuler">Annuler</button>
-            </form>
-        </section>
+                <h3>Historique des dépenses</h3>
+                <div id="liste-depenses" style="margin-top: 10px;"></div>
+                
+                <h3 style="margin-top: 24px;">Configuration Tabac</h3>
+                <form id="form-config-tabac" class="form-card" style="margin-top: 10px;">
+                    <div class="groupe-champ">
+                        <label>Cigarettes / jour autrefois</label>
+                        <input type="number" id="cigs-jour" required>
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Prix d'un paquet (€)</label>
+                        <input type="number" step="0.1" id="prix-paquet" required>
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Cigarettes dans un paquet</label>
+                        <input type="number" id="cigs-paquet" value="20" required>
+                    </div>
+                    <button type="submit" class="btn-secondaire">Mettre à jour les calculs</button>
+                </form>
+            </section>
 
-        <!-- ÉCRAN 3 : SANTÉ -->
-        <section id="ecran-sante" class="masque">
-            <h2>Jalons Santé</h2>
-            <div class="carte carte-bienveillance">
-                ℹ️ <em>Ces étapes présentent les bénéfices moyens observés physiologiquement après l'arrêt de la combustion du tabac (sources : Santé publique France / OMS) et ne constituent pas un diagnostic individuel.</em>
-            </div>
-            <div id="timeline-sante" style="margin-top: 15px;"></div>
-        </section>
+            <!-- ÉCRAN 5 : OBJECTIFS -->
+            <section id="ecran-objectifs" class="ecran masque">
+                <h2>Mes Objectifs 🎯</h2>
+                <button id="btn-ouvrir-ajout-objectif" class="btn-primaire" style="margin-bottom: 14px;">Ajouter un objectif ➕</button>
 
-        <!-- ÉCRAN 4 : BUDGET & ÉCONOMIES -->
-        <section id="ecran-finances" class="masque">
-            <h2>Budget & Économies</h2>
-            
-            <form id="form-config-tabac" class="carte">
-                <h3>Mon ancienne consommation</h3>
-                <label for="cigs-jour">Cigarettes par jour</label>
-                <input type="number" id="cigs-jour" placeholder="ex: 15" value="15">
+                <form id="form-objectif" class="form-card masque">
+                    <div class="groupe-champ">
+                        <label>Titre de l'objectif</label>
+                        <input type="text" id="obj-titre" placeholder="Ex: Passer à 3mg de nicotine" required>
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Date cible</label>
+                        <input type="date" id="obj-date" required>
+                    </div>
+                    <button type="submit" class="btn-primaire">Ajouter</button>
+                    <button type="button" id="btn-annuler-objectif" class="btn-secondaire">Annuler</button>
+                </form>
 
-                <label for="prix-paquet">Prix du paquet (€)</label>
-                <input type="number" id="prix-paquet" placeholder="ex: 12.5" step="0.1" value="12.5">
+                <div id="liste-objectifs"></div>
+            </section>
 
-                <label for="cigs-paquet">Cigarettes par paquet</label>
-                <input type="number" id="cigs-paquet" placeholder="ex: 20" value="20">
+            <!-- ÉCRAN FORMULAIRE AJOUT FLACON -->
+            <section id="ecran-ajout" class="ecran masque">
+                <h2>Commencer un flacon 🧪</h2>
+                <form id="form-flacon" class="form-card">
+                    <div class="groupe-champ">
+                        <label>Sélectionner une recette enregistrée (Optionnel)</label>
+                        <select id="select-recette">
+                            <option value="">-- Saisie libre --</option>
+                        </select>
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Nom du produit</label>
+                        <input type="text" id="nom" placeholder="Ex: Fruits Rouges" required>
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Type</label>
+                        <select id="type">
+                            <option value="Prêt à vaper">Prêt à vaper</option>
+                            <option value="DIY">DIY (Fait maison)</option>
+                        </select>
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Contenance (ml)</label>
+                        <input type="number" id="volume" placeholder="50" required>
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Nicotine (mg/ml)</label>
+                        <input type="number" step="0.5" id="nicotine" placeholder="3" required>
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Pourcentage d'arôme (%)</label>
+                        <input type="number" step="0.5" id="arome" placeholder="0">
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Date & Heure d'ouverture</label>
+                        <input type="datetime-local" id="date-ouverture">
+                    </div>
+                    <button type="submit" class="btn-primaire">Démarrer le flacon</button>
+                    <button type="button" id="btn-annuler" class="btn-secondaire">Annuler</button>
+                </form>
+            </section>
 
-                <button type="submit">Mettre à jour le calcul</button>
-            </form>
+        </main>
 
-            <div class="carte">
-                <h3>Bilan financier</h3>
-                <p>Coût tabac évité : <strong id="tabac-evite-total">0.00 €</strong></p>
-                <p>Dépenses Vape : <strong id="dépenses-vape-total" style="color: #ff6b6b;">0.00 €</strong></p>
-                <hr style="border: 0; border-top: 1px solid #2a364f; margin: 10px 0;">
-                <p style="font-size: 1.1rem;">Économie nette : <strong id="economie-nette-detail" style="color: #51cf66;">0.00 €</strong></p>
-            </div>
+        <!-- BARRE DE NAVIGATION BASSE -->
+        <nav>
+            <button class="nav-item actif" id="nav-accueil">
+                <span class="icone">🌸</span>
+                <span>Accueil</span>
+            </button>
+            <button class="nav-item" id="nav-recettes">
+                <span class="icone">🧪</span>
+                <span>Recettes</span>
+            </button>
+            <button class="nav-item" id="nav-sante">
+                <span class="icone">🫁</span>
+                <span>Santé</span>
+            </button>
+            <button class="nav-item" id="nav-finances">
+                <span class="icone">💰</span>
+                <span>Finances</span>
+            </button>
+            <button class="nav-item" id="nav-objectifs">
+                <span class="icone">🎯</span>
+                <span>Objectifs</span>
+            </button>
+        </nav>
 
-            <button id="btn-ouvrir-depense" class="btn-secondaire">+ Ajouter une dépense vape</button>
-
-            <form id="form-depense" class="carte masque" style="margin-top: 15px;">
-                <h3>Nouvelle dépense vape</h3>
-                <label for="dep-cat">Catégorie</label>
-                <select id="dep-cat">
-                    <option value="e-liquide">E-liquide prêt-à-vaper</option>
-                    <option value="concentre">Concentré DIY / Arôme</option>
-                    <option value="booster">Booster / Base</option>
-                    <option value="materiel">Pod / Résistance / Matériel</option>
-                    <option value="autre">Autre</option>
-                </select>
-
-                <label for="dep-montant">Montant (€) *</label>
-                <input type="number" id="dep-montant" required step="0.01" placeholder="ex: 14.90">
-
-                <label for="dep-nom">Description (optionnel)</label>
-                <input type="text" id="dep-nom" placeholder="ex: Pack 5 résistances">
-
-                <button type="submit">Ajouter la dépense</button>
-                <button type="button" id="btn-annuler-depense" class="btn-annuler">Annuler</button>
-            </form>
-
-            <div id="liste-depenses" style="margin-top: 15px;"></div>
-        </section>
-
-        <!-- ÉCRAN 5 : FORMULAIRE ENTAMER UN FLACON -->
-        <section id="ecran-ajout" class="masque">
-            <h2>Entamer un flacon</h2>
-            <form id="form-flacon" class="carte">
-                <label for="select-recette">Choisir un liquide existant (optionnel)</label>
-                <select id="select-recette">
-                    <option value="">-- Saisie libre --</option>
-                </select>
-
-                <label for="nom">Nom du liquide *</label>
-                <input type="text" id="nom" required placeholder="ex: KAMI">
-
-                <label for="type">Type</label>
-                <select id="type">
-                    <option value="DIY">DIY</option>
-                    <option value="Commercial">Commercial</option>
-                </select>
-
-                <label for="volume">Volume initial (ml) *</label>
-                <input type="number" id="volume" required placeholder="ex: 97" step="0.1">
-
-                <label for="nicotine">Nicotine (mg/ml) *</label>
-                <input type="number" id="nicotine" required placeholder="ex: 10" step="0.1">
-
-                <label for="arome">Dosage d'arôme (%)</label>
-                <input type="number" id="arome" placeholder="ex: 9" step="0.1">
-
-                <label for="date-ouverture">Date et heure d'ouverture</label>
-                <input type="datetime-local" id="date-ouverture">
-
-                <button type="submit">Démarrer ce flacon</button>
-                <button type="button" id="btn-annuler" class="btn-annuler">Annuler</button>
-            </form>
-        </section>
-
-        <!-- ÉCRAN 6 : PROGRESSION & OBJECTIFS -->
-        <section id="ecran-objectifs" class="masque">
-            <h2>Mes Objectifs</h2>
-            <div class="carte carte-bienveillance">
-                🌸 <strong>Chaque étape à ton rythme.</strong> Ces objectifs sont indicatifs et modifiables à tout moment. Vapoter reste une victoire sur le tabac !
-            </div>
-
-            <button id="btn-ouvrir-ajout-objectif" class="btn-secondaire">+ Ajouter une étape</button>
-
-            <form id="form-objectif" class="carte masque" style="margin-top: 15px;">
-                <h3>Nouvelle étape</h3>
-                <label for="obj-date">Date cible / effective *</label>
-                <input type="date" id="obj-date" required>
-
-                <label for="obj-titre">Intitulé de l'objectif *</label>
-                <input type="text" id="obj-titre" required placeholder="ex: Passage à 8 mg/ml">
-
-                <button type="submit">Ajouter l'étape</button>
-                <button type="button" id="btn-annuler-objectif" class="btn-annuler">Annuler</button>
-            </form>
-
-            <div id="liste-objectifs" style="margin-top: 20px;"></div>
-        </section>
-    </main>
-
-    <script src="app.js?v=2500"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
-        }
-    </script>
+    </div>
+    <script src="app.js"></script>
 </body>
 </html>
