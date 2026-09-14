@@ -1,5 +1,3 @@
-const dateArretCigarette = new Date('2026-08-17');
-
 // Navigation & Écrans
 const navAccueil = document.getElementById('nav-accueil');
 const navRecettes = document.getElementById('nav-recettes');
@@ -13,21 +11,43 @@ const ecranSante = document.getElementById('ecran-sante');
 const ecranFinances = document.getElementById('ecran-finances');
 const ecranAjout = document.getElementById('ecran-ajout');
 const ecranObjectifs = document.getElementById('ecran-objectifs');
+const ecranOnboarding = document.getElementById('ecran-onboarding');
+
+const enteteApp = document.getElementById('entete-app');
+const contenuPrincipal = document.getElementById('contenu-principal');
 
 // Formulaires
+const formOnboarding = document.getElementById('form-onboarding');
 const formConfigTabac = document.getElementById('form-config-tabac');
 const formDepense = document.getElementById('form-depense');
 const btnOuvrirDepense = document.getElementById('btn-ouvrir-depense');
 const btnAnnulerDepense = document.getElementById('btn-annuler-depense');
 
+// -------------------------------------------------------------
+// PROFILE & DATES DYNAMIQUES
+// -------------------------------------------------------------
+function getProfilUtilisateur() {
+    return JSON.parse(localStorage.getItem('profilUtilisateur'));
+}
+
 function getJoursEcoules() {
+    const profil = getProfilUtilisateur();
+    if (!profil || !profil.dateArret) return 0;
+    
+    const dateArret = new Date(profil.dateArret);
     const aujourdhui = new Date();
-    const diff = aujourdhui - dateArretCigarette;
+    const diff = aujourdhui - dateArret;
     return Math.max(0, Math.floor(diff / (1000 * 3600 * 24)));
 }
 
 function calculerJoursSansTabac() {
-    document.getElementById('compteur-jours').textContent = getJoursEcoules();
+    const profil = getProfilUtilisateur();
+    const jours = getJoursEcoules();
+    const el = document.getElementById('compteur-jours');
+    if (el) {
+        const prenom = profil && profil.prenom ? `${profil.prenom}, ` : '';
+        el.parentElement.innerHTML = `⛩️ <strong>${prenom}</strong> tu en es à <span id="compteur-jours">${jours}</span> jour(s) sans cigarette !`;
+    }
 }
 
 // -------------------------------------------------------------
@@ -86,50 +106,34 @@ function mettreAJourCerisierHD() {
                 </linearGradient>
             </defs>
 
-            <!-- Ciel Bleu Nuit -->
             <rect width="300" height="270" fill="url(#ciel)"/>
-
-            <!-- Lune éclatante -->
             <circle cx="230" cy="55" r="35" fill="url(#lune)" opacity="0.85"/>
-
-            <!-- Montagnes au loin -->
             <path d="M0 210 Q60 170 130 195 T300 200 L300 270 L0 270 Z" fill="#111827" opacity="0.7"/>
 
-            <!-- Rivière sinueuse au pied -->
             <path d="M0 220 C80 215 150 240 300 225 L300 270 L0 270 Z" fill="url(#eau)"/>
             <path d="M20 235 Q70 230 120 240" stroke="#ffb7c5" stroke-width="1" opacity="0.4" fill="none"/>
             <path d="M140 245 Q200 235 270 250" stroke="#93c5fd" stroke-width="1.5" opacity="0.3" fill="none"/>
 
-            <!-- Rive sombre -->
             <path d="M0 240 C90 230 140 255 300 245 L300 270 L0 270 Z" fill="#090d16"/>
 
-            <!-- Cerisier Japonais -->
             <g class="vent-branches">
                 <path d="M145 250 C120 180 170 120 130 50" stroke="url(#ecorce)" stroke-width="16" stroke-linecap="round" fill="none"/>
                 <path d="M138 160 C85 130 65 110 35 100" stroke="url(#ecorce)" stroke-width="8" stroke-linecap="round" fill="none"/>
                 <path d="M142 110 C185 85 205 75 235 60" stroke="url(#ecorce)" stroke-width="7" stroke-linecap="round" fill="none"/>
                 <path d="M133 75 C100 55 85 45 65 35" stroke="url(#ecorce)" stroke-width="5" stroke-linecap="round" fill="none"/>
 
-                ${niveauFleurs >= 1 ? `
-                    <circle cx="65" cy="35" r="12" fill="#34d399" opacity="0.7"/>
-                ` : ''}
-
+                ${niveauFleurs >= 1 ? `<circle cx="65" cy="35" r="12" fill="#34d399" opacity="0.7"/>` : ''}
                 ${niveauFleurs >= 2 ? `
                     <circle cx="35" cy="100" r="18" fill="#10b981" opacity="0.7"/>
                     <circle cx="235" cy="60" r="20" fill="#34d399" opacity="0.7"/>
                 ` : ''}
-
-                ${niveauFleurs >= 3 ? `
-                    <circle cx="130" cy="50" r="30" fill="#059669" opacity="0.6"/>
-                ` : ''}
-
+                ${niveauFleurs >= 3 ? `<circle cx="130" cy="50" r="30" fill="#059669" opacity="0.6"/>` : ''}
                 ${niveauFleurs >= 4 ? `
                     <circle cx="130" cy="50" r="38" fill="#f472b6" opacity="0.75"/>
                     <circle cx="35" cy="100" r="28" fill="#fb7185" opacity="0.8"/>
                     <circle cx="235" cy="60" r="32" fill="#f472b6" opacity="0.75"/>
                     <circle cx="65" cy="35" r="22" fill="#f43f5e" opacity="0.7"/>
                 ` : ''}
-
                 ${niveauFleurs >= 5 ? `
                     <circle cx="130" cy="45" r="48" fill="#ffb7c5" opacity="0.85"/>
                     <circle cx="35" cy="95" r="35" fill="#ff80ab" opacity="0.85"/>
@@ -156,15 +160,12 @@ function genererParticules() {
     for (let i = 0; i < 15; i++) {
         const petale = document.createElement('div');
         petale.className = 'petale-lumineux';
-        
         const taille = Math.random() * 6 + 4;
         petale.style.width = `${taille}px`;
         petale.style.height = `${taille * 1.2}px`;
-        
         petale.style.left = `${Math.random() * 100}%`;
         petale.style.animationDuration = `${Math.random() * 4 + 4}s`;
         petale.style.animationDelay = `${Math.random() * 5}s`;
-
         conteneur.appendChild(petale);
     }
 }
@@ -373,10 +374,46 @@ function afficherRecettes() {
         recettes.map(r => `<option value="${r.id}">${r.nom} (${r.nicotine} mg/ml)</option>`).join('');
 }
 
-// Initialisation au chargement
-window.addEventListener('DOMContentLoaded', function() {
+// -------------------------------------------------------------
+// GESTION DU DEBUT (ONBOARDING OU ACCUEIL)
+// -------------------------------------------------------------
+formOnboarding.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const prenom = document.getElementById('ob-prenom').value;
+    const dateArret = document.getElementById('ob-date-arret').value;
+    const cigsJour = parseFloat(document.getElementById('ob-cigs-jour').value) || 15;
+    const prixPaquet = parseFloat(document.getElementById('ob-prix-paquet').value) || 12.5;
+
+    const profil = { prenom, dateArret };
+    const configTabac = { cigsJour, prixPaquet, cigsPaquet: 20 };
+
+    localStorage.setItem('profilUtilisateur', JSON.stringify(profil));
+    localStorage.setItem('configTabac', JSON.stringify(configTabac));
+
+    ecranOnboarding.classList.add('masque');
+    enteteApp.classList.remove('masque');
+    contenuPrincipal.classList.remove('masque');
+
     calculerJoursSansTabac();
     mettreAJourCerisierHD();
     calculerEconomies();
     afficherTout();
+});
+
+window.addEventListener('DOMContentLoaded', function() {
+    const profil = getProfilUtilisateur();
+
+    if (!profil) {
+        // Premier lancement
+        enteteApp.classList.add('masque');
+        contenuPrincipal.classList.add('masque');
+        ecranOnboarding.classList.remove('masque');
+    } else {
+        // Lancement normal
+        ecranOnboarding.classList.add('masque');
+        calculerJoursSansTabac();
+        mettreAJourCerisierHD();
+        calculerEconomies();
+        afficherTout();
+    }
 });
