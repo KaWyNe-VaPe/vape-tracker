@@ -1,55 +1,48 @@
-const CACHE_NAME = 'vape-tracker-v2';
+const CACHE_NAME = 'vape-tracker-v3';
 
-// Liste des fichiers à mettre en cache pour le mode hors-ligne
-const urlsToCache = [
-  './',
-  './index.html',
-  './style.css',
-  './app.js',
-  './manifest.json',
-  './icon.png',
-  './arbre-stade-1.png',
-  './arbre-stade-2.png',
-  './arbre-stade-3.png',
-  './arbre-stade-4.png',
-  './arbre-stade-5.png'
-];
-
-// Installation du Service Worker et mise en cache des ressources
+// 1. Installation du Service Worker
 self.addEventListener('install', (event) => {
-  self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache);
-    })
-  );
+    self.skipWaiting();
 });
 
-// Activation : suppression des anciens caches (ex: v1) et prise de contrôle
+// 2. Activation : Nettoyage immédiat de TOUS les anciens caches (v1, v2, etc.)
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cache) => {
-          if (cache !== CACHE_NAME) {
-            return caches.delete(cache);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
-  );
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cache) => {
+                    return caches.delete(cache); // Supprime tout l'ancien cache
+                })
+            );
+        }).then(() => self.clients.claim())
+    );
 });
 
-// Interception des requêtes réseau (Priorité au cache pour l'accès instantané)
+// 3. Interception des requêtes : Réseau en priorité, secours sur le Cache si hors-ligne
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
-  );
+    // Ne pas intercepter ce qui n'est pas en GET (ex: POST)
+    if (event.request.method !== 'GET') return;
+
+    event.respondWith(
+        fetch(event.request)
+            .then((response) => {
+                // Si la requête réseau réussit, on met à jour le cache en arrière-plan
+                if (response && response.status === 200) {
+                    const responseClone = response.clone();
+                    caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(event.request, responseClone);
+                    });
+                }
+                return response;
+            })
+            .catch(() => {
+                // En cas de panne réseau (hors-ligne), on utilise le cache
+                return caches.match(event.request);
+            })
+    );
 });
 
-// Clic sur une notification PWA
+// 4. Gestion des clics sur notifications PWA
 self.addEventListener('notificationclick', function(event) {
     event.notification.close();
     event.waitUntil(
