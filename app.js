@@ -195,6 +195,9 @@ function mettreAJourCartesDashboard() {
 // -------------------------------------------------------------
 // GESTION DU CERISIER (AFFICHAGE DES IMAGES PNG ET SEUILS EN JOURS)
 // -------------------------------------------------------------
+// -------------------------------------------------------------
+// GESTION DU CERISIER (AFFICHAGE DIRECT DES IMAGES PNG)
+// -------------------------------------------------------------
 function mettreAJourCerisierHD() {
     const jours = getJoursEcoules();
     const badge = document.getElementById('nom-stade-arbre');
@@ -203,50 +206,35 @@ function mettreAJourCerisierHD() {
     let nomStade = '';
     let numStade = 1;
 
-    // --- NOUVEAUX SEUILS EN JOURS ---
+    // --- SEUILS EN JOURS ---
     if (jours <= 30) {
-        // Stade 1 : 0 à 30 jours (1er mois)
         nomStade = 'Stade 1 : Jeune pousse (0 à 1 mois) 🌿';
         numStade = 1;
     } else if (jours <= 90) {
-        // Stade 2 : 31 à 90 jours (1 à 3 mois)
         nomStade = 'Stade 2 : Petit arbuste (1 à 3 mois) 🪴';
         numStade = 2;
     } else if (jours <= 150) {
-        // Stade 3 : 91 à 150 jours (3 à 5 mois)
         nomStade = 'Stade 3 : Arbre vigoureux (3 à 5 mois) 🪵';
         numStade = 3;
     } else if (jours <= 240) {
-        // Stade 4 : 151 à 240 jours (5 à 8 mois)
         nomStade = 'Stade 4 : Premiers bourgeons (5 à 8 mois) 🌸';
         numStade = 4;
     } else {
-        // Stade 5 : À partir de 241 jours (8 mois à 1 an+)
         nomStade = 'Stade 5 : Cerisier majestueux (8 mois à 1 an+) 🌸✨';
         numStade = 5;
     }
 
     if (badge) badge.textContent = nomStade;
 
-    // Tentative de chargement de la vraie peinture d'art PNG
-    const nomFichierImage = `arbre-stade-${numStade}.png`;
-    const imgArt = new Image();
-    imgArt.src = nomFichierImage;
-
-    imgArt.onload = function() {
-        // Si l'image existe sur GitHub, on l'affiche avec son cadre d'art
-        if (conteneur) {
-            conteneur.innerHTML = `
-                <img src="${nomFichierImage}?v=${Date.now()}" alt="${nomStade}" 
-                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px; animation: fonduImage 0.8s ease;">
-            `;
-        }
-    };
-
-    imgArt.onerror = function() {
-        // Si l'image PNG n'est pas encore téléversée sur GitHub, on conserve le dessin vectoriel de secours
-        afficherVectorielSecours(conteneur, numStade);
-    };
+    // Inscription directe de l'image HTML avec timestamp pour forcer le rafraîchissement
+    if (conteneur) {
+        conteneur.innerHTML = `
+            <img src="arbre-stade-${numStade}.png?v=${Date.now()}" 
+                 alt="${nomStade}" 
+                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px; display: block;"
+                 onerror="this.style.display='none';">
+        `;
+    }
 
     genererParticules();
 }
