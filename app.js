@@ -198,6 +198,9 @@ function mettreAJourCartesDashboard() {
 // -------------------------------------------------------------
 // GESTION DU CERISIER (AFFICHAGE DIRECT DES IMAGES PNG)
 // -------------------------------------------------------------
+// -------------------------------------------------------------
+// GESTION DU CERISIER (CHEMIN FIXÉ POUR GITHUB PAGES)
+// -------------------------------------------------------------
 function mettreAJourCerisierHD() {
     const jours = getJoursEcoules();
     const badge = document.getElementById('nom-stade-arbre');
@@ -206,7 +209,7 @@ function mettreAJourCerisierHD() {
     let nomStade = '';
     let numStade = 1;
 
-    // --- SEUILS EN JOURS ---
+    // SEUILS EN JOURS
     if (jours <= 30) {
         nomStade = 'Stade 1 : Jeune pousse (0 à 1 mois) 🌿';
         numStade = 1;
@@ -226,19 +229,21 @@ function mettreAJourCerisierHD() {
 
     if (badge) badge.textContent = nomStade;
 
-    // Inscription directe de l'image HTML avec timestamp pour forcer le rafraîchissement
+    // Utilisation du chemin absolu/relatif strict ./ requis par GitHub Pages
+    const cheminImage = `./arbre-stade-${numStade}.png`;
+
     if (conteneur) {
+        conteneur.style.zIndex = '1';
         conteneur.innerHTML = `
-            <img src="arbre-stade-${numStade}.png?v=${Date.now()}" 
+            <img src="${cheminImage}" 
                  alt="${nomStade}" 
-                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px; display: block;"
-                 onerror="this.style.display='none';">
+                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px; display: block; position: relative; z-index: 1;"
+                 onerror="console.error('Erreur chargement image:', this.src);">
         `;
     }
 
     genererParticules();
 }
-
 // Dessin de secours vectoriel en l'absence de PNG
 function afficherVectorielSecours(conteneur, niveauFleurs) {
     if (!conteneur) return;
