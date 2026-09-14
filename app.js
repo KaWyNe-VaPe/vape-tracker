@@ -31,169 +31,47 @@ function calculerJoursSansTabac() {
 }
 
 // -------------------------------------------------------------
-// CERISIER VECTORIEL ÉVOLUTIF (SANS IMAGE EXTERNE)
+// CERISIER JAPONAIS HD & ÉVOLUTIF (IMAGES HD & PARTICULES)
 // -------------------------------------------------------------
-// URLs d'images HD botaniques / estampes réalistes
-const illustrationsArbre = {
-    stade1: 'https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?w=400&auto=format&fit=crop&q=80', // Pousse verte HD
-    stade2: 'https://images.unsplash.com/photo-1512428559087-560fa5ceab42?w=400&auto=format&fit=crop&q=80', // Bonsaï réaliste
-    stade3: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&auto=format&fit=crop&q=80', // Arbre feuillu
-    stade4: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=400&auto=format&fit=crop&q=80', // Cerisier bourgeons HD
-    stade5: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=400&auto=format&fit=crop&q=80', // Cerisier fleurs
-    stade6: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=400&auto=format&fit=crop&q=80'  // Cerisier japonais en pleine floraison HD
+const imagesCerisierHD = {
+    stade1: 'https://images.fineartamerica.com/images/artworkimages/mediumlarge/3/japanese-cherry-blossom-sprout-transparent-png.png',
+    stade2: 'https://images.fineartamerica.com/images/artworkimages/mediumlarge/3/japanese-bonsai-tree-transparent-png.png',
+    stade3: 'https://images.fineartamerica.com/images/artworkimages/mediumlarge/3/japanese-sakura-tree-branches-transparent-png.png',
+    stade4: 'https://images.fineartamerica.com/images/artworkimages/mediumlarge/3/blooming-cherry-blossom-tree-transparent-png.png'
 };
 
 function mettreAJourCerisierHD() {
     const jours = getJoursEcoules();
     const badge = document.getElementById('nom-stade-arbre');
-    const conteneurSvg = document.getElementById('conteneur-svg-arbre');
+    const imgEl = document.getElementById('image-cerisier-hd');
 
     let nomStade = '';
-    let urlImage = '';
+    let urlHD = '';
 
     if (jours < 4) {
         nomStade = 'Stade 1 : Jeune pousse 🌿';
-        urlImage = illustrationsArbre.stade1;
+        urlHD = imagesCerisierHD.stade1;
     } else if (jours < 11) {
         nomStade = 'Stade 2 : Petit arbre 🪴';
-        urlImage = illustrationsArbre.stade2;
+        urlHD = imagesCerisierHD.stade2;
     } else if (jours < 21) {
         nomStade = 'Stade 3 : Branchement 🪵';
-        urlImage = illustrationsArbre.stade3;
-    } else if (jours < 36) {
-        nomStade = 'Stade 4 : Premiers bourgeons 🌺';
-        urlImage = illustrationsArbre.stade4;
-    } else if (jours < 61) {
-        nomStade = 'Stade 5 : Premières fleurs 🌸';
-        urlImage = illustrationsArbre.stade5;
+        urlHD = imagesCerisierHD.stade3;
     } else {
-        nomStade = 'Stade 6 : Cerisier majestueux 🌸✨';
-        urlImage = illustrationsArbre.stade6;
+        nomStade = 'Stade 4 : Cerisier en floraison 🌸✨';
+        urlHD = imagesCerisierHD.stade4;
     }
 
-    if (conteneurSvg) {
-        conteneurSvg.innerHTML = `
-            <div style="position: relative; width: 140px; height: 140px; border-radius: 50%; overflow: hidden; border: 2px solid #ffb7c5; box-shadow: 0 0 20px rgba(255,183,197,0.4);">
-                <img src="${urlImage}" alt="Cerisier Japonais" style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
-        `;
+    if (imgEl) {
+        imgEl.src = urlHD;
     }
-    if (badge) badge.textContent = nomStade;
+    if (badge) {
+        badge.textContent = nomStade;
+    }
 
     genererParticules();
 }
-function mettreAJourCerisierHD() {
-    const jours = getJoursEcoules();
-    const badge = document.getElementById('nom-stade-arbre');
-    const conteneurSvg = document.getElementById('conteneur-svg-arbre');
 
-    let nomStade = '';
-    let svgArbre = '';
-
-    if (jours < 4) {
-        nomStade = 'Stade 1 : Jeune pousse 🌿';
-        svgArbre = `
-            <svg viewBox="0 0 200 220" class="image-arbre-hd">
-                <path d="M100 200 C98 170 102 140 98 120" stroke="#2d1d17" stroke-width="5" stroke-linecap="round" fill="none"/>
-                <path d="M98 120 C80 100 70 105 60 110" fill="#52b788"/>
-                <path d="M98 120 C115 100 125 105 135 110" fill="#74c69d"/>
-            </svg>`;
-    } else if (jours < 11) {
-        nomStade = 'Stade 2 : Petit arbre 🪴';
-        svgArbre = `
-            <svg viewBox="0 0 200 220" class="image-arbre-hd">
-                <path d="M100 200 C85 160 115 120 95 70" stroke="#2d1d17" stroke-width="9" stroke-linecap="round" fill="none"/>
-                <path d="M97 125 C75 105 55 100 40 95" stroke="#2d1d17" stroke-width="5" fill="none"/>
-                <!-- Feuillage travaillé -->
-                <path d="M40 95 Q20 70 60 60 Q80 80 40 95" fill="#4ea8de" opacity="0.8"/>
-                <path d="M95 70 Q70 40 120 40 Q130 65 95 70" fill="#52b788" opacity="0.85"/>
-            </svg>`;
-    } else if (jours < 21) {
-        nomStade = 'Stade 3 : Branchement 🪵';
-        svgArbre = `
-            <svg viewBox="0 0 200 220" class="image-arbre-hd">
-                <path d="M100 200 C80 140 120 90 90 40" stroke="#24140e" stroke-width="12" stroke-linecap="round" fill="none"/>
-                <path d="M95 125 C55 105 35 100 15 95" stroke="#24140e" stroke-width="7" fill="none"/>
-                <path d="M98 80 C135 60 155 55 175 45" stroke="#24140e" stroke-width="6" fill="none"/>
-                <circle cx="15" cy="95" r="22" fill="#52b788" opacity="0.8"/>
-                <circle cx="175" cy="45" r="25" fill="#74c69d" opacity="0.8"/>
-                <circle cx="90" cy="40" r="30" fill="#2a9d8f" opacity="0.85"/>
-            </svg>`;
-    } else if (jours < 36) {
-        nomStade = 'Stade 4 : Premiers bourgeons 🌺';
-        // Cerisier complet avec ombrages et vrai feuillage touffu
-        svgArbre = `
-            <svg viewBox="0 0 200 220" class="image-arbre-hd">
-                <defs>
-                    <radialGradient id="fleur-glow" cx="50%" cy="50%" r="50%">
-                        <stop offset="0%" stop-color="#ffffff"/>
-                        <stop offset="60%" stop-color="#ffb7c5"/>
-                        <stop offset="100%" stop-color="#ff4081"/>
-                    </radialGradient>
-                    <linearGradient id="tronc-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="#1a0f0a"/>
-                        <stop offset="50%" stop-color="#3a2318"/>
-                        <stop offset="100%" stop-color="#120a06"/>
-                    </linearGradient>
-                </defs>
-
-                <!-- Tronc courbé style estampe -->
-                <path d="M110 200 C75 130 125 80 85 30" stroke="url(#tronc-grad)" stroke-width="14" stroke-linecap="round" fill="none"/>
-                <path d="M92 120 C50 95 30 85 10 80" stroke="url(#tronc-grad)" stroke-width="7" stroke-linecap="round" fill="none"/>
-                <path d="M98 75 C140 55 165 45 190 35" stroke="url(#tronc-grad)" stroke-width="6" stroke-linecap="round" fill="none"/>
-
-                <!-- Nuages de feuillage aquarelle (plusieurs couches) -->
-                <ellipse cx="85" cy="30" rx="35" ry="25" fill="#2d6a4f" opacity="0.7"/>
-                <ellipse cx="80" cy="25" rx="30" ry="20" fill="#52b788" opacity="0.6"/>
-                <ellipse cx="10" cy="80" rx="25" ry="18" fill="#40916c" opacity="0.7"/>
-                <ellipse cx="190" cy="35" rx="28" ry="20" fill="#52b788" opacity="0.6"/>
-
-                <!-- Grappes de bourgeons lumineux -->
-                <circle cx="75" cy="20" r="6" fill="url(#fleur-glow)"/>
-                <circle cx="90" cy="15" r="8" fill="url(#fleur-glow)"/>
-                <circle cx="65" cy="30" r="7" fill="url(#fleur-glow)"/>
-                
-                <circle cx="15" cy="75" r="6" fill="url(#fleur-glow)"/>
-                <circle cx="5" cy="82" r="7" fill="url(#fleur-glow)"/>
-                
-                <circle cx="185" cy="30" r="8" fill="url(#fleur-glow)"/>
-                <circle cx="195" cy="40" r="6" fill="url(#fleur-glow)"/>
-                <circle cx="175" cy="25" r="7" fill="url(#fleur-glow)"/>
-            </svg>`;
-    } else if (jours < 61) {
-        nomStade = 'Stade 5 : Premières fleurs 🌸';
-        svgArbre = `
-            <svg viewBox="0 0 200 220" class="image-arbre-hd">
-                <path d="M110 200 C75 130 125 80 85 30" stroke="#1f1007" stroke-width="16" stroke-linecap="round" fill="none"/>
-                <path d="M92 120 C50 95 30 85 10 80" stroke="#1f1007" stroke-width="8" stroke-linecap="round" fill="none"/>
-                <path d="M98 75 C140 55 165 45 190 35" stroke="#1f1007" stroke-width="7" fill="none"/>
-                
-                <!-- Masa florale dense -->
-                <circle cx="85" cy="30" r="45" fill="#ffb7c5" opacity="0.85"/>
-                <circle cx="10" cy="80" r="32" fill="#ff80ab" opacity="0.85"/>
-                <circle cx="190" cy="35" r="38" fill="#ffcdd2" opacity="0.9"/>
-                <circle cx="130" cy="50" r="35" fill="#ff4081" opacity="0.75"/>
-            </svg>`;
-    } else {
-        nomStade = 'Stade 6 : Cerisier majestueux 🌸✨';
-        svgArbre = `
-            <svg viewBox="0 0 200 220" class="image-arbre-hd">
-                <path d="M110 200 C75 120 125 70 80 25" stroke="#120703" stroke-width="18" stroke-linecap="round" fill="none"/>
-                <path d="M90 115 C40 90 25 85 5 80" stroke="#120703" stroke-width="9" fill="none"/>
-                <path d="M100 60 C145 40 170 35 195 25" stroke="#120703" stroke-width="8" fill="none"/>
-                
-                <circle cx="80" cy="25" r="52" fill="#ffb7c5" opacity="0.9"/>
-                <circle cx="5" cy="80" r="42" fill="#ff85a1" opacity="0.9"/>
-                <circle cx="195" cy="25" r="45" fill="#fbb1bd" opacity="0.9"/>
-                <circle cx="130" cy="45" r="48" fill="#ff9ebb" opacity="0.85"/>
-            </svg>`;
-    }
-
-    if (conteneurSvg) conteneurSvg.innerHTML = svgArbre;
-    if (badge) badge.textContent = nomStade;
-
-    genererParticules();
-}
 function genererParticules() {
     const conteneur = document.getElementById('particules');
     if (!conteneur) return;
