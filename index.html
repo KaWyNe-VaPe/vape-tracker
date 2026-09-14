@@ -14,6 +14,7 @@
         <nav>
             <button id="nav-accueil" class="btn-nav actif">Accueil</button>
             <button id="nav-recettes" class="btn-nav">Mes Liquides</button>
+            <button id="nav-objectifs" class="btn-nav">Progression</button>
         </nav>
     </header>
 
@@ -42,7 +43,7 @@
             </section>
         </section>
 
-        <!-- ÉCRAN 2 : MES LIQUIDES (RECETTES) -->
+        <!-- ÉCRAN 2 : MES LIQUIDES -->
         <section id="ecran-recettes" class="masque">
             <h2>Mes Recettes / Liquides</h2>
             <button id="btn-ouvrir-ajout-recette" class="btn-secondaire">+ Créer un nouveau liquide</button>
@@ -51,7 +52,6 @@
                 <p class="texte-vide">Aucun liquide enregistré.</p>
             </div>
 
-            <!-- Formulaire pour ajouter une recette -->
             <form id="form-recette" class="carte masque" style="margin-top: 15px;">
                 <h3>Nouveau liquide réutilisable</h3>
                 <label for="recette-nom">Nom du liquide *</label>
@@ -78,7 +78,6 @@
         <section id="ecran-ajout" class="masque">
             <h2>Entamer un flacon</h2>
             <form id="form-flacon" class="carte">
-                
                 <label for="select-recette">Choisir un liquide existant (optionnel)</label>
                 <select id="select-recette">
                     <option value="">-- Saisie libre --</option>
@@ -108,6 +107,30 @@
                 <button type="submit">Démarrer ce flacon</button>
                 <button type="button" id="btn-annuler" class="btn-annuler">Annuler</button>
             </form>
+        </section>
+
+        <!-- ÉCRAN 4 : PROGRESSION & OBJECTIFS -->
+        <section id="ecran-objectifs" class="masque">
+            <h2>Mes Objectifs</h2>
+            <div class="carte carte-bienveillance">
+                🌱 <strong>Chaque étape à ton rythme.</strong> Ces objectifs sont indicatifs et modifiables à tout moment. Vapoter reste une victoire sur le tabac !
+            </div>
+
+            <button id="btn-ouvrir-ajout-objectif" class="btn-secondaire">+ Ajouter une étape</button>
+
+            <form id="form-objectif" class="carte masque" style="margin-top: 15px;">
+                <h3>Nouvelle étape</h3>
+                <label for="obj-date">Date cible / effective *</label>
+                <input type="date" id="obj-date" required>
+
+                <label for="obj-titre">Intitulé de l'objectif *</label>
+                <input type="text" id="obj-titre" required placeholder="ex: Passage à 8 mg/ml">
+
+                <button type="submit">Ajouter l'étape</button>
+                <button type="button" id="btn-annuler-objectif" class="btn-annuler">Annuler</button>
+            </form>
+
+            <div id="liste-objectifs" style="margin-top: 20px;"></div>
         </section>
     </main>
 
