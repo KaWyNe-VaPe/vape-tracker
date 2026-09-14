@@ -44,30 +44,47 @@ const imagesCerisier = {
 
 function mettreAJourCerisierHD() {
     const jours = getJoursEcoules();
-    const imgEl = document.getElementById('image-cerisier');
+    const conteneurArbre = document.querySelector('.carte-arbre-feerique');
     const badge = document.getElementById('nom-stade-arbre');
 
-    let imageSrc = '';
+    // On remplace le tag <img> s'il ne charge pas par une illustration dynamique
+    let imgEl = document.getElementById('image-cerisier');
+    if (imgEl) imgEl.remove(); // On enlève l'image externe problématique
+
+    let icone = '';
     let nomStade = '';
 
     if (jours < 4) {
-        imageSrc = imagesCerisier.stade1; nomStade = 'Stade 1 : Jeune pousse 🌿';
+        icone = '🌱'; nomStade = 'Stade 1 : Jeune pousse';
     } else if (jours < 11) {
-        imageSrc = imagesCerisier.stade2; nomStade = 'Stade 2 : Petit arbre 🪴';
+        icone = '🪴'; nomStade = 'Stade 2 : Petit arbre';
     } else if (jours < 21) {
-        imageSrc = imagesCerisier.stade3; nomStade = 'Stade 3 : Branchement 🪵';
+        icone = '🪵'; nomStade = 'Stade 3 : Branchement';
     } else if (jours < 36) {
-        imageSrc = imagesCerisier.stade4; nomStade = 'Stade 4 : Premiers bourgeons 🌺';
+        icone = '🌿'; nomStade = 'Stade 4 : Premiers bourgeons';
     } else if (jours < 61) {
-        imageSrc = imagesCerisier.stade5; nomStade = 'Stade 5 : Premières fleurs 🌸';
+        icone = '🌸'; nomStade = 'Stade 5 : Premières fleurs';
     } else {
-        imageSrc = imagesCerisier.stade6; nomStade = 'Stade 6 : Cerisier majestueux 🌸✨';
+        icone = '🌸✨'; nomStade = 'Stade 6 : Cerisier en pleine floraison';
     }
 
-    imgEl.src = imageSrc;
+    // Création d'un élément géant centré pour l'arbre
+    let affichageArbre = document.getElementById('element-arbre-geant');
+    if (!affichageArbre) {
+        affichageArbre = document.createElement('div');
+        affichageArbre.id = 'element-arbre-geant';
+        affichageArbre.style.fontSize = '80px';
+        affichageArbre.style.zIndex = '2';
+        affichageArbre.style.margin = '20px 0';
+        affichageArbre.style.filter = 'drop-shadow(0 0 15px rgba(255,183,197,0.5))';
+        conteneurArbre.insertBefore(affichageArbre, badge);
+    }
+
+    affichageArbre.textContent = icone;
     badge.textContent = nomStade;
 
     genererParticules();
+}
 }
 
 function genererParticules() {
