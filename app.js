@@ -58,15 +58,35 @@ function mettreAJourCartesDashboard() {
     const cardCigsEl = document.getElementById('card-cigs');
     if (cardCigsEl) cardCigsEl.textContent = cigsEvitees.toLocaleString('fr-FR');
 
-    // 3. Carte Économie nette
+    // 3. Calculs financiers
     const coutParCig = config.prixPaquet / config.cigsPaquet;
     const tabacEvite = jours * config.cigsJour * coutParCig;
+
     const depenses = JSON.parse(localStorage.getItem('depensesVape')) || [];
-    const totalDepenses = depenses.reduce((sum, d) => sum + d.montant, 0);
+    const totalDepenses = depenses.reduce((sum, d) => sum + (parseFloat(d.montant) || 0), 0);
+
     const economieNette = tabacEvite - totalDepenses;
 
+    // Mise à jour de la carte Accueil
     const cardEconEl = document.getElementById('card-economies');
     if (cardEconEl) cardEconEl.textContent = `${economieNette.toFixed(2)} €`;
+
+    // Mise à jour des détails dans la section Budget
+    const tabacEviteEl = document.getElementById('tabac-evite-total');
+    const depensesVapeEl = document.getElementById('dépenses-vape-total');
+    const economieDetailEl = document.getElementById('economie-nette-detail');
+
+    if (tabacEviteEl) tabacEviteEl.textContent = `${tabacEvite.toFixed(2)} €`;
+    if (depensesVapeEl) depensesVapeEl.textContent = `${totalDepenses.toFixed(2)} €`;
+    if (economieDetailEl) economieDetailEl.textContent = `${economieNette.toFixed(2)} €`;
+
+    // Remplissage des champs de configuration
+    const inputCigs = document.getElementById('cigs-jour');
+    const inputPrix = document.getElementById('prix-paquet');
+    const inputCigsPaquet = document.getElementById('cigs-paquet');
+    if (inputCigs) inputCigs.value = config.cigsJour;
+    if (inputPrix) inputPrix.value = config.prixPaquet;
+    if (inputCigsPaquet) inputCigsPaquet.value = config.cigsPaquet;
 
     // 4. Carte Prochain Jalon Santé
     const prochainJalon = jalonsSanteData.find(j => j.jours > jours) || jalonsSanteData[jalonsSanteData.length - 1];
@@ -206,7 +226,7 @@ function basculerEcran(ecranAFFICHER) {
 }
 
 const navs = [
-    { btn: navAccueil, ecran: ecranAccueil },
+    { btn: navAccueil, ecran: ecranAccueil, action: () => mettreAJourCartesDashboard() },
     { btn: navRecettes, ecran: ecranRecettes, action: () => afficherRecettes() },
     { btn: navSante, ecran: ecranSante, action: () => afficherSante() },
     { btn: navFinances, ecran: ecranFinances, action: () => afficherFinances() },
@@ -225,7 +245,7 @@ navs.forEach(item => {
 });
 
 // -------------------------------------------------------------
-// AFFICHAGE RECETTES & INTERACTION
+// AFFICHAGES & GESTION DES LISTES
 // -------------------------------------------------------------
 function afficherRecettes() {
     const recettes = JSON.parse(localStorage.getItem('recettesLiquides')) || [];
@@ -274,7 +294,7 @@ function afficherFinances() {
                     <br><span style="font-size: 0.8rem; color: #8b949e;">${d.date}</span>
                 </div>
                 <div>
-                    <strong>-${d.montant.toFixed(2)} €</strong>
+                    <strong>-${parseFloat(d.montant).toFixed(2)} €</strong>
                     <button class="btn-suppr" onclick="supprimerDepense(${d.id})">✕</button>
                 </div>
             </div>
@@ -497,10 +517,12 @@ document.addEventListener('submit', function(e) {
     if (e.target && e.target.id === 'form-depense') {
         e.preventDefault();
         const depenses = JSON.parse(localStorage.getItem('depensesVape')) || [];
+        const montantInput = parseFloat(document.getElementById('dep-montant').value) || 0;
+
         const nouvelleDepense = {
             id: Date.now(),
             cat: document.getElementById('dep-cat').value,
-            montant: parseFloat(document.getElementById('dep-montant').value),
+            montant: montantInput,
             nom: document.getElementById('dep-nom').value || 'Achat Vape',
             date: new Date().toLocaleDateString('fr-FR')
         };
@@ -508,6 +530,8 @@ document.addEventListener('submit', function(e) {
         localStorage.setItem('depensesVape', JSON.stringify(depenses));
         e.target.reset();
         e.target.classList.add('masque');
+
+        // Recalcul immédiat des bilans
         afficherFinances();
     }
 
