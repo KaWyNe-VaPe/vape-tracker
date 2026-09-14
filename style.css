@@ -347,3 +347,20 @@ input, select {
     opacity: 0.6;
     cursor: default;
 }
+/* Animation de la brise sur l'image du cerisier */
+.arbre-brise {
+    transform-origin: bottom center; /* L'arbre pivote depuis sa base */
+    animation: briseDouce 8s ease-in-out infinite alternate;
+}
+
+@keyframes briseDouce {
+    0% {
+        transform: scale(1) rotate(0deg) translateY(0);
+    }
+    50% {
+        transform: scale(1.02) rotate(1.2deg) translateY(-2px); /* Légère inclinaison vers la droite */
+    }
+    100% {
+        transform: scale(1.01) rotate(-1deg) translateY(0); /* Légère inclinaison vers la gauche */
+    }
+}
