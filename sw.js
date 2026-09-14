@@ -1,12 +1,55 @@
-// Service Worker pour la gestion des notifications PWA
-self.addEventListener('install', (e) => {
-    self.skipWaiting();
+const CACHE_NAME = 'vape-tracker-v2';
+
+// Liste des fichiers à mettre en cache pour le mode hors-ligne
+const urlsToCache = [
+  './',
+  './index.html',
+  './style.css',
+  './app.js',
+  './manifest.json',
+  './icon.png',
+  './arbre-stade-1.png',
+  './arbre-stade-2.png',
+  './arbre-stade-3.png',
+  './arbre-stade-4.png',
+  './arbre-stade-5.png'
+];
+
+// Installation du Service Worker et mise en cache des ressources
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(urlsToCache);
+    })
+  );
 });
 
-self.addEventListener('activate', (e) => {
-    return self.clients.claim();
+// Activation : suppression des anciens caches (ex: v1) et prise de contrôle
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cache) => {
+          if (cache !== CACHE_NAME) {
+            return caches.delete(cache);
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
+  );
 });
 
+// Interception des requêtes réseau (Priorité au cache pour l'accès instantané)
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
+    })
+  );
+});
+
+// Clic sur une notification PWA
 self.addEventListener('notificationclick', function(event) {
     event.notification.close();
     event.waitUntil(
@@ -18,7 +61,7 @@ self.addEventListener('notificationclick', function(event) {
                 }
             }
             if (clients.openWindow) {
-                return clients.openWindow('/');
+                return clients.openWindow('./');
             }
         })
     );
