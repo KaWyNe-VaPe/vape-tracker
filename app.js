@@ -33,6 +33,55 @@ function calculerJoursSansTabac() {
 // -------------------------------------------------------------
 // CERISIER VECTORIEL ÉVOLUTIF (SANS IMAGE EXTERNE)
 // -------------------------------------------------------------
+// URLs d'images HD botaniques / estampes réalistes
+const illustrationsArbre = {
+    stade1: 'https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?w=400&auto=format&fit=crop&q=80', // Pousse verte HD
+    stade2: 'https://images.unsplash.com/photo-1512428559087-560fa5ceab42?w=400&auto=format&fit=crop&q=80', // Bonsaï réaliste
+    stade3: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&auto=format&fit=crop&q=80', // Arbre feuillu
+    stade4: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=400&auto=format&fit=crop&q=80', // Cerisier bourgeons HD
+    stade5: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=400&auto=format&fit=crop&q=80', // Cerisier fleurs
+    stade6: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=400&auto=format&fit=crop&q=80'  // Cerisier japonais en pleine floraison HD
+};
+
+function mettreAJourCerisierHD() {
+    const jours = getJoursEcoules();
+    const badge = document.getElementById('nom-stade-arbre');
+    const conteneurSvg = document.getElementById('conteneur-svg-arbre');
+
+    let nomStade = '';
+    let urlImage = '';
+
+    if (jours < 4) {
+        nomStade = 'Stade 1 : Jeune pousse 🌿';
+        urlImage = illustrationsArbre.stade1;
+    } else if (jours < 11) {
+        nomStade = 'Stade 2 : Petit arbre 🪴';
+        urlImage = illustrationsArbre.stade2;
+    } else if (jours < 21) {
+        nomStade = 'Stade 3 : Branchement 🪵';
+        urlImage = illustrationsArbre.stade3;
+    } else if (jours < 36) {
+        nomStade = 'Stade 4 : Premiers bourgeons 🌺';
+        urlImage = illustrationsArbre.stade4;
+    } else if (jours < 61) {
+        nomStade = 'Stade 5 : Premières fleurs 🌸';
+        urlImage = illustrationsArbre.stade5;
+    } else {
+        nomStade = 'Stade 6 : Cerisier majestueux 🌸✨';
+        urlImage = illustrationsArbre.stade6;
+    }
+
+    if (conteneurSvg) {
+        conteneurSvg.innerHTML = `
+            <div style="position: relative; width: 140px; height: 140px; border-radius: 50%; overflow: hidden; border: 2px solid #ffb7c5; box-shadow: 0 0 20px rgba(255,183,197,0.4);">
+                <img src="${urlImage}" alt="Cerisier Japonais" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+        `;
+    }
+    if (badge) badge.textContent = nomStade;
+
+    genererParticules();
+}
 function mettreAJourCerisierHD() {
     const jours = getJoursEcoules();
     const badge = document.getElementById('nom-stade-arbre');
