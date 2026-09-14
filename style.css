@@ -410,6 +410,9 @@ nav {
 /* =============================================================
    ÉCRAN DE LANCEMENT (SPLASH SCREEN STYLISÉ JAPONAIS)
    ============================================================= */
+/* =============================================================
+   ÉCRAN DE LANCEMENT AUTO-EFFACANT (CSS PUR)
+   ============================================================= */
 #splash-screen {
     position: fixed;
     top: 0;
@@ -422,15 +425,25 @@ nav {
     justify-content: center;
     align-items: center;
     z-index: 999999;
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.6s ease, visibility 0.6s ease;
+    
+    /* Animation automatique : reste 2s puis disparaît en 0.5s */
+    animation: masqueAutoSplash 0.5s ease-out 2.5s forwards;
 }
 
-#splash-screen.masque-splash {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
+@keyframes masqueAutoSplash {
+    0% {
+        opacity: 1;
+        visibility: visible;
+    }
+    99% {
+        opacity: 0;
+        visibility: visible;
+    }
+    100% {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
 }
 
 .splash-logo {
