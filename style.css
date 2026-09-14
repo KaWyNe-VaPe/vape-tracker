@@ -267,7 +267,6 @@ h2 {
     z-index: 1;
 }
 
-/* Couleurs par carte */
 .stat-verte { border-color: rgba(63, 185, 80, 0.3); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(63, 185, 80, 0.05); }
 .stat-verte::before { background: #3fb950; }
 .stat-verte .stat-valeur { color: #3fb950; }
@@ -407,8 +406,9 @@ nav {
 .nav-item .icone { font-size: 1.2rem; margin-bottom: 2px; }
 .nav-item.actif { color: #ffb7c5; }
 .texte-vide { font-size: 0.85rem; color: #6e7681; text-align: center; padding: 12px; }
+
 /* =============================================================
-   ÉCRAN DE LANCEMENT (SPLASH SCREEN)
+   ÉCRAN DE LANCEMENT (SPLASH SCREEN STYLISÉ JAPONAIS)
    ============================================================= */
 #splash-screen {
     position: fixed;
@@ -421,38 +421,43 @@ nav {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 99999; /* Toujours au premier plan */
-    transition: opacity 0.5s ease, visibility 0.5s ease;
+    z-index: 999999;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
 }
 
 #splash-screen.masque-splash {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
 }
 
 .splash-logo {
-    width: 100px;
-    height: 100px;
-    border-radius: 22px;
-    box-shadow: 0 0 30px rgba(255, 183, 197, 0.4);
-    margin-bottom: 16px;
+    width: 130px;
+    height: 130px;
+    border-radius: 28px;
+    box-shadow: 0 0 35px rgba(255, 183, 197, 0.45);
+    margin-bottom: 20px;
     animation: zoomSplash 2.5s ease-in-out infinite alternate;
 }
 
 .splash-titre {
-    font-size: 1.6rem;
+    font-family: 'Cinzel', 'Noto Serif JP', 'Georgia', serif;
+    font-size: 1.9rem;
     font-weight: 800;
     color: #f0f6fc;
-    letter-spacing: -0.5px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 0 12px rgba(255, 183, 197, 0.3);
 }
 
 .splash-sous-titre {
-    font-size: 1.2rem;
-    margin-top: 6px;
+    font-size: 1.4rem;
+    margin-top: 8px;
 }
 
 @keyframes zoomSplash {
     0% { transform: scale(1); }
-    100% { transform: scale(1.06); }
+    100% { transform: scale(1.08); }
 }
