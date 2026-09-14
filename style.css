@@ -82,6 +82,76 @@ body {
 }
 
 /* =============================================================
+   GRILLE DES DASHBOARDS DE L'ACCUEIL
+   ============================================================= */
+.grille-dashboards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.carte-stat {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-icone {
+    font-size: 1.2rem;
+    margin-bottom: 6px;
+}
+
+.stat-titre {
+    font-size: 0.75rem;
+    color: #8b949e;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-valeur {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 4px 0 2px 0;
+}
+
+.stat-valeur-texte {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 4px 0 2px 0;
+    color: #f0f6fc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stat-unite {
+    font-size: 0.75rem;
+    color: #6e7681;
+}
+
+/* Thèmes de couleur pour chaque carte */
+.stat-verte { border-top: 3px solid #3fb950; }
+.stat-verte .stat-valeur { color: #3fb950; }
+
+.stat-bleue { border-top: 3px solid #38bdf8; }
+.stat-bleue .stat-valeur { color: #38bdf8; }
+
+.stat-doree { border-top: 3px solid #f59e0b; }
+.stat-doree .stat-valeur { color: #f59e0b; }
+
+.stat-rose { border-top: 3px solid #ffb7c5; }
+.stat-rose .stat-valeur-texte { color: #ffb7c5; }
+
+/* =============================================================
    EN-TÊTE & NAVIGATION
    ============================================================= */
 header {
@@ -147,6 +217,7 @@ nav {
     justify-content: space-between;
     align-items: center;
     padding: 10px;
+    margin-bottom: 15px;
 }
 
 #conteneur-svg-arbre {
@@ -211,22 +282,8 @@ nav {
 }
 
 /* =============================================================
-   COMPTEUR, FORMULAIRES & BOUTONS
+   FORMULAIRES & BOUTONS
    ============================================================= */
-.info-arrêt {
-    background: linear-gradient(135deg, #1b2e2b, #161b22);
-    border-left: 4px solid #3fb950;
-    font-size: 1.05rem;
-    text-align: center;
-    color: #3fb950;
-}
-
-.carte-economie-rapide {
-    background-color: #1f242d;
-    text-align: center;
-    font-size: 0.95rem;
-}
-
 .masque { display: none !important; }
 
 button {
@@ -258,9 +315,6 @@ input, select {
 
 .texte-vide { color: #6e7681; font-style: italic; font-size: 0.9rem; }
 
-/* =============================================================
-   JALONS SANTÉ & OBJECTIFS
-   ============================================================= */
 .carte-bienveillance {
     background-color: #21262d;
     border-left: 4px solid #d29922;
