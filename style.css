@@ -1,355 +1,131 @@
+/* =============================================================
+   VARIABLES & REINITIALISATION STYLES GLOBAUX
+   ============================================================= */
 * {
     box-sizing: border-box;
-    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
     background-color: #0b0e14;
     color: #e6edf3;
-    margin: 0;
-    padding: 15px;
-}
-
-/* =============================================================
-   ÉCRAN DE LANCEMENT ÉPURÉ (SPLASH SCREEN)
-   ============================================================= */
-#splash-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: #0b0e14;
-    z-index: 9999;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     display: flex;
     justify-content: center;
-    align-items: center;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
-}
-
-.splash-contenu {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.splash-logo {
-    width: 130px;
-    height: 130px;
-    border-radius: 28px;
-    box-shadow: 0 0 30px rgba(255, 183, 197, 0.35);
-    margin-bottom: 20px;
-    animation: apparitionLogo 1s ease-out;
-}
-
-@keyframes apparitionLogo {
-    0% { transform: scale(0.8); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-.splash-titre {
-    font-size: 2.2rem;
-    color: #f0f6fc;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 0;
     margin: 0;
-    font-weight: 700;
-    letter-spacing: -0.5px;
 }
 
-/* =============================================================
-   ÉCRAN PREMIÈRE CONNEXION (ONBOARDING)
-   ============================================================= */
-.carte-onboarding {
-    max-width: 400px;
-    margin: 20px auto;
-    padding: 25px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.logo-onboarding {
-    width: 80px;
-    height: 80px;
-    border-radius: 18px;
-    margin-bottom: 15px;
-    box-shadow: 0 0 20px rgba(255, 183, 197, 0.3);
-}
-
-.carte-onboarding form {
+#app-container {
     width: 100%;
-    margin-top: 15px;
-}
-
-/* =============================================================
-   GRILLE DES DASHBOARDS DE L'ACCUEIL
-   ============================================================= */
-.grille-dashboards {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin-bottom: 15px;
-}
-
-.carte-stat {
-    background: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 16px;
-    padding: 14px;
+    max-width: 480px;
+    min-height: 100vh;
+    background-color: #0d1117;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     position: relative;
-    overflow: hidden;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+    padding-bottom: 75px; /* Espace pour la barre de nav */
 }
-
-.stat-icone {
-    font-size: 1.2rem;
-    margin-bottom: 6px;
-}
-
-.stat-titre {
-    font-size: 0.75rem;
-    color: #8b949e;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.stat-valeur {
-    font-size: 1.4rem;
-    font-weight: 700;
-    margin: 4px 0 2px 0;
-}
-
-.stat-valeur-texte {
-    font-size: 1.05rem;
-    font-weight: 700;
-    margin: 4px 0 2px 0;
-    color: #f0f6fc;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.stat-unite {
-    font-size: 0.75rem;
-    color: #6e7681;
-}
-
-/* Thèmes de couleur pour chaque carte */
-.stat-verte { border-top: 3px solid #3fb950; }
-.stat-verte .stat-valeur { color: #3fb950; }
-
-.stat-bleue { border-top: 3px solid #38bdf8; }
-.stat-bleue .stat-valeur { color: #38bdf8; }
-
-.stat-doree { border-top: 3px solid #f59e0b; }
-.stat-doree .stat-valeur { color: #f59e0b; }
-
-.stat-rose { border-top: 3px solid #ffb7c5; }
-.stat-rose .stat-valeur-texte { color: #ffb7c5; }
 
 /* =============================================================
-   EN-TÊTE & NAVIGATION
+   EN-TÊTE FIXE (HEADER)
    ============================================================= */
 header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-h1 {
-    font-size: 1.5rem;
-    color: #f0f6fc;
-    margin: 0 0 15px 0;
-    font-weight: 600;
-}
-
-nav {
+    padding: 18px 20px;
+    background: rgba(13, 17, 23, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 100;
     display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 5px;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.btn-nav {
-    background-color: #161b22;
-    color: #8b949e;
-    padding: 8px 16px;
+header h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #f0f6fc;
+    letter-spacing: -0.3px;
+}
+
+#btn-notifications {
+    background: rgba(255, 183, 197, 0.12);
+    border: 1px solid rgba(255, 183, 197, 0.3);
+    color: #ffb7c5;
+    padding: 6px 12px;
     border-radius: 20px;
-    font-size: 0.85rem;
-    border: 1px solid #30363d;
-    white-space: nowrap;
+    font-size: 0.75rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
-.btn-nav.actif {
-    background-color: #ffb7c5;
-    color: #0b0e14;
-    font-weight: 700;
-    border-color: #ffb7c5;
-    box-shadow: 0 0 12px rgba(255, 183, 197, 0.4);
+#btn-notifications:disabled {
+    opacity: 0.6;
+    cursor: default;
 }
 
 /* =============================================================
-   CARTES & CADRE CERISIER / RIVIÈRE
+   CONTENU ET ÉCRANS
    ============================================================= */
-.carte {
-    background: #161b22;
-    padding: 18px;
-    border-radius: 16px;
-    border: 1px solid #30363d;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-    margin-bottom: 15px;
+main {
+    padding: 16px;
+    flex: 1;
 }
 
-.carte-arbre-feerique {
+.ecran {
+    display: block;
+    animation: apparition 0.25s ease-out;
+}
+
+.masque {
+    display: none !important;
+}
+
+@keyframes apparition {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+    font-size: 1.2rem;
+    margin-bottom: 14px;
+    color: #f0f6fc;
+}
+
+/* =============================================================
+   CADRE DU CERISIER JAPONAIS & ANIMATION
+   ============================================================= */
+.cadre-arbre {
     position: relative;
-    height: 270px;
+    width: 100%;
+    height: 250px;
     background: #0b0e14;
-    border-radius: 16px;
-    border: 1px solid #2d3548;
+    border-radius: 20px;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
 #conteneur-svg-arbre {
     width: 100%;
     height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative;
     z-index: 1;
 }
 
-#conteneur-svg-arbre svg {
-    width: 100%;
-    height: 100%;
-}
-
-.vent-branches {
-    transform-origin: 150px 240px;
-    animation: briseFumee 6s ease-in-out infinite alternate;
-}
-
-@keyframes briseFumee {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(2deg) skewX(1deg); }
-}
-
-.conteneur-particules {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: 2;
-    pointer-events: none;
-}
-
-.petale-lumineux {
-    position: absolute;
-    background: radial-gradient(circle, #ffb7c5 0%, #ff4081 100%);
-    border-radius: 50% 0 50% 50%;
-    opacity: 0.8;
-    animation: chuteVent 6s linear infinite;
-}
-
-@keyframes chuteVent {
-    0% { transform: translate(0, -10px) rotate(0deg); opacity: 0; }
-    20% { opacity: 0.9; }
-    100% { transform: translate(-100px, 280px) rotate(360deg); opacity: 0; }
-}
-
-.badge-stade {
-    z-index: 3;
-    background: rgba(11, 14, 20, 0.85);
-    border: 1px solid rgba(255, 183, 197, 0.5);
-    color: #ffb7c5;
-    padding: 5px 16px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    backdrop-filter: blur(4px);
-    margin-top: auto;
-}
-
-/* =============================================================
-   FORMULAIRES & BOUTONS
-   ============================================================= */
-.masque { display: none !important; }
-
-button {
-    width: 100%;
-    background: #ffb7c5;
-    color: #0b0e14;
-    border: none;
-    padding: 12px;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.btn-secondaire { background: #238636; color: white; margin-top: 10px; }
-.btn-annuler { background: #21262d; color: #8b949e; border: 1px solid #30363d; margin-top: 8px; }
-
-label { display: block; margin-top: 12px; font-weight: 600; font-size: 0.85rem; color: #8b949e; }
-input, select {
-    width: 100%;
-    padding: 11px;
-    margin-top: 6px;
-    background: #0b0e14;
-    border: 1px solid #30363d;
-    border-radius: 8px;
-    color: #e6edf3;
-    font-size: 0.95rem;
-}
-
-.texte-vide { color: #6e7681; font-style: italic; font-size: 0.9rem; }
-
-.carte-bienveillance {
-    background-color: #21262d;
-    border-left: 4px solid #d29922;
-    font-size: 0.85rem;
-    line-height: 1.5;
-    color: #c9d1d9;
-}
-
-.jalon-sante { border-left: 3px solid #30363d; padding-left: 12px; margin-bottom: 12px; }
-.jalon-sante.atteint { border-left-color: #3fb950; }
-.jalon-sante h4 { margin: 0; font-size: 0.95rem; color: #f0f6fc; }
-.jalon-sante p { margin: 4px 0 0 0; font-size: 0.85rem; color: #8b949e; }
-
-.item-objectif { display: flex; justify-content: space-between; align-items: center; }
-.btn-suppr { background: none; border: none; color: #f85149; cursor: pointer; font-size: 1.1rem; padding: 0 5px; width: auto; }
-.btn-notif-header {
-    background: #21262d;
-    color: #ffb7c5;
-    border: 1px solid #30363d;
-    padding: 6px 14px;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    margin-bottom: 12px;
-    cursor: pointer;
-    width: auto;
-    display: inline-block;
-}
-
-.btn-notif-header:disabled {
-    opacity: 0.6;
-    cursor: default;
-}
-/* Animation de la brise sur l'image du cerisier */
+/* Animation de la brise douce sur l'arbre PNG */
 .arbre-brise {
-    transform-origin: bottom center; /* L'arbre pivote depuis sa base */
+    transform-origin: bottom center;
     animation: briseDouce 8s ease-in-out infinite alternate;
 }
 
@@ -358,9 +134,359 @@ input, select {
         transform: scale(1) rotate(0deg) translateY(0);
     }
     50% {
-        transform: scale(1.02) rotate(1.2deg) translateY(-2px); /* Légère inclinaison vers la droite */
+        transform: scale(1.02) rotate(1.2deg) translateY(-2px);
     }
     100% {
-        transform: scale(1.01) rotate(-1deg) translateY(0); /* Légère inclinaison vers la gauche */
+        transform: scale(1.01) rotate(-1deg) translateY(0);
     }
+}
+
+#particules {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.petale-lumineux {
+    position: absolute;
+    top: -10px;
+    background: radial-gradient(circle, #ffb7c5 0%, #ff80ab 70%, transparent 100%);
+    border-radius: 50% 0 50% 50%;
+    opacity: 0.8;
+    animation: chutePetale linear infinite;
+}
+
+@keyframes chutePetale {
+    0% {
+        transform: translateY(0) rotate(0deg) translateX(0);
+        opacity: 0.9;
+    }
+    50% {
+        transform: translateY(130px) rotate(180deg) translateX(25px);
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateY(260px) rotate(360deg) translateX(-15px);
+        opacity: 0;
+    }
+}
+
+.badge-stade {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background: rgba(13, 17, 23, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 6px 14px;
+    border-radius: 14px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #e6edf3;
+    z-index: 3;
+}
+
+/* =============================================================
+   GRILLE DES DASHBOARDS (STYLE GLASSMORPHISM NÉON)
+   ============================================================= */
+.grille-dashboards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.carte-stat {
+    background: rgba(22, 27, 34, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.carte-stat:active {
+    transform: scale(0.97);
+}
+
+.carte-stat::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    filter: blur(25px);
+    opacity: 0.35;
+    z-index: 0;
+}
+
+.stat-icone {
+    font-size: 1.1rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    z-index: 1;
+}
+
+.stat-titre {
+    font-size: 0.7rem;
+    color: #8b949e;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    position: relative;
+    z-index: 1;
+}
+
+.stat-valeur {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 4px 0 2px 0;
+    letter-spacing: -0.5px;
+    position: relative;
+    z-index: 1;
+}
+
+.stat-valeur-texte {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin: 4px 0 2px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    z-index: 1;
+}
+
+.stat-unite {
+    font-size: 0.72rem;
+    color: #6e7681;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+}
+
+/* --- THÈMES DE COULEUR & LUMINEUX --- */
+
+/* 1. Vert Émeraude (Jours) */
+.stat-verte {
+    border-color: rgba(63, 185, 80, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(63, 185, 80, 0.05);
+}
+.stat-verte::before { background: #3fb950; }
+.stat-verte .stat-valeur { color: #3fb950; }
+.stat-verte .stat-icone { background: rgba(63, 185, 80, 0.15); border-color: rgba(63, 185, 80, 0.3); }
+
+/* 2. Bleu Cyber (Cigarettes) */
+.stat-bleue {
+    border-color: rgba(56, 189, 248, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(56, 189, 248, 0.05);
+}
+.stat-bleue::before { background: #38bdf8; }
+.stat-bleue .stat-valeur { color: #38bdf8; }
+.stat-bleue .stat-icone { background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.3); }
+
+/* 3. Or Impérial (Économies) */
+.stat-doree {
+    border-color: rgba(245, 158, 11, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(245, 158, 11, 0.05);
+}
+.stat-doree::before { background: #f59e0b; }
+.stat-doree .stat-valeur { color: #f59e0b; }
+.stat-doree .stat-icone { background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.3); }
+
+/* 4. Rose Sakura (Jalon Santé) */
+.stat-rose {
+    border-color: rgba(255, 183, 197, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(255, 183, 197, 0.05);
+}
+.stat-rose::before { background: #ffb7c5; }
+.stat-rose .stat-valeur-texte { color: #ffb7c5; }
+.stat-rose .stat-icone { background: rgba(255, 183, 197, 0.15); border-color: rgba(255, 183, 197, 0.3); }
+
+/* =============================================================
+   CARTES INTERACTIVES (FLACON ACTIF, RECETTES, FINANCES)
+   ============================================================= */
+.carte {
+    background: #161b22;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 14px;
+}
+
+.carte-flacon-actif {
+    background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%);
+    border: 1px solid rgba(255, 183, 197, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.contenu-flacon {
+    margin: 12px 0;
+}
+
+.texte-secondaire {
+    font-size: 0.82rem;
+    color: #8b949e;
+    margin-top: 4px;
+}
+
+.item-objectif {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.jalon-sante {
+    opacity: 0.5;
+    transition: all 0.2s ease;
+}
+
+.jalon-sante.atteint {
+    opacity: 1;
+    border-color: rgba(63, 185, 80, 0.4);
+    background: rgba(63, 185, 80, 0.05);
+}
+
+/* =============================================================
+   FORMULAIRES & BOUTONS
+   ============================================================= */
+.form-card {
+    background: #161b22;
+    padding: 18px;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.groupe-champ {
+    margin-bottom: 14px;
+}
+
+.groupe-champ label {
+    display: block;
+    font-size: 0.8rem;
+    color: #8b949e;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px 14px;
+    background: #0d1117;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    color: #f0f6fc;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+input:focus, select:focus {
+    border-color: #ffb7c5;
+}
+
+.btn-primaire {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #ffb7c5 0%, #ff80ab 100%);
+    border: none;
+    border-radius: 12px;
+    color: #0b0e14;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-secondaire {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    color: #f0f6fc;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.btn-suppr {
+    background: rgba(248, 81, 73, 0.15);
+    color: #f85149;
+    border: 1px solid rgba(248, 81, 73, 0.3);
+    border-radius: 8px;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+/* =============================================================
+   BARRE DE NAVIGATION BASSE (BOTTOM NAV)
+   ============================================================= */
+nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: rgba(13, 17, 23, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0;
+    z-index: 1000;
+}
+
+.nav-item {
+    background: none;
+    border: none;
+    color: #6e7681;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.nav-item .icone {
+    font-size: 1.2rem;
+    margin-bottom: 2px;
+}
+
+.nav-item.actif {
+    color: #ffb7c5;
+}
+
+.texte-vide {
+    font-size: 0.85rem;
+    color: #6e7681;
+    text-align: center;
+    padding: 12px;
 }
