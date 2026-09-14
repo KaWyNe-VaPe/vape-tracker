@@ -31,131 +31,63 @@ function calculerJoursSansTabac() {
 }
 
 // -------------------------------------------------------------
-// CERISIER JAPONAIS CANVARS (GÉNÉRATION ORGANIQUE & ANIMÉE)
+// CERISIER JAPONAIS HD & ÉVOLUTIF (ESTAMPES + PARTICULES)
 // -------------------------------------------------------------
-let canvas, ctx;
-let angleVent = 0;
-let petales = [];
+const imagesCerisier = {
+    stade1: 'https://cdn-icons-png.flaticon.com/512/628/628324.png', // Jeune pousse HD
+    stade2: 'https://cdn-icons-png.flaticon.com/512/4147/4147926.png', // Petit arbre Bonsaï
+    stade3: 'https://cdn-icons-png.flaticon.com/512/1087/1087420.png', // Branches & feuillage
+    stade4: 'https://cdn-icons-png.flaticon.com/512/2972/2972531.png', // Bourgeons & fleurs
+    stade5: 'https://cdn-icons-png.flaticon.com/512/2972/2972528.png', // Cerisier fleuri HD
+    stade6: 'https://cdn-icons-png.flaticon.com/512/3050/3050525.png'  // Cerisier adulte majestueux
+};
 
-function initPetales() {
-    petales = [];
-    for (let i = 0; i < 25; i++) {
-        petales.push({
-            x: Math.random() * 360,
-            y: Math.random() * 260,
-            r: Math.random() * 3 + 1.5,
-            vx: -Math.random() * 1.2 - 0.5,
-            vy: Math.random() * 1.5 + 0.5,
-            alpha: Math.random() * 0.7 + 0.3
-        });
-    }
-}
-
-function dessinerBranche(x, y, longueur, angle, epaisseur, profondeur, niveauMax) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.translate(x, y);
-    
-    // Effet du vent sur l'angle de la branche
-    const courbureVent = Math.sin(angleVent + profondeur) * 0.03;
-    ctx.rotate(angle + courbureVent);
-
-    // Couleur du tronc et des branches (bois sombre)
-    ctx.strokeStyle = '#2b1e1a';
-    ctx.lineWidth = epaisseur;
-    ctx.lineCap = 'round';
-
-    ctx.moveTo(0, 0);
-    ctx.lineTo(0, -longueur);
-    ctx.stroke();
-
-    if (profondeur < niveauMax) {
-        // Sous-branches
-        dessinerBranche(0, -longueur, longueur * 0.75, 0.45, epaisseur * 0.65, profondeur + 1, niveauMax);
-        dessinerBranche(0, -longueur, longueur * 0.75, -0.45, epaisseur * 0.65, profondeur + 1, niveauMax);
-    } else {
-        // Fleurs de Cerisier au bout des branches
-        const tailleFleur = Math.random() * 3 + 4;
-        ctx.fillStyle = '#ffb7c5';
-        ctx.beginPath();
-        ctx.arc(0, -longueur, tailleFleur, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(0, -longueur, tailleFleur * 0.4, 0, Math.PI * 2);
-        ctx.fill();
-    }
-
-    ctx.restore();
-}
-
-function animerCerisier() {
-    if (!canvas || !ctx) return;
-
+function mettreAJourCerisierHD() {
     const jours = getJoursEcoules();
+    const imgEl = document.getElementById('image-cerisier');
     const badge = document.getElementById('nom-stade-arbre');
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Lune en arrière-plan (Estampe japonaise)
-    ctx.fillStyle = 'rgba(255, 235, 205, 0.08)';
-    ctx.beginPath();
-    ctx.arc(280, 70, 45, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Sol / Colline
-    ctx.fillStyle = '#161b22';
-    ctx.beginPath();
-    ctx.ellipse(180, 270, 200, 30, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Détermination de la maturité
-    let niveauMax = 1;
+    let imageSrc = '';
     let nomStade = '';
 
     if (jours < 4) {
-        niveauMax = 2; nomStade = 'Stade 1 : Jeune pousse 🌿';
+        imageSrc = imagesCerisier.stade1; nomStade = 'Stade 1 : Jeune pousse 🌿';
     } else if (jours < 11) {
-        niveauMax = 3; nomStade = 'Stade 2 : Petit arbre 🪴';
+        imageSrc = imagesCerisier.stade2; nomStade = 'Stade 2 : Petit arbre 🪴';
     } else if (jours < 21) {
-        niveauMax = 4; nomStade = 'Stade 3 : Branchement 🪵';
+        imageSrc = imagesCerisier.stade3; nomStade = 'Stade 3 : Branchement 🪵';
     } else if (jours < 36) {
-        niveauMax = 5; nomStade = 'Stade 4 : Premiers bourgeons 🌺';
+        imageSrc = imagesCerisier.stade4; nomStade = 'Stade 4 : Premiers bourgeons 🌺';
     } else if (jours < 61) {
-        niveauMax = 6; nomStade = 'Stade 5 : Premières fleurs 🌸';
+        imageSrc = imagesCerisier.stade5; nomStade = 'Stade 5 : Premières fleurs 🌸';
     } else {
-        niveauMax = 7; nomStade = 'Stade 6 : Cerisier majestueux 🌸✨';
+        imageSrc = imagesCerisier.stade6; nomStade = 'Stade 6 : Cerisier majestueux 🌸✨';
     }
 
+    imgEl.src = imageSrc;
     badge.textContent = nomStade;
 
-    // Dessin de l'arbre
-    dessinerBranche(180, 250, 48, 0, 10, 1, niveauMax);
+    genererParticules();
+}
 
-    // Animation du vent
-    angleVent += 0.02;
+function genererParticules() {
+    const conteneur = document.getElementById('particules');
+    conteneur.innerHTML = '';
 
-    // Animation des pétales volants dans le vent
-    if (niveauMax >= 5) {
-        petales.forEach(p => {
-            ctx.fillStyle = `rgba(255, 183, 197, ${p.alpha})`;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fill();
+    for (let i = 0; i < 15; i++) {
+        const petale = document.createElement('div');
+        petale.className = 'petale-lumineux';
+        
+        const taille = Math.random() * 6 + 4;
+        petale.style.width = `${taille}px`;
+        petale.style.height = `${taille * 1.2}px`;
+        
+        petale.style.left = `${Math.random() * 100}%`;
+        petale.style.animationDuration = `${Math.random() * 4 + 4}s`;
+        petale.style.animationDelay = `${Math.random() * 5}s`;
 
-            p.x += p.vx + Math.sin(angleVent) * 0.5;
-            p.y += p.vy;
-
-            // Réinitialisation des pétales sortis
-            if (p.x < 0 || p.y > 260) {
-                p.x = Math.random() * 360 + 50;
-                p.y = -10;
-            }
-        });
+        conteneur.appendChild(petale);
     }
-
-    requestAnimationFrame(animerCerisier);
 }
 
 // -------------------------------------------------------------
@@ -362,15 +294,10 @@ function afficherRecettes() {
         recettes.map(r => `<option value="${r.id}">${r.nom} (${r.nicotine} mg/ml)</option>`).join('');
 }
 
-// Initialisation au chargement
+// Initialisation
 window.onload = function() {
-    canvas = document.getElementById('canvas-cerisier');
-    if (canvas) {
-        ctx = canvas.getContext('2d');
-        initPetales();
-        animerCerisier();
-    }
     calculerJoursSansTabac();
+    mettreAJourCerisierHD();
     calculerEconomies();
     afficherTout();
 };
