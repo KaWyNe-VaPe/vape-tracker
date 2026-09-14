@@ -4,18 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vape Tracker</title>
-    <link rel="stylesheet" href="style.css?v=101">
+    <link rel="stylesheet" href="style.css?v=200">
     <link rel="manifest" href="manifest.json?v=999">
-    
-    <!-- Lignes indispensables pour l'icône de l'application -->
-    <link rel="icon" type="image/png" href="icon.png">
-    <link rel="apple-touch-icon" href="icon.png">
-
+    <link rel="icon" type="image/png" sizes="192x192" href="icon.png?v=2">
+    <link rel="apple-touch-icon" href="icon.png?v=2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+
+    <!-- ÉCRAN DE LANCEMENT TEMPORAIRE (SPLASH SCREEN) -->
+    <div id="splash-screen">
+        <div class="splash-contenu">
+            <img src="icon.png" alt="Vape Tracker Logo" class="splash-logo">
+            <div class="splash-titre-japonais">禁煙の木</div>
+            <h1 class="splash-titre">Vape Tracker</h1>
+            <div class="splash-chargement"></div>
+        </div>
+    </div>
 
     <header>
         <div class="titre-japonais">禁煙の木</div>
@@ -32,8 +39,6 @@
     <main>
         <!-- ÉCRAN 1 : ACCUEIL -->
         <section id="ecran-accueil">
-            
-            <!-- Cadre Tableau Estampe Japonaise -->
             <div class="carte carte-arbre-feerique">
                 <div class="conteneur-particules" id="particules"></div>
                 <div id="conteneur-svg-arbre"></div>
@@ -218,6 +223,6 @@
         </section>
     </main>
 
-    <script src="app.js?v=100"></script>
+    <script src="app.js?v=200"></script>
 </body>
 </html>
