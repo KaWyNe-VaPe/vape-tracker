@@ -4,7 +4,7 @@
 }
 
 body {
-    background-color: #0d1117;
+    background-color: #0b0e14;
     color: #e6edf3;
     margin: 0;
     padding: 15px;
@@ -32,7 +32,7 @@ h1 {
     font-weight: 600;
 }
 
-/* Navigation Style Estampe */
+/* Navigation Estampe Dark */
 nav {
     display: flex;
     gap: 8px;
@@ -54,50 +54,111 @@ nav {
 
 .btn-nav.actif {
     background-color: #ffb7c5;
-    color: #0d1117;
+    color: #0b0e14;
     font-weight: 700;
     border-color: #ffb7c5;
-    box-shadow: 0 0 12px rgba(255, 183, 197, 0.3);
+    box-shadow: 0 0 12px rgba(255, 183, 197, 0.4);
 }
 
-/* Cartes Dark Japonaises */
+/* Cadre Féérique Cerisier HD */
 .carte {
     background: #161b22;
     padding: 18px;
     border-radius: 16px;
     border: 1px solid #30363d;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     margin-bottom: 15px;
 }
 
-.carte-arbre {
-    text-align: center;
-    background: radial-gradient(circle at center, #1c2333 0%, #0d1117 100%);
+.carte-arbre-feerique {
     position: relative;
-    padding: 15px 5px;
-    border-color: #21262d;
+    height: 250px;
+    background: radial-gradient(circle at 75% 30%, #1e2638 0%, #0b0e14 70%);
+    border-radius: 16px;
+    border: 1px solid #2d3548;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 12px;
 }
 
-#canvas-cerisier {
-    display: block;
-    margin: 0 auto;
-    max-width: 100%;
+/* Effets Visuels (Lune, Particules, Brume) */
+.halo-lune {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 236, 210, 0.9) 0%, rgba(255, 183, 197, 0.2) 60%, transparent 100%);
+    box-shadow: 0 0 25px rgba(255, 236, 210, 0.4);
+}
+
+.image-arbre-hd {
+    max-height: 190px;
+    max-width: 90%;
+    object-fit: contain;
+    z-index: 2;
+    filter: drop-shadow(0 0 10px rgba(255, 183, 197, 0.15));
+    transition: all 0.5s ease-in-out;
+}
+
+.brume-doree {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+    background: linear-gradient(to top, rgba(11, 14, 20, 0.9), transparent);
+    z-index: 3;
+}
+
+/* Particules / Pétales animés */
+.conteneur-particules {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.petale-lumineux {
+    position: absolute;
+    background: radial-gradient(circle, #ffb7c5 0%, #ff4081 100%);
+    border-radius: 50% 0 50% 50%;
+    opacity: 0.8;
+    animation: chuteVent 6s linear infinite;
+}
+
+@keyframes chuteVent {
+    0% {
+        transform: translate(0, -10px) rotate(0deg);
+        opacity: 0;
+    }
+    20% { opacity: 0.9; }
+    100% {
+        transform: translate(-100px, 260px) rotate(360deg);
+        opacity: 0;
+    }
 }
 
 .badge-stade {
-    display: inline-block;
-    background: rgba(255, 183, 197, 0.1);
-    border: 1px solid rgba(255, 183, 197, 0.4);
+    z-index: 4;
+    background: rgba(11, 14, 20, 0.85);
+    border: 1px solid rgba(255, 183, 197, 0.5);
     color: #ffb7c5;
-    padding: 5px 14px;
+    padding: 5px 16px;
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 600;
-    margin-top: 5px;
-    letter-spacing: 0.5px;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
+/* Cartes & Saisies */
 .info-arrêt {
     background: linear-gradient(135deg, #1b2e2b, #161b22);
     border-left: 4px solid #3fb950;
@@ -110,73 +171,38 @@ nav {
     background-color: #1f242d;
     text-align: center;
     font-size: 0.95rem;
-    border-color: #30363d;
 }
 
-.masque {
-    display: none !important;
-}
+.masque { display: none !important; }
 
-/* Boutons & Saisies */
 button {
     width: 100%;
     background: #ffb7c5;
-    color: #0d1117;
+    color: #0b0e14;
     border: none;
     padding: 12px;
     border-radius: 10px;
     font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
-    transition: transform 0.1s;
 }
 
-button:active {
-    transform: scale(0.98);
-}
+.btn-secondaire { background: #238636; color: white; margin-top: 10px; }
+.btn-annuler { background: #21262d; color: #8b949e; border: 1px solid #30363d; margin-top: 8px; }
 
-.btn-secondaire {
-    background: #238636;
-    color: white;
-    margin-top: 10px;
-}
-
-.btn-annuler {
-    background: #21262d;
-    color: #8b949e;
-    border: 1px solid #30363d;
-    margin-top: 8px;
-}
-
-label {
-    display: block;
-    margin-top: 12px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    color: #8b949e;
-}
-
+label { display: block; margin-top: 12px; font-weight: 600; font-size: 0.85rem; color: #8b949e; }
 input, select {
     width: 100%;
     padding: 11px;
     margin-top: 6px;
-    background: #0d1117;
+    background: #0b0e14;
     border: 1px solid #30363d;
     border-radius: 8px;
     color: #e6edf3;
     font-size: 0.95rem;
 }
 
-input:focus, select:focus {
-    outline: none;
-    border-color: #ffb7c5;
-}
-
-.texte-vide {
-    color: #6e7681;
-    font-style: italic;
-    font-size: 0.9rem;
-}
+.texte-vide { color: #6e7681; font-style: italic; font-size: 0.9rem; }
 
 /* Jalons Santé & Objectifs */
 .carte-bienveillance {
@@ -187,40 +213,10 @@ input:focus, select:focus {
     color: #c9d1d9;
 }
 
-.jalon-sante {
-    border-left: 3px solid #30363d;
-    padding-left: 12px;
-    margin-bottom: 12px;
-}
+.jalon-sante { border-left: 3px solid #30363d; padding-left: 12px; margin-bottom: 12px; }
+.jalon-sante.atteint { border-left-color: #3fb950; }
+.jalon-sante h4 { margin: 0; font-size: 0.95rem; color: #f0f6fc; }
+.jalon-sante p { margin: 4px 0 0 0; font-size: 0.85rem; color: #8b949e; }
 
-.jalon-sante.atteint {
-    border-left-color: #3fb950;
-}
-
-.jalon-sante h4 {
-    margin: 0;
-    font-size: 0.95rem;
-    color: #f0f6fc;
-}
-
-.jalon-sante p {
-    margin: 4px 0 0 0;
-    font-size: 0.85rem;
-    color: #8b949e;
-}
-
-.item-objectif {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.btn-suppr {
-    background: none;
-    border: none;
-    color: #f85149;
-    cursor: pointer;
-    font-size: 1.1rem;
-    padding: 0 5px;
-    width: auto;
-}
+.item-objectif { display: flex; justify-content: space-between; align-items: center; }
+.btn-suppr { background: none; border: none; color: #f85149; cursor: pointer; font-size: 1.1rem; padding: 0 5px; width: auto; }
