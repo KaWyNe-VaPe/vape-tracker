@@ -31,21 +31,12 @@ function calculerJoursSansTabac() {
 }
 
 // -------------------------------------------------------------
-// CERISIER JAPONAIS HD & ÉVOLUTIF (ESTAMPES + PARTICULES)
+// CERISIER VECTORIEL ÉVOLUTIF (SANS IMAGE EXTERNE)
 // -------------------------------------------------------------
-const imagesCerisier = {
-    stade1: 'https://cdn-icons-png.flaticon.com/512/628/628324.png', // Jeune pousse HD
-    stade2: 'https://cdn-icons-png.flaticon.com/512/4147/4147926.png', // Petit arbre Bonsaï
-    stade3: 'https://cdn-icons-png.flaticon.com/512/1087/1087420.png', // Branches & feuillage
-    stade4: 'https://cdn-icons-png.flaticon.com/512/2972/2972531.png', // Bourgeons & fleurs
-    stade5: 'https://cdn-icons-png.flaticon.com/512/2972/2972528.png', // Cerisier fleuri HD
-    stade6: 'https://cdn-icons-png.flaticon.com/512/3050/3050525.png'  // Cerisier adulte majestueux
-};
-
 function mettreAJourCerisierHD() {
     const jours = getJoursEcoules();
     const badge = document.getElementById('nom-stade-arbre');
-    const imgEl = document.getElementById('image-cerisier');
+    const conteneurSvg = document.getElementById('conteneur-svg-arbre');
 
     let nomStade = '';
     let svgArbre = '';
@@ -91,7 +82,6 @@ function mettreAJourCerisierHD() {
                 <path d="M100 185 Q88 115 100 60" stroke="#2a1810" stroke-width="16" stroke-linecap="round" fill="none"/>
                 <path d="M96 125 Q50 95 35 100" stroke="#2a1810" stroke-width="8" stroke-linecap="round" fill="none"/>
                 <path d="M102 90 Q150 65 165 72" stroke="#2a1810" stroke-width="7" stroke-linecap="round" fill="none"/>
-                <!-- Feuillage & Bourgeons -->
                 <circle cx="35" cy="100" r="25" fill="#52b788" opacity="0.7"/>
                 <circle cx="165" cy="72" r="28" fill="#74c69d" opacity="0.7"/>
                 <circle cx="100" cy="50" r="35" fill="#40916c" opacity="0.8"/>
@@ -107,7 +97,6 @@ function mettreAJourCerisierHD() {
                 <path d="M100 185 Q85 110 100 50" stroke="#24140e" stroke-width="18" stroke-linecap="round" fill="none"/>
                 <path d="M95 125 Q45 90 30 95" stroke="#24140e" stroke-width="9" stroke-linecap="round" fill="none"/>
                 <path d="M102 85 Q155 60 170 68" stroke="#24140e" stroke-width="8" stroke-linecap="round" fill="none"/>
-                <!-- Masse Florale Rose Féérique -->
                 <circle cx="100" cy="45" r="42" fill="#ffb7c5" opacity="0.85"/>
                 <circle cx="30" cy="95" r="32" fill="#ff80ab" opacity="0.85"/>
                 <circle cx="170" cy="68" r="35" fill="#ffcdd2" opacity="0.9"/>
@@ -121,7 +110,6 @@ function mettreAJourCerisierHD() {
                 <path d="M100 185 Q80 110 100 45" stroke="#1c0f0a" stroke-width="20" stroke-linecap="round" fill="none"/>
                 <path d="M92 125 Q35 85 20 92" stroke="#1c0f0a" stroke-width="10" stroke-linecap="round" fill="none"/>
                 <path d="M105 80 Q160 50 180 58" stroke="#1c0f0a" stroke-width="9" stroke-linecap="round" fill="none"/>
-                <!-- Grand Cerisier Fleuri HD -->
                 <circle cx="100" cy="40" r="50" fill="#ffb7c5" opacity="0.9"/>
                 <circle cx="20" cy="92" r="38" fill="#ff80ab" opacity="0.85"/>
                 <circle cx="180" cy="58" r="42" fill="#ffcdd2" opacity="0.9"/>
@@ -131,29 +119,19 @@ function mettreAJourCerisierHD() {
             </svg>`;
     }
 
-    // Remplacement direct dans le conteneur
-    const conteneur = document.querySelector('.carte-arbre-feerique');
-    if (imgEl) imgEl.remove();
-
-    let conteneurSvg = document.getElementById('conteneur-svg-arbre');
-    if (!conteneurSvg) {
-        conteneurSvg = document.createElement('div');
-        conteneurSvg.id = 'conteneur-svg-arbre';
-        conteneurSvg.style.zIndex = '2';
-        conteneurSvg.style.width = '100%';
-        conteneurSvg.style.display = 'flex';
-        conteneurSvg.style.justifyContent = 'center';
-        conteneur.insertBefore(conteneurSvg, badge);
+    if (conteneurSvg) {
+        conteneurSvg.innerHTML = svgArbre;
     }
-
-    conteneurSvg.innerHTML = svgArbre;
-    badge.textContent = nomStade;
+    if (badge) {
+        badge.textContent = nomStade;
+    }
 
     genererParticules();
 }
 
 function genererParticules() {
     const conteneur = document.getElementById('particules');
+    if (!conteneur) return;
     conteneur.innerHTML = '';
 
     for (let i = 0; i < 15; i++) {
