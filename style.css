@@ -1,0 +1,114 @@
+/* Style général */
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: #f4f6f8;
+    color: #2c3e50;
+    margin: 0;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header h1 {
+    font-size: 1.4rem;
+    color: #34495e;
+    margin-bottom: 20px;
+}
+
+main {
+    width: 100%;
+    max-width: 400px; /* Taille idéale pour simuler un écran de téléphone */
+}
+
+/* Style des cartes */
+.carte {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.info-arrêt {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+/* Bouton principal */
+button {
+    width: 100%;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+/* Masquer un élément */
+.masque {
+    display: none;
+}
+
+/* Style des formulaires */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+label {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #555;
+    margin-top: 6px;
+}
+
+input, select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+/* Boutons secondaires */
+.btn-secondaire {
+    background-color: #2ecc71;
+}
+
+.btn-secondaire:hover {
+    background-color: #27ae60;
+}
+
+.btn-annuler {
+    background-color: #95a5a6;
+}
+
+.btn-annuler:hover {
+    background-color: #7f8c8d;
+}
+/* Style de l'historique */
+#section-historique {
+    margin-top: 24px;
+}
+
+.carte-historique {
+    font-size: 0.95rem;
+    border-left: 4px solid #3498db;
+}
+
+.texte-vide {
+    font-style: italic;
+    color: #888;
+    font-size: 0.9rem;
+}
