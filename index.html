@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vape Tracker</title>
-    <link rel="stylesheet" href="style.css?v=300">
+    <link rel="stylesheet" href="style.css?v=500">
     <link rel="manifest" href="manifest.json?v=999">
     <link rel="icon" type="image/png" sizes="192x192" href="icon.png?v=2">
     <link rel="apple-touch-icon" href="icon.png?v=2">
@@ -14,28 +14,27 @@
 </head>
 <body>
 
-    <!-- ÉCRAN DE LANCEMENT ÉPURÉ -->
     <!-- ÉCRAN DE LANCEMENT ÉPURÉ AUTONOME -->
-<div id="splash-screen">
-    <div class="splash-contenu">
-        <img src="icon.png" alt="Vape Tracker Logo" class="splash-logo">
-        <h1 class="splash-titre">Vape Tracker</h1>
+    <div id="splash-screen">
+        <div class="splash-contenu">
+            <img src="icon.png" alt="Vape Tracker Logo" class="splash-logo">
+            <h1 class="splash-titre">Vape Tracker</h1>
+        </div>
     </div>
-</div>
 
-<script>
-    // Se déclenche à coup sûr au bout de 2.5 secondes
-    setTimeout(function() {
-        var splash = document.getElementById('splash-screen');
-        if (splash) {
-            splash.style.opacity = '0';
-            splash.style.visibility = 'hidden';
-            setTimeout(function() {
-                splash.style.display = 'none';
-            }, 500);
-        }
-    }, 2500);
-</script>
+    <script>
+        // Masque l'écran de lancement à coup sûr après 2.5 secondes
+        setTimeout(function() {
+            var splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.style.opacity = '0';
+                splash.style.visibility = 'hidden';
+                setTimeout(function() {
+                    splash.style.display = 'none';
+                }, 500);
+            }
+        }, 2500);
+    </script>
 
     <header>
         <h1>Mon Suivi Vape</h1>
@@ -235,6 +234,6 @@
         </section>
     </main>
 
-    <script src="app.js?v=200"></script>
+    <script src="app.js?v=500"></script>
 </body>
 </html>
