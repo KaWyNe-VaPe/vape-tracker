@@ -1,0 +1,15 @@
+{
+  "name": "Mon Suivi Vape",
+  "short_name": "VapeTrack",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f4f6f8",
+  "theme_color": "#3498db",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3050/3050525.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
