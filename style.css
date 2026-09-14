@@ -1,47 +1,132 @@
-/* Style général */
+* {
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
 body {
-    font-family: system-ui, -apple-system, sans-serif;
     background-color: #f4f6f8;
     color: #2c3e50;
     margin: 0;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    padding: 15px;
 }
 
-header h1 {
+header {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+h1 {
     font-size: 1.4rem;
     color: #34495e;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
-main {
-    width: 100%;
-    max-width: 400px; /* Taille idéale pour simuler un écran de téléphone */
+/* Navigation défilante */
+nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 5px;
 }
 
-/* Style des cartes */
+.btn-nav {
+    background-color: #e0e6ed;
+    color: #555;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    border: none;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.btn-nav.actif {
+    background-color: #3498db;
+    color: white;
+    font-weight: bold;
+}
+
+/* Cartes & Éléments */
 .carte {
-    background-color: #ffffff;
+    background: white;
+    padding: 15px;
     border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin-bottom: 15px;
+}
+
+.carte-arbre {
+    text-align: center;
+    background: linear-gradient(to bottom, #eef9ff, #ffffff);
+    position: relative;
+    overflow: hidden;
+    padding: 20px 10px 10px 10px;
+}
+
+#conteneur-arbre {
+    height: 160px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.badge-stade {
+    display: inline-block;
+    background: #rgba(255, 255, 255, 0.8);
+    border: 1px solid #ffb7c5;
+    color: #d81b60;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+/* Animations Vent & Arbre */
+.vent-branches {
+    transform-origin: bottom center;
+    animation: brise 4s ease-in-out infinite alternate;
+}
+
+@keyframes brise {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(2.5deg); }
+}
+
+.petale {
+    animation: voler 5s linear infinite;
+}
+
+@keyframes voler {
+    0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+    100% { transform: translate(-60px, 80px) rotate(360deg); opacity: 0; }
 }
 
 .info-arrêt {
-    background-color: #e8f5e9;
-    color: #2e7d32;
-    font-weight: bold;
-    text-align: center;
+    background-color: #e8f8f5;
+    border-left: 4px solid #2ecc71;
     font-size: 1.1rem;
+    text-align: center;
 }
 
-/* Bouton principal */
+.carte-economie-rapide {
+    background-color: #f0f3f4;
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+.flacon-actif h3 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+
+.masque {
+    display: none !important;
+}
+
 button {
     width: 100%;
-    background-color: #3498db;
+    background-color: #2ecc71;
     color: white;
     border: none;
     padding: 12px;
@@ -49,95 +134,68 @@ button {
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 10px;
 }
 
-button:hover {
-    background-color: #2980b9;
-}
-/* Masquer un élément */
-.masque {
-    display: none;
-}
-
-/* Style des formulaires */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-label {
-    font-size: 0.9rem;
-    font-weight: bold;
-    color: #555;
-    margin-top: 6px;
-}
-
-input, select {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 1rem;
-}
-
-/* Boutons secondaires */
 .btn-secondaire {
-    background-color: #2ecc71;
-}
-
-.btn-secondaire:hover {
-    background-color: #27ae60;
+    background-color: #3498db;
+    margin-top: 10px;
 }
 
 .btn-annuler {
     background-color: #95a5a6;
+    margin-top: 8px;
 }
 
-.btn-annuler:hover {
-    background-color: #7f8c8d;
-}
-/* Style de l'historique */
-#section-historique {
-    margin-top: 24px;
+/* Formulaires */
+label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 0.85rem;
 }
 
-.carte-historique {
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 4px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
     font-size: 0.95rem;
-    border-left: 4px solid #3498db;
 }
 
 .texte-vide {
+    color: #7f8c8d;
     font-style: italic;
-    color: #888;
     font-size: 0.9rem;
 }
-/* Navigation */
-nav {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
 
-.btn-nav {
-    background-color: #bdc3c7;
-    color: #333;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    margin-top: 0;
-}
-
-.btn-nav.actif {
-    background-color: #3498db;
-    color: white;
-}
-/* Style bienveillance & objectifs */
+/* Jalons Santé & Objectifs */
 .carte-bienveillance {
     background-color: #fef9e7;
     border-left: 4px solid #f1c40f;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     line-height: 1.4;
+}
+
+.jalon-sante {
+    border-left: 3px solid #bdc3c7;
+    padding-left: 12px;
+    margin-bottom: 12px;
+}
+
+.jalon-sante.atteint {
+    border-left-color: #2ecc71;
+}
+
+.jalon-sante h4 {
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.jalon-sante p {
+    margin: 4px 0 0 0;
+    font-size: 0.85rem;
+    color: #555;
 }
 
 .item-objectif {
