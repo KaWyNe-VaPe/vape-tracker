@@ -17,7 +17,7 @@ const enteteApp = document.getElementById('entete-app');
 const contenuPrincipal = document.getElementById('contenu-principal');
 
 // -------------------------------------------------------------
-// PROFILE & DATES DYNAMIQUES
+// PROFILE & CALCULS DYNAMIQUES
 // -------------------------------------------------------------
 function getProfilUtilisateur() {
     return JSON.parse(localStorage.getItem('profilUtilisateur'));
@@ -33,14 +33,48 @@ function getJoursEcoules() {
     return Math.max(0, Math.floor(diff / (1000 * 3600 * 24)));
 }
 
-function calculerJoursSansTabac() {
+const jalonsSanteData = [
+    { jours: 1, titre: '24 Heures', desc: 'Monoxyde éliminé' },
+    { jours: 2, titre: '48 Heures', desc: 'Goût et odorat' },
+    { jours: 14, titre: '2 Semaines', desc: 'Souffle amélioré' },
+    { jours: 30, titre: '1 Mois', desc: 'Toux diminuée' },
+    { jours: 90, titre: '3 Mois', desc: 'Fonction pulmonaire' },
+    { jours: 365, titre: '1 An', desc: 'Risque cardiaque /2' }
+];
+
+function mettreAJourCartesDashboard() {
     const profil = getProfilUtilisateur();
     const jours = getJoursEcoules();
-    const el = document.getElementById('compteur-jours');
-    if (el) {
-        const prenom = profil && profil.prenom ? `${profil.prenom}, ` : '';
-        el.parentElement.innerHTML = `⛩️ <strong>${prenom}</strong> tu en es à <span id="compteur-jours">${jours}</span> jour(s) sans cigarette !`;
-    }
+    const config = JSON.parse(localStorage.getItem('configTabac')) || { cigsJour: 15, prixPaquet: 12.5, cigsPaquet: 20 };
+
+    // 1. Carte Jours
+    const cardJoursEl = document.getElementById('card-jours');
+    const prenomEl = document.getElementById('prenom-accueil');
+    if (cardJoursEl) cardJoursEl.textContent = jours;
+    if (prenomEl && profil && profil.prenom) prenomEl.textContent = `bravo ${profil.prenom} !`;
+
+    // 2. Carte Cigarettes évitées
+    const cigsEvitees = Math.floor(jours * config.cigsJour);
+    const cardCigsEl = document.getElementById('card-cigs');
+    if (cardCigsEl) cardCigsEl.textContent = cigsEvitees.toLocaleString('fr-FR');
+
+    // 3. Carte Économie nette
+    const coutParCig = config.prixPaquet / config.cigsPaquet;
+    const tabacEvite = jours * config.cigsJour * coutParCig;
+    const depenses = JSON.parse(localStorage.getItem('depensesVape')) || [];
+    const totalDepenses = depenses.reduce((sum, d) => sum + d.montant, 0);
+    const economieNette = tabacEvite - totalDepenses;
+
+    const cardEconEl = document.getElementById('card-economies');
+    if (cardEconEl) cardEconEl.textContent = `${economieNette.toFixed(2)} €`;
+
+    // 4. Carte Prochain Jalon Santé
+    const prochainJalon = jalonsSanteData.find(j => j.jours > jours) || jalonsSanteData[jalonsSanteData.length - 1];
+    const jalonTitreEl = document.getElementById('card-jalon-titre');
+    const jalonDescEl = document.getElementById('card-jalon-desc');
+
+    if (jalonTitreEl) jalonTitreEl.textContent = prochainJalon.titre;
+    if (jalonDescEl) jalonDescEl.textContent = prochainJalon.desc;
 }
 
 // -------------------------------------------------------------
@@ -191,31 +225,6 @@ navs.forEach(item => {
 });
 
 // -------------------------------------------------------------
-// ÉCONOMIES
-// -------------------------------------------------------------
-function calculerEconomies() {
-    const jours = getJoursEcoules();
-    const config = JSON.parse(localStorage.getItem('configTabac')) || { cigsJour: 15, prixPaquet: 12.5, cigsPaquet: 20 };
-    
-    const coutParCig = config.prixPaquet / config.cigsPaquet;
-    const tabacEvite = jours * config.cigsJour * coutParCig;
-
-    const depenses = JSON.parse(localStorage.getItem('depensesVape')) || [];
-    const totalDepenses = depenses.reduce((sum, d) => sum + d.montant, 0);
-
-    const economieNette = tabacEvite - totalDepenses;
-
-    document.getElementById('economie-accueil').textContent = `${economieNette.toFixed(2)} €`;
-    document.getElementById('tabac-evite-total').textContent = `${tabacEvite.toFixed(2)} €`;
-    document.getElementById('dépenses-vape-total').textContent = `${totalDepenses.toFixed(2)} €`;
-    document.getElementById('economie-nette-detail').textContent = `${economieNette.toFixed(2)} €`;
-
-    document.getElementById('cigs-jour').value = config.cigsJour;
-    document.getElementById('prix-paquet').value = config.prixPaquet;
-    document.getElementById('cigs-paquet').value = config.cigsPaquet;
-}
-
-// -------------------------------------------------------------
 // AFFICHAGE RECETTES & INTERACTION
 // -------------------------------------------------------------
 function afficherRecettes() {
@@ -251,7 +260,7 @@ window.supprimerRecette = function(id) {
 };
 
 function afficherFinances() {
-    calculerEconomies();
+    mettreAJourCartesDashboard();
     const depenses = JSON.parse(localStorage.getItem('depensesVape')) || [];
     const listeEl = document.getElementById('liste-depenses');
 
@@ -279,15 +288,6 @@ window.supprimerDepense = function(id) {
     localStorage.setItem('depensesVape', JSON.stringify(depenses));
     afficherFinances();
 };
-
-const jalonsSanteData = [
-    { jours: 1, titre: '24 Heures', desc: 'Le monoxyde de carbone est totalement éliminé de l\'organisme.' },
-    { jours: 2, titre: '48 Heures', desc: 'Le goût et l\'odorat s\'améliorent. Les terminaisons nerveuses se régénèrent.' },
-    { jours: 14, titre: '2 Semaines', desc: 'La respiration devient plus aisée. Le souffle s\'améliore à l\'effort.' },
-    { jours: 30, titre: '1 Mois', desc: 'La toux et l\'essoufflement diminuent. Vous regagnez en énergie générale.' },
-    { jours: 90, titre: '3 Mois', desc: 'La fonction pulmonaire s\'améliore nettement. Circulation sanguine normalisée.' },
-    { jours: 365, titre: '1 An', desc: 'Le risque de maladie cardiovasculaire est réduit de moitié par rapport à un fumeur.' }
-];
 
 function afficherSante() {
     const joursActuels = getJoursEcoules();
@@ -377,48 +377,39 @@ function afficherTout() {
 }
 
 // -------------------------------------------------------------
-// ÉCOUTEURS D'ÉVÉNEMENTS GLOBAUX (ROBUSTE)
+// ÉCOUTEURS D'ÉVÉNEMENTS GLOBAUX
 // -------------------------------------------------------------
 document.addEventListener('click', function(e) {
-    // Ouvrir formulaire recette
     if (e.target && e.target.id === 'btn-ouvrir-ajout-recette') {
         const f = document.getElementById('form-recette');
         if (f) f.classList.remove('masque');
     }
-    // Annuler formulaire recette
     if (e.target && e.target.id === 'btn-annuler-recette') {
         const f = document.getElementById('form-recette');
         if (f) f.classList.add('masque');
     }
-    // Ouvrir dépense
     if (e.target && e.target.id === 'btn-ouvrir-depense') {
         const f = document.getElementById('form-depense');
         if (f) f.classList.remove('masque');
     }
-    // Annuler dépense
     if (e.target && e.target.id === 'btn-annuler-depense') {
         const f = document.getElementById('form-depense');
         if (f) f.classList.add('masque');
     }
-    // Ouvrir objectif
     if (e.target && e.target.id === 'btn-ouvrir-ajout-objectif') {
         const f = document.getElementById('form-objectif');
         if (f) f.classList.remove('masque');
     }
-    // Annuler objectif
     if (e.target && e.target.id === 'btn-annuler-objectif') {
         const f = document.getElementById('form-objectif');
         if (f) f.classList.add('masque');
     }
-    // Entamer un flacon
     if (e.target && e.target.id === 'btn-ouvrir-ajout') {
         basculerEcran(ecranAjout);
     }
-    // Annuler flacon
     if (e.target && e.target.id === 'btn-annuler') {
         basculerEcran(ecranAccueil);
     }
-    // Terminer flacon
     if (e.target && e.target.id === 'btn-terminer') {
         const flaconActif = JSON.parse(localStorage.getItem('flaconActif'));
         if (!flaconActif) return;
@@ -443,7 +434,6 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Soumission des formulaires
 document.addEventListener('submit', function(e) {
     if (e.target && e.target.id === 'form-recette') {
         e.preventDefault();
@@ -479,9 +469,8 @@ document.addEventListener('submit', function(e) {
         enteteApp.classList.remove('masque');
         contenuPrincipal.classList.remove('masque');
 
-        calculerJoursSansTabac();
+        mettreAJourCartesDashboard();
         mettreAJourCerisierHD();
-        calculerEconomies();
         afficherTout();
     }
 
@@ -545,7 +534,7 @@ document.addEventListener('submit', function(e) {
             cigsPaquet: parseFloat(document.getElementById('cigs-paquet').value) || 20
         };
         localStorage.setItem('configTabac', JSON.stringify(config));
-        calculerEconomies();
+        mettreAJourCartesDashboard();
     }
 });
 
@@ -559,9 +548,8 @@ window.addEventListener('DOMContentLoaded', function() {
         ecranOnboarding.classList.remove('masque');
     } else {
         ecranOnboarding.classList.add('masque');
-        calculerJoursSansTabac();
+        mettreAJourCartesDashboard();
         mettreAJourCerisierHD();
-        calculerEconomies();
         afficherTout();
     }
 });
