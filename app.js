@@ -396,3 +396,10 @@ window.addEventListener('load', () => {
         }, 1800); // Reste affiché 1,8 seconde
     }
 });
+// FERMETURE AUTOMATIQUE DE L'ÉCRAN DE LANCEMENT (2.5 SECONDES)
+setTimeout(() => {
+    const splash = document.getElementById('splash-screen');
+    if (splash) {
+        splash.classList.add('fondu-sortie');
+    }
+}, 2500);
