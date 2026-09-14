@@ -232,15 +232,17 @@ function mettreAJourCerisierHD() {
     // Utilisation du chemin absolu/relatif strict ./ requis par GitHub Pages
     const cheminImage = `./arbre-stade-${numStade}.png`;
 
-    if (conteneur) {
-        conteneur.style.zIndex = '1';
-        conteneur.innerHTML = `
-            <img src="${cheminImage}" 
-                 alt="${nomStade}" 
-                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px; display: block; position: relative; z-index: 1;"
-                 onerror="console.error('Erreur chargement image:', this.src);">
-        `;
-    }
+    // Remplace la partie d'injection de l'image dans mettreAJourCerisierHD() par :
+if (conteneur) {
+    conteneur.style.zIndex = '1';
+    conteneur.innerHTML = `
+        <img src="${cheminImage}" 
+             alt="${nomStade}" 
+             class="arbre-brise"
+             style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px; display: block; position: relative; z-index: 1;"
+             onerror="console.error('Erreur chargement image:', this.src);">
+    `;
+}
 
     genererParticules();
 }
