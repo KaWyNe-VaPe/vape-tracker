@@ -14,7 +14,7 @@ const ecranFinances = document.getElementById('ecran-finances');
 const ecranAjout = document.getElementById('ecran-ajout');
 const ecranObjectifs = document.getElementById('ecran-objectifs');
 
-// Éléments Formulaires
+// Formulaires
 const formConfigTabac = document.getElementById('form-config-tabac');
 const formDepense = document.getElementById('form-depense');
 const btnOuvrirDepense = document.getElementById('btn-ouvrir-depense');
@@ -31,43 +31,126 @@ function calculerJoursSansTabac() {
 }
 
 // -------------------------------------------------------------
-// CERISIER JAPONAIS HD & ÉVOLUTIF (IMAGES HD & PARTICULES)
+// TABLEAU VECTORIEL JAPONAIS (LUNE, RIVIÈRE, CERISIER)
 // -------------------------------------------------------------
-const imagesCerisierHD = {
-    stade1: 'https://images.fineartamerica.com/images/artworkimages/mediumlarge/3/japanese-cherry-blossom-sprout-transparent-png.png',
-    stade2: 'https://images.fineartamerica.com/images/artworkimages/mediumlarge/3/japanese-bonsai-tree-transparent-png.png',
-    stade3: 'https://images.fineartamerica.com/images/artworkimages/mediumlarge/3/japanese-sakura-tree-branches-transparent-png.png',
-    stade4: 'https://images.fineartamerica.com/images/artworkimages/mediumlarge/3/blooming-cherry-blossom-tree-transparent-png.png'
-};
-
 function mettreAJourCerisierHD() {
     const jours = getJoursEcoules();
     const badge = document.getElementById('nom-stade-arbre');
-    const imgEl = document.getElementById('image-cerisier-hd');
+    const conteneur = document.getElementById('conteneur-svg-arbre');
 
     let nomStade = '';
-    let urlHD = '';
+    let niveauFleurs = 0;
 
     if (jours < 4) {
         nomStade = 'Stade 1 : Jeune pousse 🌿';
-        urlHD = imagesCerisierHD.stade1;
+        niveauFleurs = 1;
     } else if (jours < 11) {
         nomStade = 'Stade 2 : Petit arbre 🪴';
-        urlHD = imagesCerisierHD.stade2;
+        niveauFleurs = 2;
     } else if (jours < 21) {
         nomStade = 'Stade 3 : Branchement 🪵';
-        urlHD = imagesCerisierHD.stade3;
+        niveauFleurs = 3;
+    } else if (jours < 36) {
+        nomStade = 'Stade 4 : Premiers bourgeons 🌸';
+        niveauFleurs = 4;
     } else {
-        nomStade = 'Stade 4 : Cerisier en floraison 🌸✨';
-        urlHD = imagesCerisierHD.stade4;
+        nomStade = 'Stade 5 : Cerisier en pleine floraison 🌸✨';
+        niveauFleurs = 5;
     }
 
-    if (imgEl) {
-        imgEl.src = urlHD;
-    }
-    if (badge) {
-        badge.textContent = nomStade;
-    }
+    // SVG vectoriel complet combinant l'arrière-plan, la rivière, le tronc et la frondaison
+    const svgTableau = `
+        <svg viewBox="0 0 300 270" preserveAspectRatio="xMidYMid slice">
+            <defs>
+                <linearGradient id="ciel" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#0b0e14"/>
+                    <stop offset="70%" stop-color="#1a2332"/>
+                    <stop offset="100%" stop-color="#0f172a"/>
+                </linearGradient>
+
+                <linearGradient id="eau" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#0f2b46"/>
+                    <stop offset="50%" stop-color="#1d4ed8"/>
+                    <stop offset="100%" stop-color="#0f2b46"/>
+                </linearGradient>
+
+                <radialGradient id="lune" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#fffbeb"/>
+                    <stop offset="40%" stop-color="#fef08a"/>
+                    <stop offset="100%" stop-color="transparent"/>
+                </radialGradient>
+
+                <linearGradient id="ecorce" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#1c110a"/>
+                    <stop offset="50%" stop-color="#42281d"/>
+                    <stop offset="100%" stop-color="#120b07"/>
+                </linearGradient>
+            </defs>
+
+            <!-- Ciel Bleu Nuit -->
+            <rect width="300" height="270" fill="url(#ciel)"/>
+
+            <!-- Lune éclatante -->
+            <circle cx="230" cy="55" r="35" fill="url(#lune)" opacity="0.85"/>
+
+            <!-- Montagnes au loin -->
+            <path d="M0 210 Q60 170 130 195 T300 200 L300 270 L0 270 Z" fill="#111827" opacity="0.7"/>
+
+            <!-- Rivière sinueuse au pied -->
+            <path d="M0 220 C80 215 150 240 300 225 L300 270 L0 270 Z" fill="url(#eau)"/>
+            <!-- Reflets d'eau -->
+            <path d="M20 235 Q70 230 120 240" stroke="#ffb7c5" stroke-width="1" opacity="0.4" fill="none"/>
+            <path d="M140 245 Q200 235 270 250" stroke="#93c5fd" stroke-width="1.5" opacity="0.3" fill="none"/>
+
+            <!-- Rive sombre -->
+            <path d="M0 240 C90 230 140 255 300 245 L300 270 L0 270 Z" fill="#090d16"/>
+
+            <!-- Cerisier Japonais -->
+            <g class="vent-branches">
+                <!-- Tronc courbé d'estampe -->
+                <path d="M145 250 C120 180 170 120 130 50" stroke="url(#ecorce)" stroke-width="16" stroke-linecap="round" fill="none"/>
+                <path d="M138 160 C85 130 65 110 35 100" stroke="url(#ecorce)" stroke-width="8" stroke-linecap="round" fill="none"/>
+                <path d="M142 110 C185 85 205 75 235 60" stroke="url(#ecorce)" stroke-width="7" stroke-linecap="round" fill="none"/>
+                <path d="M133 75 C100 55 85 45 65 35" stroke="url(#ecorce)" stroke-width="5" stroke-linecap="round" fill="none"/>
+
+                ${niveauFleurs >= 1 ? `
+                    <!-- Jeune feuillage -->
+                    <circle cx="65" cy="35" r="12" fill="#34d399" opacity="0.7"/>
+                ` : ''}
+
+                ${niveauFleurs >= 2 ? `
+                    <circle cx="35" cy="100" r="18" fill="#10b981" opacity="0.7"/>
+                    <circle cx="235" cy="60" r="20" fill="#34d399" opacity="0.7"/>
+                ` : ''}
+
+                ${niveauFleurs >= 3 ? `
+                    <circle cx="130" cy="50" r="30" fill="#059669" opacity="0.6"/>
+                ` : ''}
+
+                ${niveauFleurs >= 4 ? `
+                    <!-- Premières fleurs Sakura -->
+                    <circle cx="130" cy="50" r="38" fill="#f472b6" opacity="0.75"/>
+                    <circle cx="35" cy="100" r="28" fill="#fb7185" opacity="0.8"/>
+                    <circle cx="235" cy="60" r="32" fill="#f472b6" opacity="0.75"/>
+                    <circle cx="65" cy="35" r="22" fill="#f43f5e" opacity="0.7"/>
+                ` : ''}
+
+                ${niveauFleurs >= 5 ? `
+                    <!-- Floraison totale féérique -->
+                    <circle cx="130" cy="45" r="48" fill="#ffb7c5" opacity="0.85"/>
+                    <circle cx="35" cy="95" r="35" fill="#ff80ab" opacity="0.85"/>
+                    <circle cx="235" cy="55" r="38" fill="#ffcdd2" opacity="0.85"/>
+                    <circle cx="65" cy="30" r="28" fill="#ff4081" opacity="0.8"/>
+                    <!-- Cœurs de fleurs clairs -->
+                    <circle cx="130" cy="45" r="15" fill="#ffffff" opacity="0.6"/>
+                    <circle cx="235" cy="55" r="10" fill="#ffffff" opacity="0.6"/>
+                ` : ''}
+            </g>
+        </svg>
+    `;
+
+    if (conteneur) conteneur.innerHTML = svgTableau;
+    if (badge) badge.textContent = nomStade;
 
     genererParticules();
 }
@@ -232,7 +315,7 @@ function afficherSante() {
 }
 
 // -------------------------------------------------------------
-// RECETTES & FLACONS (AFFICHER & GÉRER)
+// RECETTES & FLACONS
 // -------------------------------------------------------------
 function afficherTout() {
     const flaconActif = JSON.parse(localStorage.getItem('flaconActif'));
