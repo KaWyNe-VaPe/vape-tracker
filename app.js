@@ -17,6 +17,102 @@ const enteteApp = document.getElementById('entete-app');
 const contenuPrincipal = document.getElementById('contenu-principal');
 
 // -------------------------------------------------------------
+// SYSTÈME DE NOTIFICATIONS INTERNES PWA
+// -------------------------------------------------------------
+function envoyerNotification(titre, message) {
+    if ('Notification' in window && Notification.permission === 'granted') {
+        if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+            navigator.serviceWorker.ready.then(registration => {
+                registration.showNotification(titre, {
+                    body: message,
+                    icon: 'icon.png',
+                    badge: 'icon.png'
+                });
+            });
+        } else {
+            new Notification(titre, { body: message, icon: 'icon.png' });
+        }
+    }
+}
+
+function verifierEtEnvoyerNotifications() {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+    const profil = getProfilUtilisateur();
+    if (!profil) return;
+
+    const jours = getJoursEcoules();
+    const prenom = profil.prenom || '';
+    const maintenant = Date.now();
+
+    // 1. Notification Quotidienne d'encouragement
+    const derniereNotifJour = localStorage.getItem('notif_derniere_date') || 0;
+    if (maintenant - derniereNotifJour > 20 * 3600 * 1000 && jours > 0) { // Toutes les 20h min
+        const messagesPensees = [
+            `Chaque jour sans tabac fait s'épanouir ton cerisier 🌸 Continue comme ça ${prenom} !`,
+            `Bravo ${prenom} ! Tu en es à ${jours} jours sans cigarette ⛩️ Tes poumons te remercient.`,
+            `Une nouvelle journée de liberté 💨 Courage ${prenom}, tu gères parfaitement !`
+        ];
+        const msgChoisi = messagesPensees[Math.floor(Math.random() * messagesPensees.length)];
+        envoyerNotification('Vape Tracker 🌸', msgChoisi);
+        localStorage.setItem('notif_derniere_date', maintenant);
+    }
+
+    // 2. Notification de Jalon Santé
+    const jalonsAtteints = JSON.parse(localStorage.getItem('notif_jalons_atteints')) || [];
+    jalonsSanteData.forEach(j => {
+        if (jours >= j.jours && !jalonsAtteints.includes(j.jours)) {
+            envoyerNotification(`Jalon Santé Débloqué ! 🫁`, `Bravo ${prenom} : ${j.titre} sans tabac (${j.desc}) !`);
+            jalonsAtteints.push(j.jours);
+        }
+    });
+    localStorage.setItem('notif_jalons_atteints', JSON.stringify(jalonsAtteints));
+
+    // 3. Notification tous les 100 € économisés
+    const config = JSON.parse(localStorage.getItem('configTabac')) || { cigsJour: 15, prixPaquet: 12.5, cigsPaquet: 20 };
+    const coutParCig = config.prixPaquet / config.cigsPaquet;
+    const tabacEvite = jours * config.cigsJour * coutParCig;
+    const depenses = JSON.parse(localStorage.getItem('depensesVape')) || [];
+    const totalDepenses = depenses.reduce((sum, d) => sum + (parseFloat(d.montant) || 0), 0);
+    const economieNette = tabacEvite - totalDepenses;
+
+    const centaineActuelle = Math.floor(economieNette / 100) * 100;
+    const derniereCentaine = parseInt(localStorage.getItem('notif_centaine_dépasse')) || 0;
+
+    if (centaineActuelle >= 100 && centaineActuelle > derniereCentaine) {
+        envoyerNotification(`Cap des ${centaineActuelle} € franchi ! 💰`, `Félicitations ${prenom} ! Tu as atteint ${centaineActuelle} € d'économie nette ! 🎉`);
+        localStorage.setItem('notif_centaine_dépasse', centaineActuelle);
+    }
+}
+
+function initialiserBoutonNotif() {
+    const btn = document.getElementById('btn-notifications');
+    if (!btn) return;
+
+    if (!('Notification' in window)) {
+        btn.style.display = 'none';
+        return;
+    }
+
+    if (Notification.permission === 'granted') {
+        btn.textContent = '🔔 Notifications activées';
+        btn.disabled = true;
+    }
+
+    btn.addEventListener('click', async () => {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            btn.textContent = '🔔 Notifications activées';
+            btn.disabled = true;
+            envoyerNotification('Vape Tracker 🌸', 'Les notifications sont activées ! Tu recevras tes encouragements et jalons.');
+            verifierEtEnvoyerNotifications();
+        } else {
+            alert('Les notifications ont été bloquées dans les paramètres de ton navigateur.');
+        }
+    });
+}
+
+// -------------------------------------------------------------
 // PROFILE & CALCULS DYNAMIQUES
 // -------------------------------------------------------------
 function getProfilUtilisateur() {
@@ -67,11 +163,9 @@ function mettreAJourCartesDashboard() {
 
     const economieNette = tabacEvite - totalDepenses;
 
-    // Mise à jour de la carte Accueil
     const cardEconEl = document.getElementById('card-economies');
     if (cardEconEl) cardEconEl.textContent = `${economieNette.toFixed(2)} €`;
 
-    // Mise à jour des détails dans la section Budget
     const tabacEviteEl = document.getElementById('tabac-evite-total');
     const depensesVapeEl = document.getElementById('dépenses-vape-total');
     const economieDetailEl = document.getElementById('economie-nette-detail');
@@ -80,7 +174,6 @@ function mettreAJourCartesDashboard() {
     if (depensesVapeEl) depensesVapeEl.textContent = `${totalDepenses.toFixed(2)} €`;
     if (economieDetailEl) economieDetailEl.textContent = `${economieNette.toFixed(2)} €`;
 
-    // Remplissage des champs de configuration
     const inputCigs = document.getElementById('cigs-jour');
     const inputPrix = document.getElementById('prix-paquet');
     const inputCigsPaquet = document.getElementById('cigs-paquet');
@@ -95,6 +188,9 @@ function mettreAJourCartesDashboard() {
 
     if (jalonTitreEl) jalonTitreEl.textContent = prochainJalon.titre;
     if (jalonDescEl) jalonDescEl.textContent = prochainJalon.desc;
+
+    // Vérification des notifications à chaque rafraîchissement
+    verifierEtEnvoyerNotifications();
 }
 
 // -------------------------------------------------------------
@@ -531,7 +627,6 @@ document.addEventListener('submit', function(e) {
         e.target.reset();
         e.target.classList.add('masque');
 
-        // Recalcul immédiat des bilans
         afficherFinances();
     }
 
@@ -564,6 +659,7 @@ document.addEventListener('submit', function(e) {
 
 // INITIALISATION
 window.addEventListener('DOMContentLoaded', function() {
+    initialiserBoutonNotif();
     const profil = getProfilUtilisateur();
 
     if (!profil) {
