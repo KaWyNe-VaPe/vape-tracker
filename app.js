@@ -45,98 +45,98 @@ function mettreAJourCerisierHD() {
         nomStade = 'Stade 1 : Jeune pousse 🌿';
         svgArbre = `
             <svg viewBox="0 0 200 220" class="image-arbre-hd">
-                <path d="M100 200 Q98 160 100 140 Q95 125 90 115" stroke="#3d2b1f" stroke-width="4" stroke-linecap="round" fill="none"/>
-                <!-- Feuilles détaillées -->
-                <path d="M90 115 Q75 105 70 115 Q80 125 90 115" fill="#4ea8de"/>
-                <path d="M90 115 Q105 105 110 115 Q100 125 90 115" fill="#72efdd"/>
-                <path d="M100 140 Q115 130 120 138 Q108 148 100 140" fill="#52b788"/>
+                <path d="M100 200 C98 170 102 140 98 120" stroke="#2d1d17" stroke-width="5" stroke-linecap="round" fill="none"/>
+                <path d="M98 120 C80 100 70 105 60 110" fill="#52b788"/>
+                <path d="M98 120 C115 100 125 105 135 110" fill="#74c69d"/>
             </svg>`;
     } else if (jours < 11) {
         nomStade = 'Stade 2 : Petit arbre 🪴';
         svgArbre = `
             <svg viewBox="0 0 200 220" class="image-arbre-hd">
-                <!-- Tronc torsadé -->
-                <path d="M100 200 C90 160 110 120 95 80" stroke="#2c1d11" stroke-width="8" stroke-linecap="round" fill="none"/>
-                <path d="M98 120 C75 100 60 95 50 90" stroke="#2c1d11" stroke-width="4" stroke-linecap="round" fill="none"/>
-                <!-- Feuillage stylisé estampe -->
-                <path d="M50 90 Q30 70 60 65 Q80 85 50 90" fill="#4ea8de" opacity="0.8"/>
-                <path d="M95 80 Q75 50 110 50 Q120 75 95 80" fill="#52b788" opacity="0.85"/>
+                <path d="M100 200 C85 160 115 120 95 70" stroke="#2d1d17" stroke-width="9" stroke-linecap="round" fill="none"/>
+                <path d="M97 125 C75 105 55 100 40 95" stroke="#2d1d17" stroke-width="5" fill="none"/>
+                <!-- Feuillage travaillé -->
+                <path d="M40 95 Q20 70 60 60 Q80 80 40 95" fill="#4ea8de" opacity="0.8"/>
+                <path d="M95 70 Q70 40 120 40 Q130 65 95 70" fill="#52b788" opacity="0.85"/>
             </svg>`;
     } else if (jours < 21) {
         nomStade = 'Stade 3 : Branchement 🪵';
         svgArbre = `
             <svg viewBox="0 0 200 220" class="image-arbre-hd">
-                <path d="M100 200 C85 150 115 100 90 50" stroke="#241409" stroke-width="11" stroke-linecap="round" fill="none"/>
-                <path d="M96 130 C65 110 45 105 30 100" stroke="#241409" stroke-width="6" fill="none"/>
-                <path d="M102 90 C130 75 150 70 165 65" stroke="#241409" stroke-width="5" fill="none"/>
-                <!-- Nuages de feuillage aquarelle -->
-                <path d="M30 100 Q10 75 45 70 Q60 95 30 100" fill="#2a9d8f" opacity="0.8"/>
-                <path d="M165 65 Q185 40 145 40 Q135 60 165 65" fill="#52b788" opacity="0.8"/>
-                <path d="M90 50 Q65 25 115 25 Q125 45 90 50" fill="#72efdd" opacity="0.7"/>
+                <path d="M100 200 C80 140 120 90 90 40" stroke="#24140e" stroke-width="12" stroke-linecap="round" fill="none"/>
+                <path d="M95 125 C55 105 35 100 15 95" stroke="#24140e" stroke-width="7" fill="none"/>
+                <path d="M98 80 C135 60 155 55 175 45" stroke="#24140e" stroke-width="6" fill="none"/>
+                <circle cx="15" cy="95" r="22" fill="#52b788" opacity="0.8"/>
+                <circle cx="175" cy="45" r="25" fill="#74c69d" opacity="0.8"/>
+                <circle cx="90" cy="40" r="30" fill="#2a9d8f" opacity="0.85"/>
             </svg>`;
     } else if (jours < 36) {
         nomStade = 'Stade 4 : Premiers bourgeons 🌺';
+        // Cerisier complet avec ombrages et vrai feuillage touffu
         svgArbre = `
             <svg viewBox="0 0 200 220" class="image-arbre-hd">
-                <!-- Silhouette du tronc réaliste -->
-                <path d="M105 200 C80 140 115 90 85 40" stroke="#1f1007" stroke-width="12" stroke-linecap="round" fill="none"/>
-                <path d="M95 125 C55 105 40 95 20 90" stroke="#1f1007" stroke-width="6" stroke-linecap="round" fill="none"/>
-                <path d="M98 80 C135 60 155 55 175 45" stroke="#1f1007" stroke-width="5" fill="none"/>
-                
-                <!-- Feuillage vert d'eau piqué de fleurs -->
-                <path d="M85 40 Q55 15 115 15 Q125 35 85 40" fill="#2a9d8f" opacity="0.6"/>
-                <path d="M20 90 Q0 70 45 65 Q55 85 20 90" fill="#52b788" opacity="0.6"/>
+                <defs>
+                    <radialGradient id="fleur-glow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#ffffff"/>
+                        <stop offset="60%" stop-color="#ffb7c5"/>
+                        <stop offset="100%" stop-color="#ff4081"/>
+                    </radialGradient>
+                    <linearGradient id="tronc-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#1a0f0a"/>
+                        <stop offset="50%" stop-color="#3a2318"/>
+                        <stop offset="100%" stop-color="#120a06"/>
+                    </linearGradient>
+                </defs>
 
-                <!-- Fleurs Sakura découpées à 5 pétales -->
-                <g transform="translate(85, 30) scale(0.8)">
-                    <circle cx="0" cy="0" r="3" fill="#ffb7c5"/>
-                    <path d="M0 -4 Q-4 -12 0 -15 Q4 -12 0 -4 M-4 0 Q-12 -4 -15 0 Q-12 4 -4 0 M0 4 Q-4 12 0 15 Q4 12 0 4 M4 0 Q12 -4 15 0 Q12 4 4 0" fill="#ff758f"/>
-                </g>
-                <g transform="translate(30, 75) scale(0.7)">
-                    <path d="M0 -4 Q-4 -12 0 -15 Q4 -12 0 -4 M-4 0 Q-12 -4 -15 0 Q-12 4 -4 0 M0 4 Q-4 12 0 15 Q4 12 0 4 M4 0 Q12 -4 15 0 Q12 4 4 0" fill="#ff758f"/>
-                </g>
-                <g transform="translate(160, 50) scale(0.75)">
-                    <path d="M0 -4 Q-4 -12 0 -15 Q4 -12 0 -4 M-4 0 Q-12 -4 -15 0 Q-12 4 -4 0 M0 4 Q-4 12 0 15 Q4 12 0 4 M4 0 Q12 -4 15 0 Q12 4 4 0" fill="#ff758f"/>
-                </g>
+                <!-- Tronc courbé style estampe -->
+                <path d="M110 200 C75 130 125 80 85 30" stroke="url(#tronc-grad)" stroke-width="14" stroke-linecap="round" fill="none"/>
+                <path d="M92 120 C50 95 30 85 10 80" stroke="url(#tronc-grad)" stroke-width="7" stroke-linecap="round" fill="none"/>
+                <path d="M98 75 C140 55 165 45 190 35" stroke="url(#tronc-grad)" stroke-width="6" stroke-linecap="round" fill="none"/>
+
+                <!-- Nuages de feuillage aquarelle (plusieurs couches) -->
+                <ellipse cx="85" cy="30" rx="35" ry="25" fill="#2d6a4f" opacity="0.7"/>
+                <ellipse cx="80" cy="25" rx="30" ry="20" fill="#52b788" opacity="0.6"/>
+                <ellipse cx="10" cy="80" rx="25" ry="18" fill="#40916c" opacity="0.7"/>
+                <ellipse cx="190" cy="35" rx="28" ry="20" fill="#52b788" opacity="0.6"/>
+
+                <!-- Grappes de bourgeons lumineux -->
+                <circle cx="75" cy="20" r="6" fill="url(#fleur-glow)"/>
+                <circle cx="90" cy="15" r="8" fill="url(#fleur-glow)"/>
+                <circle cx="65" cy="30" r="7" fill="url(#fleur-glow)"/>
+                
+                <circle cx="15" cy="75" r="6" fill="url(#fleur-glow)"/>
+                <circle cx="5" cy="82" r="7" fill="url(#fleur-glow)"/>
+                
+                <circle cx="185" cy="30" r="8" fill="url(#fleur-glow)"/>
+                <circle cx="195" cy="40" r="6" fill="url(#fleur-glow)"/>
+                <circle cx="175" cy="25" r="7" fill="url(#fleur-glow)"/>
             </svg>`;
     } else if (jours < 61) {
         nomStade = 'Stade 5 : Premières fleurs 🌸';
         svgArbre = `
             <svg viewBox="0 0 200 220" class="image-arbre-hd">
-                <path d="M105 200 C80 130 120 80 85 35" stroke="#180b05" stroke-width="14" stroke-linecap="round" fill="none"/>
-                <path d="M92 120 C50 95 35 90 15 85" stroke="#180b05" stroke-width="7" fill="none"/>
-                <path d="M98 70 C140 50 160 45 180 35" stroke="#180b05" stroke-width="6" fill="none"/>
+                <path d="M110 200 C75 130 125 80 85 30" stroke="#1f1007" stroke-width="16" stroke-linecap="round" fill="none"/>
+                <path d="M92 120 C50 95 30 85 10 80" stroke="#1f1007" stroke-width="8" stroke-linecap="round" fill="none"/>
+                <path d="M98 75 C140 55 165 45 190 35" stroke="#1f1007" stroke-width="7" fill="none"/>
                 
-                <!-- Nuages de fleurs rose poudré -->
-                <ellipse cx="85" cy="35" rx="45" ry="30" fill="#ffb7c5" opacity="0.85"/>
-                <ellipse cx="20" cy="80" rx="35" ry="22" fill="#ff85a1" opacity="0.85"/>
-                <ellipse cx="170" cy="40" rx="38" ry="25" fill="#fbb1bd" opacity="0.85"/>
-                <ellipse cx="110" cy="60" rx="40" ry="25" fill="#ff9ebb" opacity="0.8"/>
-
-                <!-- Détails fleurs brillantes -->
-                <circle cx="85" cy="35" r="5" fill="#fff"/>
-                <circle cx="20" cy="80" r="4" fill="#fff"/>
-                <circle cx="170" cy="40" r="4" fill="#fff"/>
+                <!-- Masa florale dense -->
+                <circle cx="85" cy="30" r="45" fill="#ffb7c5" opacity="0.85"/>
+                <circle cx="10" cy="80" r="32" fill="#ff80ab" opacity="0.85"/>
+                <circle cx="190" cy="35" r="38" fill="#ffcdd2" opacity="0.9"/>
+                <circle cx="130" cy="50" r="35" fill="#ff4081" opacity="0.75"/>
             </svg>`;
     } else {
         nomStade = 'Stade 6 : Cerisier majestueux 🌸✨';
         svgArbre = `
             <svg viewBox="0 0 200 220" class="image-arbre-hd">
-                <!-- Grand tronc d'estampe courbé -->
-                <path d="M110 200 C75 120 125 70 80 25" stroke="#120703" stroke-width="16" stroke-linecap="round" fill="none"/>
-                <path d="M90 115 C40 90 25 85 5 80" stroke="#120703" stroke-width="8" fill="none"/>
-                <path d="M100 60 C145 40 170 35 195 25" stroke="#120703" stroke-width="7" fill="none"/>
+                <path d="M110 200 C75 120 125 70 80 25" stroke="#120703" stroke-width="18" stroke-linecap="round" fill="none"/>
+                <path d="M90 115 C40 90 25 85 5 80" stroke="#120703" stroke-width="9" fill="none"/>
+                <path d="M100 60 C145 40 170 35 195 25" stroke="#120703" stroke-width="8" fill="none"/>
                 
-                <!-- Explosion florale Sakura HD (dégradés rose & blanc) -->
-                <circle cx="80" cy="25" r="50" fill="#ffb7c5" opacity="0.9"/>
-                <circle cx="10" cy="75" r="40" fill="#ff85a1" opacity="0.9"/>
-                <circle cx="185" cy="30" r="42" fill="#fbb1bd" opacity="0.9"/>
-                <circle cx="120" cy="45" r="45" fill="#ff9ebb" opacity="0.85"/>
-                <circle cx="50" cy="45" r="38" fill="#ffe5ec" opacity="0.9"/>
-
-                <!-- Coeur lumineux féérique -->
-                <circle cx="80" cy="25" r="15" fill="#ffffff" opacity="0.6"/>
-                <circle cx="120" cy="45" r="12" fill="#ffffff" opacity="0.6"/>
+                <circle cx="80" cy="25" r="52" fill="#ffb7c5" opacity="0.9"/>
+                <circle cx="5" cy="80" r="42" fill="#ff85a1" opacity="0.9"/>
+                <circle cx="195" cy="25" r="45" fill="#fbb1bd" opacity="0.9"/>
+                <circle cx="130" cy="45" r="48" fill="#ff9ebb" opacity="0.85"/>
             </svg>`;
     }
 
