@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vape Tracker</title>
-    <link rel="stylesheet" href="style.css?v=600">
+    <link rel="stylesheet" href="style.css?v=800">
     <link rel="manifest" href="manifest.json?v=999">
     <link rel="icon" type="image/png" sizes="192x192" href="icon.png?v=2">
     <link rel="apple-touch-icon" href="icon.png?v=2">
@@ -14,7 +14,7 @@
 </head>
 <body>
 
-    <!-- ÉCRAN DE LANCEMENT ÉPURÉ AUTONOME -->
+    <!-- ÉCRAN DE LANCEMENT AUTONOME -->
     <div id="splash-screen">
         <div class="splash-contenu">
             <img src="icon.png" alt="Vape Tracker Logo" class="splash-logo">
@@ -33,12 +33,12 @@
         }, 2500);
     </script>
 
-    <!-- ÉCRAN DE PREMIÈRE CONNEXION (ONBOARDING) -->
+    <!-- ÉCRAN PREMIÈRE CONNEXION (ONBOARDING) -->
     <section id="ecran-onboarding" class="masque">
         <div class="carte carte-onboarding">
             <img src="icon.png" alt="Logo" class="logo-onboarding">
             <h2>Bienvenue sur Vape Tracker</h2>
-            <p style="color: #8b949e; font-size: 0.9rem; text-align: center;">Configuration initiale pour calculer tes économies et faire grandir ton cerisier !</p>
+            <p style="color: #8b949e; font-size: 0.9rem; text-align: center;">Configuration initiale pour personnaliser ton suivi !</p>
             
             <form id="form-onboarding">
                 <label for="ob-prenom">Ton Prénom / Pseudo *</label>
@@ -78,12 +78,35 @@
                 <div id="nom-stade-arbre" class="badge-stade">Jeune pousse</div>
             </div>
 
-            <div class="carte info-arrêt">
-                <span id="compteur-jours">0</span> jours sans cigarette ⛩️
-            </div>
+            <!-- GRILLE DES 4 CARTES STATISTIQUES STYLÉES -->
+            <div class="grille-dashboards">
+                <div class="carte-stat stat-verte">
+                    <span class="stat-icone">⛩️</span>
+                    <span class="stat-titre">Jours sans tabac</span>
+                    <strong class="stat-valeur" id="card-jours">0</strong>
+                    <span class="stat-unite" id="prenom-accueil">jours d'arrêt</span>
+                </div>
 
-            <div class="carte carte-economie-rapide">
-                💰 Économie nette estimée : <strong id="economie-accueil">0,00 €</strong>
+                <div class="carte-stat stat-bleue">
+                    <span class="stat-icone">🚭</span>
+                    <span class="stat-titre">Cigarettes évitées</span>
+                    <strong class="stat-valeur" id="card-cigs">0</strong>
+                    <span class="stat-unite">non fumées</span>
+                </div>
+
+                <div class="carte-stat stat-doree">
+                    <span class="stat-icone">💰</span>
+                    <span class="stat-titre">Économie nette</span>
+                    <strong class="stat-valeur" id="card-economies">0.00 €</strong>
+                    <span class="stat-unite">économisés</span>
+                </div>
+
+                <div class="carte-stat stat-rose">
+                    <span class="stat-icone">🫁</span>
+                    <span class="stat-titre">Prochain jalon</span>
+                    <strong class="stat-valeur-texte" id="card-jalon-titre">24h</strong>
+                    <span class="stat-unite" id="card-jalon-desc">Monoxyde éliminé</span>
+                </div>
             </div>
 
             <h2>Flacon en cours</h2>
@@ -256,6 +279,6 @@
         </section>
     </main>
 
-    <script src="app.js?v=9999"></script>
+    <script src="app.js?v=800"></script>
 </body>
 </html>
