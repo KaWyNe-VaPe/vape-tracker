@@ -6,10 +6,14 @@
     <title>Vape Tracker</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <header>
+        <div class="titre-japonais">禁煙の木</div>
         <h1>Mon Suivi Vape</h1>
         <nav>
             <button id="nav-accueil" class="btn-nav actif">Accueil</button>
@@ -24,14 +28,14 @@
         <!-- ÉCRAN 1 : ACCUEIL -->
         <section id="ecran-accueil">
             
-            <!-- Zone Cerisier Japonais -->
+            <!-- Estampe Cerisier Japonais Canvas -->
             <div class="carte carte-arbre">
-                <div id="conteneur-arbre"></div>
+                <canvas id="canvas-cerisier" width="360" height="260"></canvas>
                 <div id="nom-stade-arbre" class="badge-stade">Jeune pousse</div>
             </div>
 
             <div class="carte info-arrêt">
-                <span id="compteur-jours">0</span> jours sans cigarette 🎉
+                <span id="compteur-jours">0</span> jours sans cigarette ⛩️
             </div>
 
             <div class="carte carte-economie-rapide">
@@ -117,9 +121,9 @@
             <div class="carte">
                 <h3>Bilan financier</h3>
                 <p>Coût tabac évité : <strong id="tabac-evite-total">0.00 €</strong></p>
-                <p>Dépenses Vape : <strong id="dépenses-vape-total" style="color: #e74c3c;">0.00 €</strong></p>
-                <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
-                <p style="font-size: 1.1rem;">Économie nette : <strong id="economie-nette-detail" style="color: #2ecc71;">0.00 €</strong></p>
+                <p>Dépenses Vape : <strong id="dépenses-vape-total" style="color: #ff6b6b;">0.00 €</strong></p>
+                <hr style="border: 0; border-top: 1px solid #2a364f; margin: 10px 0;">
+                <p style="font-size: 1.1rem;">Économie nette : <strong id="economie-nette-detail" style="color: #51cf66;">0.00 €</strong></p>
             </div>
 
             <button id="btn-ouvrir-depense" class="btn-secondaire">+ Ajouter une dépense vape</button>
@@ -128,7 +132,7 @@
                 <h3>Nouvelle dépense vape</h3>
                 <label for="dep-cat">Catégorie</label>
                 <select id="dep-cat">
-                    <option value="e-liquide">E-liquide prê-à-vaper</option>
+                    <option value="e-liquide">E-liquide prêt-à-vaper</option>
                     <option value="concentre">Concentré DIY / Arôme</option>
                     <option value="booster">Booster / Base</option>
                     <option value="materiel">Pod / Résistance / Matériel</option>
@@ -187,7 +191,7 @@
         <section id="ecran-objectifs" class="masque">
             <h2>Mes Objectifs</h2>
             <div class="carte carte-bienveillance">
-                🌱 <strong>Chaque étape à ton rythme.</strong> Ces objectifs sont indicatifs et modifiables à tout moment. Vapoter reste une victoire sur le tabac !
+                🌸 <strong>Chaque étape à ton rythme.</strong> Ces objectifs sont indicatifs et modifiables à tout moment. Vapoter reste une victoire sur le tabac !
             </div>
 
             <button id="btn-ouvrir-ajout-objectif" class="btn-secondaire">+ Ajouter une étape</button>
@@ -208,6 +212,6 @@
         </section>
     </main>
 
-    <script src="app.js?v=3"></script>
+    <script src="app.js?v=4"></script>
 </body>
 </html>
