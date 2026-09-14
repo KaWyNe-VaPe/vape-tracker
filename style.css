@@ -132,3 +132,26 @@ nav {
     background-color: #3498db;
     color: white;
 }
+/* Style bienveillance & objectifs */
+.carte-bienveillance {
+    background-color: #fef9e7;
+    border-left: 4px solid #f1c40f;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.item-objectif {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-suppr {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0 5px;
+    width: auto;
+}
