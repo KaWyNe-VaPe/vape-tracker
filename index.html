@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi Vape</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+    <header>
+        <h1>Mon Suivi Vape</h1>
+    </header>
+
+    <main>
+        <!-- ÉCRAN 1 : ACCUEIL -->
+        <section id="ecran-accueil">
+            <div class="carte info-arrêt">
+                <span id="compteur-jours">0</span> jours sans cigarette 🎉
+            </div>
+
+            <h2>Flacon en cours</h2>
+            <div class="carte flacon-actif">
+                <h3 id="nom-liquide">Aucun flacon actif</h3>
+                <p id="details-nicotine"></p>
+                <p id="details-flacon"></p>
+                <button id="btn-terminer" style="display:none;">FLACON TERMINÉ</button>
+            </div>
+
+            <button id="btn-ouvrir-ajout" class="btn-secondaire">+ Ajouter un flacon</button>
+
+            <!-- SECTION HISTORIQUE -->
+            <section id="section-historique">
+                <h2>Historique des flacons</h2>
+                <div id="liste-historique">
+                    <p class="texte-vide">Aucun flacon terminé pour le moment.</p>
+                </div>
+            </section>
+        </section>
+
+        <!-- ÉCRAN 3 : FORMULAIRE NOUVEAU FLACON -->
+        <section id="ecran-ajout" class="masque">
+            <h2>Nouveau flacon</h2>
+            <form id="form-flacon" class="carte">
+                <label for="nom">Nom du liquide *</label>
+                <input type="text" id="nom" required placeholder="ex: KAMI">
+
+                <label for="type">Type</label>
+                <select id="type">
+                    <option value="DIY">DIY</option>
+                    <option value="Commercial">Commercial</option>
+                </select>
+
+                <label for="volume">Volume initial (ml) *</label>
+                <input type="number" id="volume" required placeholder="ex: 97" step="0.1">
+
+                <label for="nicotine">Nicotine (mg/ml) *</label>
+                <input type="number" id="nicotine" required placeholder="ex: 10" step="0.1">
+
+                <label for="arome">Dosage d'arôme (%)</label>
+                <input type="number" id="arome" placeholder="ex: 9" step="0.1">
+
+                <label for="date-ouverture">Date et heure d'ouverture</label>
+                <input type="datetime-local" id="date-ouverture">
+
+                <button type="submit">Démarrer ce flacon</button>
+                <button type="button" id="btn-annuler" class="btn-annuler">Annuler</button>
+            </form>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
