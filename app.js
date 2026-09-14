@@ -147,7 +147,7 @@ function mettreAJourCartesDashboard() {
     const cardJoursEl = document.getElementById('card-jours');
     const prenomEl = document.getElementById('prenom-accueil');
     if (cardJoursEl) cardJoursEl.textContent = jours;
-    if (prenomEl && profil && profil.prenom) prenomEl.textContent = `bravo ${profil.prenom} !`;
+    if (prenomEl && profil && profil.prenom) prenomEl.textContent = `Bravo ${profil.prenom} !`;
 
     // 2. Carte Cigarettes évitées
     const cigsEvitees = Math.floor(jours * config.cigsJour);
