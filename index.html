@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suivi Vape</title>
+    <title>Vape Tracker</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
 </head>
@@ -11,6 +11,10 @@
 
     <header>
         <h1>Mon Suivi Vape</h1>
+        <nav>
+            <button id="nav-accueil" class="btn-nav actif">Accueil</button>
+            <button id="nav-recettes" class="btn-nav">Mes Liquides</button>
+        </nav>
     </header>
 
     <main>
@@ -28,9 +32,8 @@
                 <button id="btn-terminer" style="display:none;">FLACON TERMINÉ</button>
             </div>
 
-            <button id="btn-ouvrir-ajout" class="btn-secondaire">+ Ajouter un flacon</button>
+            <button id="btn-ouvrir-ajout" class="btn-secondaire">+ Entamer un flacon</button>
 
-            <!-- SECTION HISTORIQUE -->
             <section id="section-historique">
                 <h2>Historique des flacons</h2>
                 <div id="liste-historique">
@@ -39,10 +42,48 @@
             </section>
         </section>
 
-        <!-- ÉCRAN 3 : FORMULAIRE NOUVEAU FLACON -->
+        <!-- ÉCRAN 2 : MES LIQUIDES (RECETTES) -->
+        <section id="ecran-recettes" class="masque">
+            <h2>Mes Recettes / Liquides</h2>
+            <button id="btn-ouvrir-ajout-recette" class="btn-secondaire">+ Créer un nouveau liquide</button>
+
+            <div id="liste-recettes" style="margin-top: 15px;">
+                <p class="texte-vide">Aucun liquide enregistré.</p>
+            </div>
+
+            <!-- Formulaire pour ajouter une recette -->
+            <form id="form-recette" class="carte masque" style="margin-top: 15px;">
+                <h3>Nouveau liquide réutilisable</h3>
+                <label for="recette-nom">Nom du liquide *</label>
+                <input type="text" id="recette-nom" required placeholder="ex: KAMI">
+
+                <label for="recette-type">Type</label>
+                <select id="recette-type">
+                    <option value="DIY">DIY</option>
+                    <option value="Commercial">Commercial</option>
+                </select>
+
+                <label for="recette-nicotine">Nicotine (mg/ml) *</label>
+                <input type="number" id="recette-nicotine" required placeholder="ex: 10" step="0.1">
+
+                <label for="recette-arome">Dosage d'arôme (%)</label>
+                <input type="number" id="recette-arome" placeholder="ex: 9" step="0.1">
+
+                <button type="submit">Enregistrer le liquide</button>
+                <button type="button" id="btn-annuler-recette" class="btn-annuler">Annuler</button>
+            </form>
+        </section>
+
+        <!-- ÉCRAN 3 : FORMULAIRE ENTAMER UN FLACON -->
         <section id="ecran-ajout" class="masque">
-            <h2>Nouveau flacon</h2>
+            <h2>Entamer un flacon</h2>
             <form id="form-flacon" class="carte">
+                
+                <label for="select-recette">Choisir un liquide existant (optionnel)</label>
+                <select id="select-recette">
+                    <option value="">-- Saisie libre --</option>
+                </select>
+
                 <label for="nom">Nom du liquide *</label>
                 <input type="text" id="nom" required placeholder="ex: KAMI">
 
