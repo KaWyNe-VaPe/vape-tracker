@@ -44,47 +44,112 @@ const imagesCerisier = {
 
 function mettreAJourCerisierHD() {
     const jours = getJoursEcoules();
-    const conteneurArbre = document.querySelector('.carte-arbre-feerique');
     const badge = document.getElementById('nom-stade-arbre');
+    const imgEl = document.getElementById('image-cerisier');
 
-    // On remplace le tag <img> s'il ne charge pas par une illustration dynamique
-    let imgEl = document.getElementById('image-cerisier');
-    if (imgEl) imgEl.remove(); // On enlève l'image externe problématique
-
-    let icone = '';
     let nomStade = '';
+    let svgArbre = '';
 
     if (jours < 4) {
-        icone = '🌱'; nomStade = 'Stade 1 : Jeune pousse';
+        nomStade = 'Stade 1 : Jeune pousse 🌿';
+        svgArbre = `
+            <svg viewBox="0 0 200 200" class="image-arbre-hd">
+                <path d="M100 180 Q100 150 100 130" stroke="#4a3525" stroke-width="6" stroke-linecap="round" fill="none"/>
+                <path d="M100 130 Q80 110 70 120 Q90 135 100 130" fill="#52b788"/>
+                <path d="M100 130 Q120 110 130 120 Q110 135 100 130" fill="#74c69d"/>
+            </svg>`;
     } else if (jours < 11) {
-        icone = '🪴'; nomStade = 'Stade 2 : Petit arbre';
+        nomStade = 'Stade 2 : Petit arbre 🪴';
+        svgArbre = `
+            <svg viewBox="0 0 200 200" class="image-arbre-hd">
+                <path d="M100 180 Q95 130 100 90" stroke="#3d2616" stroke-width="10" stroke-linecap="round" fill="none"/>
+                <path d="M100 120 Q70 100 60 105" stroke="#3d2616" stroke-width="5" stroke-linecap="round" fill="none"/>
+                <circle cx="60" cy="105" r="15" fill="#74c69d" opacity="0.9"/>
+                <circle cx="100" cy="80" r="22" fill="#52b788" opacity="0.9"/>
+            </svg>`;
     } else if (jours < 21) {
-        icone = '🪵'; nomStade = 'Stade 3 : Branchement';
+        nomStade = 'Stade 3 : Branchement 🪵';
+        svgArbre = `
+            <svg viewBox="0 0 200 200" class="image-arbre-hd">
+                <path d="M100 185 Q90 120 100 70" stroke="#2c1a0e" stroke-width="14" stroke-linecap="round" fill="none"/>
+                <path d="M98 120 Q60 95 45 100" stroke="#2c1a0e" stroke-width="7" stroke-linecap="round" fill="none"/>
+                <path d="M102 95 Q140 75 150 80" stroke="#2c1a0e" stroke-width="6" stroke-linecap="round" fill="none"/>
+                <circle cx="45" cy="100" r="22" fill="#52b788" opacity="0.85"/>
+                <circle cx="150" cy="80" r="25" fill="#74c69d" opacity="0.85"/>
+                <circle cx="100" cy="60" r="30" fill="#40916c" opacity="0.9"/>
+            </svg>`;
     } else if (jours < 36) {
-        icone = '🌿'; nomStade = 'Stade 4 : Premiers bourgeons';
+        nomStade = 'Stade 4 : Premiers bourgeons 🌺';
+        svgArbre = `
+            <svg viewBox="0 0 200 200" class="image-arbre-hd">
+                <defs>
+                    <radialGradient id="grad-fleurs" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#ffb7c5"/>
+                        <stop offset="100%" stop-color="#ff4081"/>
+                    </radialGradient>
+                </defs>
+                <path d="M100 185 Q88 115 100 60" stroke="#2a1810" stroke-width="16" stroke-linecap="round" fill="none"/>
+                <path d="M96 125 Q50 95 35 100" stroke="#2a1810" stroke-width="8" stroke-linecap="round" fill="none"/>
+                <path d="M102 90 Q150 65 165 72" stroke="#2a1810" stroke-width="7" stroke-linecap="round" fill="none"/>
+                <!-- Feuillage & Bourgeons -->
+                <circle cx="35" cy="100" r="25" fill="#52b788" opacity="0.7"/>
+                <circle cx="165" cy="72" r="28" fill="#74c69d" opacity="0.7"/>
+                <circle cx="100" cy="50" r="35" fill="#40916c" opacity="0.8"/>
+                <circle cx="30" cy="92" r="8" fill="url(#grad-fleurs)"/>
+                <circle cx="160" cy="65" r="10" fill="url(#grad-fleurs)"/>
+                <circle cx="90" cy="40" r="11" fill="url(#grad-fleurs)"/>
+                <circle cx="115" cy="45" r="9" fill="url(#grad-fleurs)"/>
+            </svg>`;
     } else if (jours < 61) {
-        icone = '🌸'; nomStade = 'Stade 5 : Premières fleurs';
+        nomStade = 'Stade 5 : Premières fleurs 🌸';
+        svgArbre = `
+            <svg viewBox="0 0 200 200" class="image-arbre-hd">
+                <path d="M100 185 Q85 110 100 50" stroke="#24140e" stroke-width="18" stroke-linecap="round" fill="none"/>
+                <path d="M95 125 Q45 90 30 95" stroke="#24140e" stroke-width="9" stroke-linecap="round" fill="none"/>
+                <path d="M102 85 Q155 60 170 68" stroke="#24140e" stroke-width="8" stroke-linecap="round" fill="none"/>
+                <!-- Masse Florale Rose Féérique -->
+                <circle cx="100" cy="45" r="42" fill="#ffb7c5" opacity="0.85"/>
+                <circle cx="30" cy="95" r="32" fill="#ff80ab" opacity="0.85"/>
+                <circle cx="170" cy="68" r="35" fill="#ffcdd2" opacity="0.9"/>
+                <circle cx="70" cy="65" r="28" fill="#f8bbd0" opacity="0.8"/>
+                <circle cx="135" cy="50" r="30" fill="#ff4081" opacity="0.75"/>
+            </svg>`;
     } else {
-        icone = '🌸✨'; nomStade = 'Stade 6 : Cerisier en pleine floraison';
+        nomStade = 'Stade 6 : Cerisier majestueux 🌸✨';
+        svgArbre = `
+            <svg viewBox="0 0 200 200" class="image-arbre-hd">
+                <path d="M100 185 Q80 110 100 45" stroke="#1c0f0a" stroke-width="20" stroke-linecap="round" fill="none"/>
+                <path d="M92 125 Q35 85 20 92" stroke="#1c0f0a" stroke-width="10" stroke-linecap="round" fill="none"/>
+                <path d="M105 80 Q160 50 180 58" stroke="#1c0f0a" stroke-width="9" stroke-linecap="round" fill="none"/>
+                <!-- Grand Cerisier Fleuri HD -->
+                <circle cx="100" cy="40" r="50" fill="#ffb7c5" opacity="0.9"/>
+                <circle cx="20" cy="92" r="38" fill="#ff80ab" opacity="0.85"/>
+                <circle cx="180" cy="58" r="42" fill="#ffcdd2" opacity="0.9"/>
+                <circle cx="60" cy="60" r="35" fill="#f8bbd0" opacity="0.85"/>
+                <circle cx="140" cy="42" r="38" fill="#ff4081" opacity="0.8"/>
+                <circle cx="100" cy="25" r="30" fill="#ffffff" opacity="0.6"/>
+            </svg>`;
     }
 
-    // Création d'un élément géant centré pour l'arbre
-    let affichageArbre = document.getElementById('element-arbre-geant');
-    if (!affichageArbre) {
-        affichageArbre = document.createElement('div');
-        affichageArbre.id = 'element-arbre-geant';
-        affichageArbre.style.fontSize = '80px';
-        affichageArbre.style.zIndex = '2';
-        affichageArbre.style.margin = '20px 0';
-        affichageArbre.style.filter = 'drop-shadow(0 0 15px rgba(255,183,197,0.5))';
-        conteneurArbre.insertBefore(affichageArbre, badge);
+    // Remplacement direct dans le conteneur
+    const conteneur = document.querySelector('.carte-arbre-feerique');
+    if (imgEl) imgEl.remove();
+
+    let conteneurSvg = document.getElementById('conteneur-svg-arbre');
+    if (!conteneurSvg) {
+        conteneurSvg = document.createElement('div');
+        conteneurSvg.id = 'conteneur-svg-arbre';
+        conteneurSvg.style.zIndex = '2';
+        conteneurSvg.style.width = '100%';
+        conteneurSvg.style.display = 'flex';
+        conteneurSvg.style.justifyContent = 'center';
+        conteneur.insertBefore(conteneurSvg, badge);
     }
 
-    affichageArbre.textContent = icone;
+    conteneurSvg.innerHTML = svgArbre;
     badge.textContent = nomStade;
 
     genererParticules();
-}
 }
 
 function genererParticules() {
