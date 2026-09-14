@@ -3,9 +3,12 @@ const dateArretCigarette = new Date('2026-08-17');
 // Éléments Navigation
 const navAccueil = document.getElementById('nav-accueil');
 const navRecettes = document.getElementById('nav-recettes');
+const navObjectifs = document.getElementById('nav-objectifs');
+
 const ecranAccueil = document.getElementById('ecran-accueil');
 const ecranRecettes = document.getElementById('ecran-recettes');
 const ecranAjout = document.getElementById('ecran-ajout');
+const ecranObjectifs = document.getElementById('ecran-objectifs');
 
 // Éléments Accueil
 const nomLiquideEl = document.getElementById('nom-liquide');
@@ -27,6 +30,12 @@ const formRecette = document.getElementById('form-recette');
 const btnAnnulerRecette = document.getElementById('btn-annuler-recette');
 const listeRecettesEl = document.getElementById('liste-recettes');
 
+// Éléments Écran Objectifs
+const btnOuvrirAjoutObjectif = document.getElementById('btn-ouvrir-ajout-objectif');
+const formObjectif = document.getElementById('form-objectif');
+const btnAnnulerObjectif = document.getElementById('btn-annuler-objectif');
+const listeObjectifsEl = document.getElementById('liste-objectifs');
+
 // 1. Calcul des jours sans tabac
 function calculerJoursSansTabac() {
     const aujourdhui = new Date();
@@ -37,21 +46,28 @@ function calculerJoursSansTabac() {
 
 // 2. Gestion de la navigation
 function basculerEcran(ecranAFFICHER) {
-    [ecranAccueil, ecranRecettes, ecranAjout].forEach(e => e.classList.add('masque'));
+    [ecranAccueil, ecranRecettes, ecranAjout, ecranObjectifs].forEach(e => e.classList.add('masque'));
     ecranAFFICHER.classList.remove('masque');
 }
 
 navAccueil.addEventListener('click', () => {
+    [navAccueil, navRecettes, navObjectifs].forEach(b => b.classList.remove('actif'));
     navAccueil.classList.add('actif');
-    navRecettes.classList.remove('actif');
     basculerEcran(ecranAccueil);
 });
 
 navRecettes.addEventListener('click', () => {
+    [navAccueil, navRecettes, navObjectifs].forEach(b => b.classList.remove('actif'));
     navRecettes.classList.add('actif');
-    navAccueil.classList.remove('actif');
     basculerEcran(ecranRecettes);
     afficherRecettes();
+});
+
+navObjectifs.addEventListener('click', () => {
+    [navAccueil, navRecettes, navObjectifs].forEach(b => b.classList.remove('actif'));
+    navObjectifs.classList.add('actif');
+    basculerEcran(ecranObjectifs);
+    afficherObjectifs();
 });
 
 // 3. Affichage global
@@ -106,7 +122,6 @@ function afficherRecettes() {
         `).join('');
     }
 
-    // Mettre à jour la liste déroulante du formulaire de flacon
     selectRecette.innerHTML = '<option value="">-- Saisie libre --</option>' + 
         recettes.map(r => `<option value="${r.id}">${r.nom} (${r.nicotine} mg/ml)</option>`).join('');
 }
@@ -142,7 +157,6 @@ formRecette.addEventListener('submit', (e) => {
     afficherRecettes();
 });
 
-// Auto-remplissage lors du choix d'une recette
 selectRecette.addEventListener('change', () => {
     const recettes = JSON.parse(localStorage.getItem('recettesLiquides')) || [];
     const recetteTrouvee = recettes.find(r => r.id == selectRecette.value);
@@ -155,7 +169,74 @@ selectRecette.addEventListener('change', () => {
     }
 });
 
-// 5. Actions d'ajout/fin de flacon
+// 5. Gestion des Objectifs
+function afficherObjectifs() {
+    let objectifs = JSON.parse(localStorage.getItem('objectifsVape'));
+
+    // Objectifs par défaut si la liste est vide
+    if (!objectifs || objectifs.length === 0) {
+        objectifs = [
+            { id: 1, date: '2026-08-17', titre: 'Arrêt de la cigarette 🚭' },
+            { id: 2, date: '2026-09-21', titre: 'Objectif zéro tabac fumé ✨' },
+            { id: 3, date: '2027-09-01', titre: 'Objectif 0 mg/ml nicotine 🎯' }
+        ];
+        localStorage.setItem('objectifsVape', JSON.stringify(objectifs));
+    }
+
+    // Tri par date
+    objectifs.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    listeObjectifsEl.innerHTML = objectifs.map(o => {
+        const dateFmt = new Date(o.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        return `
+            <div class="carte item-objectif">
+                <div>
+                    <strong>${dateFmt}</strong>
+                    <div>${o.titre}</div>
+                </div>
+                <button class="btn-suppr" onclick="supprimerObjectif(${o.id})">✕</button>
+            </div>
+        `;
+    }).join('');
+}
+
+window.supprimerObjectif = function(id) {
+    let objectifs = JSON.parse(localStorage.getItem('objectifsVape')) || [];
+    objectifs = objectifs.filter(o => o.id !== id);
+    localStorage.setItem('objectifsVape', JSON.stringify(objectifs));
+    afficherObjectifs();
+};
+
+btnOuvrirAjoutObjectif.addEventListener('click', () => {
+    formObjectif.classList.remove('masque');
+    btnOuvrirAjoutObjectif.classList.add('masque');
+});
+
+btnAnnulerObjectif.addEventListener('click', () => {
+    formObjectif.classList.add('masque');
+    btnOuvrirAjoutObjectif.classList.remove('masque');
+});
+
+formObjectif.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const objectifs = JSON.parse(localStorage.getItem('objectifsVape')) || [];
+
+    const nouvelObj = {
+        id: Date.now(),
+        date: document.getElementById('obj-date').value,
+        titre: document.getElementById('obj-titre').value
+    };
+
+    objectifs.push(nouvelObj);
+    localStorage.setItem('objectifsVape', JSON.stringify(objectifs));
+
+    formObjectif.reset();
+    formObjectif.classList.add('masque');
+    btnOuvrirAjoutObjectif.classList.remove('masque');
+    afficherObjectifs();
+});
+
+// 6. Actions Flacon
 btnOuvrirAjout.addEventListener('click', () => {
     basculerEcran(ecranAjout);
     afficherRecettes();
