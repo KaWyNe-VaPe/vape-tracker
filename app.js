@@ -47,7 +47,7 @@ function verifierEtEnvoyerNotifications() {
 
     // 1. Notification Quotidienne d'encouragement
     const derniereNotifJour = localStorage.getItem('notif_derniere_date') || 0;
-    if (maintenant - derniereNotifJour > 20 * 3600 * 1000 && jours > 0) { // Toutes les 20h min
+    if (maintenant - derniereNotifJour > 20 * 3600 * 1000 && jours > 0) {
         const messagesPensees = [
             `Chaque jour sans tabac fait s'épanouir ton cerisier 🌸 Continue comme ça ${prenom} !`,
             `Bravo ${prenom} ! Tu en es à ${jours} jours sans cigarette ⛩️ Tes poumons te remercient.`,
@@ -189,12 +189,11 @@ function mettreAJourCartesDashboard() {
     if (jalonTitreEl) jalonTitreEl.textContent = prochainJalon.titre;
     if (jalonDescEl) jalonDescEl.textContent = prochainJalon.desc;
 
-    // Vérification des notifications à chaque rafraîchissement
     verifierEtEnvoyerNotifications();
 }
 
 // -------------------------------------------------------------
-// TABLEAU VECTORIEL JAPONAIS (CERISIER)
+// GESTION DU CERISIER (AFFICHAGE DES IMAGES PNG ET SEUILS EN JOURS)
 // -------------------------------------------------------------
 function mettreAJourCerisierHD() {
     const jours = getJoursEcoules();
@@ -202,26 +201,60 @@ function mettreAJourCerisierHD() {
     const conteneur = document.getElementById('conteneur-svg-arbre');
 
     let nomStade = '';
-    let niveauFleurs = 0;
+    let numStade = 1;
 
-    if (jours < 4) {
-        nomStade = 'Stade 1 : Jeune pousse 🌿';
-        niveauFleurs = 1;
-    } else if (jours < 11) {
-        nomStade = 'Stade 2 : Petit arbre 🪴';
-        niveauFleurs = 2;
-    } else if (jours < 21) {
-        nomStade = 'Stade 3 : Branchement 🪵';
-        niveauFleurs = 3;
-    } else if (jours < 36) {
-        nomStade = 'Stade 4 : Premiers bourgeons 🌸';
-        niveauFleurs = 4;
+    // --- NOUVEAUX SEUILS EN JOURS ---
+    if (jours <= 30) {
+        // Stade 1 : 0 à 30 jours (1er mois)
+        nomStade = 'Stade 1 : Jeune pousse (0 à 1 mois) 🌿';
+        numStade = 1;
+    } else if (jours <= 90) {
+        // Stade 2 : 31 à 90 jours (1 à 3 mois)
+        nomStade = 'Stade 2 : Petit arbuste (1 à 3 mois) 🪴';
+        numStade = 2;
+    } else if (jours <= 150) {
+        // Stade 3 : 91 à 150 jours (3 à 5 mois)
+        nomStade = 'Stade 3 : Arbre vigoureux (3 à 5 mois) 🪵';
+        numStade = 3;
+    } else if (jours <= 240) {
+        // Stade 4 : 151 à 240 jours (5 à 8 mois)
+        nomStade = 'Stade 4 : Premiers bourgeons (5 à 8 mois) 🌸';
+        numStade = 4;
     } else {
-        nomStade = 'Stade 5 : Cerisier en pleine floraison 🌸✨';
-        niveauFleurs = 5;
+        // Stade 5 : À partir de 241 jours (8 mois à 1 an+)
+        nomStade = 'Stade 5 : Cerisier majestueux (8 mois à 1 an+) 🌸✨';
+        numStade = 5;
     }
 
-    const svgTableau = `
+    if (badge) badge.textContent = nomStade;
+
+    // Tentative de chargement de la vraie peinture d'art PNG
+    const nomFichierImage = `arbre-stade-${numStade}.png`;
+    const imgArt = new Image();
+    imgArt.src = nomFichierImage;
+
+    imgArt.onload = function() {
+        // Si l'image existe sur GitHub, on l'affiche avec son cadre d'art
+        if (conteneur) {
+            conteneur.innerHTML = `
+                <img src="${nomFichierImage}?v=${Date.now()}" alt="${nomStade}" 
+                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px; animation: fonduImage 0.8s ease;">
+            `;
+        }
+    };
+
+    imgArt.onerror = function() {
+        // Si l'image PNG n'est pas encore téléversée sur GitHub, on conserve le dessin vectoriel de secours
+        afficherVectorielSecours(conteneur, numStade);
+    };
+
+    genererParticules();
+}
+
+// Dessin de secours vectoriel en l'absence de PNG
+function afficherVectorielSecours(conteneur, niveauFleurs) {
+    if (!conteneur) return;
+    conteneur.innerHTML = `
         <svg viewBox="0 0 300 270" preserveAspectRatio="xMidYMid slice">
             <defs>
                 <linearGradient id="ciel" x1="0" y1="0" x2="0" y2="1">
@@ -229,19 +262,16 @@ function mettreAJourCerisierHD() {
                     <stop offset="70%" stop-color="#1a2332"/>
                     <stop offset="100%" stop-color="#0f172a"/>
                 </linearGradient>
-
                 <linearGradient id="eau" x1="0" y1="0" x2="1" y2="0">
                     <stop offset="0%" stop-color="#0f2b46"/>
                     <stop offset="50%" stop-color="#1d4ed8"/>
                     <stop offset="100%" stop-color="#0f2b46"/>
                 </linearGradient>
-
                 <radialGradient id="lune" cx="50%" cy="50%" r="50%">
                     <stop offset="0%" stop-color="#fffbeb"/>
                     <stop offset="40%" stop-color="#fef08a"/>
                     <stop offset="100%" stop-color="transparent"/>
                 </radialGradient>
-
                 <linearGradient id="ecorce" x1="0" y1="0" x2="1" y2="0">
                     <stop offset="0%" stop-color="#1c110a"/>
                     <stop offset="50%" stop-color="#42281d"/>
@@ -252,11 +282,9 @@ function mettreAJourCerisierHD() {
             <rect width="300" height="270" fill="url(#ciel)"/>
             <circle cx="230" cy="55" r="35" fill="url(#lune)" opacity="0.85"/>
             <path d="M0 210 Q60 170 130 195 T300 200 L300 270 L0 270 Z" fill="#111827" opacity="0.7"/>
-
             <path d="M0 220 C80 215 150 240 300 225 L300 270 L0 270 Z" fill="url(#eau)"/>
             <path d="M20 235 Q70 230 120 240" stroke="#ffb7c5" stroke-width="1" opacity="0.4" fill="none"/>
             <path d="M140 245 Q200 235 270 250" stroke="#93c5fd" stroke-width="1.5" opacity="0.3" fill="none"/>
-
             <path d="M0 240 C90 230 140 255 300 245 L300 270 L0 270 Z" fill="#090d16"/>
 
             <g class="vent-branches">
@@ -288,11 +316,6 @@ function mettreAJourCerisierHD() {
             </g>
         </svg>
     `;
-
-    if (conteneur) conteneur.innerHTML = svgTableau;
-    if (badge) badge.textContent = nomStade;
-
-    genererParticules();
 }
 
 function genererParticules() {
