@@ -14,13 +14,12 @@ const ecranFinances = document.getElementById('ecran-finances');
 const ecranAjout = document.getElementById('ecran-ajout');
 const ecranObjectifs = document.getElementById('ecran-objectifs');
 
-// Éléments Économies
+// Éléments Formulaires
 const formConfigTabac = document.getElementById('form-config-tabac');
 const formDepense = document.getElementById('form-depense');
 const btnOuvrirDepense = document.getElementById('btn-ouvrir-depense');
 const btnAnnulerDepense = document.getElementById('btn-annuler-depense');
 
-// 1. Calcul du nombre de jours
 function getJoursEcoules() {
     const aujourdhui = new Date();
     const diff = aujourdhui - dateArretCigarette;
@@ -31,107 +30,137 @@ function calculerJoursSansTabac() {
     document.getElementById('compteur-jours').textContent = getJoursEcoules();
 }
 
-// 2. Cerisier SVG Interactif & Animé
-function dessinerCerisier() {
+// -------------------------------------------------------------
+// CERISIER JAPONAIS CANVARS (GÉNÉRATION ORGANIQUE & ANIMÉE)
+// -------------------------------------------------------------
+let canvas, ctx;
+let angleVent = 0;
+let petales = [];
+
+function initPetales() {
+    petales = [];
+    for (let i = 0; i < 25; i++) {
+        petales.push({
+            x: Math.random() * 360,
+            y: Math.random() * 260,
+            r: Math.random() * 3 + 1.5,
+            vx: -Math.random() * 1.2 - 0.5,
+            vy: Math.random() * 1.5 + 0.5,
+            alpha: Math.random() * 0.7 + 0.3
+        });
+    }
+}
+
+function dessinerBranche(x, y, longueur, angle, epaisseur, profondeur, niveauMax) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.translate(x, y);
+    
+    // Effet du vent sur l'angle de la branche
+    const courbureVent = Math.sin(angleVent + profondeur) * 0.03;
+    ctx.rotate(angle + courbureVent);
+
+    // Couleur du tronc et des branches (bois sombre)
+    ctx.strokeStyle = '#2b1e1a';
+    ctx.lineWidth = epaisseur;
+    ctx.lineCap = 'round';
+
+    ctx.moveTo(0, 0);
+    ctx.lineTo(0, -longueur);
+    ctx.stroke();
+
+    if (profondeur < niveauMax) {
+        // Sous-branches
+        dessinerBranche(0, -longueur, longueur * 0.75, 0.45, epaisseur * 0.65, profondeur + 1, niveauMax);
+        dessinerBranche(0, -longueur, longueur * 0.75, -0.45, epaisseur * 0.65, profondeur + 1, niveauMax);
+    } else {
+        // Fleurs de Cerisier au bout des branches
+        const tailleFleur = Math.random() * 3 + 4;
+        ctx.fillStyle = '#ffb7c5';
+        ctx.beginPath();
+        ctx.arc(0, -longueur, tailleFleur, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(0, -longueur, tailleFleur * 0.4, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    ctx.restore();
+}
+
+function animerCerisier() {
+    if (!canvas || !ctx) return;
+
     const jours = getJoursEcoules();
-    const conteneur = document.getElementById('conteneur-arbre');
     const badge = document.getElementById('nom-stade-arbre');
 
-    let svgContent = '';
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Lune en arrière-plan (Estampe japonaise)
+    ctx.fillStyle = 'rgba(255, 235, 205, 0.08)';
+    ctx.beginPath();
+    ctx.arc(280, 70, 45, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Sol / Colline
+    ctx.fillStyle = '#161b22';
+    ctx.beginPath();
+    ctx.ellipse(180, 270, 200, 30, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Détermination de la maturité
+    let niveauMax = 1;
     let nomStade = '';
 
     if (jours < 4) {
-        nomStade = 'Stade 1 : Jeune pousse 🌿';
-        svgContent = `
-            <svg width="120" height="120" viewBox="0 0 100 100">
-                <path d="M50 95 Q 50 75 50 65" stroke="#8d6e63" stroke-width="4" fill="none" />
-                <path d="M50 65 Q 40 55 35 60 Q 45 70 50 65" fill="#81c784" />
-                <path d="M50 65 Q 60 55 65 60 Q 55 70 50 65" fill="#a5d6a7" />
-            </svg>`;
+        niveauMax = 2; nomStade = 'Stade 1 : Jeune pousse 🌿';
     } else if (jours < 11) {
-        nomStade = 'Stade 2 : Petit tronc 🪴';
-        svgContent = `
-            <svg width="130" height="130" viewBox="0 0 100 100">
-                <g class="vent-branches">
-                    <path d="M50 95 Q 48 60 50 45" stroke="#6d4c41" stroke-width="6" stroke-linecap="round" fill="none" />
-                    <path d="M50 55 Q 35 45 30 48" stroke="#6d4c41" stroke-width="3" fill="none" />
-                    <circle cx="30" cy="48" r="6" fill="#81c784" />
-                    <circle cx="50" cy="40" r="8" fill="#a5d6a7" />
-                </g>
-            </svg>`;
+        niveauMax = 3; nomStade = 'Stade 2 : Petit arbre 🪴';
     } else if (jours < 21) {
-        nomStade = 'Stade 3 : Branches & Feuillage 🌿';
-        svgContent = `
-            <svg width="140" height="140" viewBox="0 0 100 100">
-                <g class="vent-branches">
-                    <path d="M50 95 Q 47 50 50 30" stroke="#5d4037" stroke-width="8" stroke-linecap="round" fill="none" />
-                    <path d="M50 60 Q 30 45 20 48" stroke="#5d4037" stroke-width="4" fill="none" />
-                    <path d="M50 50 Q 70 35 75 40" stroke="#5d4037" stroke-width="4" fill="none" />
-                    <circle cx="20" cy="48" r="10" fill="#66bb6a" />
-                    <circle cx="75" cy="40" r="12" fill="#81c784" />
-                    <circle cx="50" cy="25" r="14" fill="#a5d6a7" />
-                </g>
-            </svg>`;
+        niveauMax = 4; nomStade = 'Stade 3 : Branchement 🪵';
     } else if (jours < 36) {
-        nomStade = 'Stade 4 : Premiers bourgeons 🌺';
-        svgContent = `
-            <svg width="150" height="150" viewBox="0 0 100 100">
-                <g class="vent-branches">
-                    <path d="M50 95 Q 45 50 50 25" stroke="#4e342e" stroke-width="9" stroke-linecap="round" fill="none" />
-                    <path d="M50 65 Q 25 50 15 55" stroke="#4e342e" stroke-width="4" fill="none" />
-                    <path d="M50 45 Q 75 30 80 35" stroke="#4e342e" stroke-width="4" fill="none" />
-                    <circle cx="15" cy="55" r="12" fill="#81c784" />
-                    <circle cx="80" cy="35" r="14" fill="#a5d6a7" />
-                    <circle cx="50" cy="20" r="16" fill="#81c784" />
-                    <!-- Bourgeons -->
-                    <circle cx="20" cy="50" r="4" fill="#ff80ab" />
-                    <circle cx="75" cy="30" r="4" fill="#ff4081" />
-                    <circle cx="45" cy="15" r="5" fill="#ff80ab" />
-                </g>
-            </svg>`;
+        niveauMax = 5; nomStade = 'Stade 4 : Premiers bourgeons 🌺';
     } else if (jours < 61) {
-        nomStade = 'Stade 5 : Premières fleurs 🌸';
-        svgContent = `
-            <svg width="160" height="160" viewBox="0 0 100 100">
-                <g class="vent-branches">
-                    <path d="M50 95 Q 45 50 50 20" stroke="#3e2723" stroke-width="10" stroke-linecap="round" fill="none" />
-                    <path d="M50 65 Q 20 45 10 50" stroke="#3e2723" stroke-width="5" fill="none" />
-                    <path d="M50 45 Q 80 25 85 30" stroke="#3e2723" stroke-width="5" fill="none" />
-                    <!-- Feuillage & Fleurs -->
-                    <circle cx="10" cy="50" r="14" fill="#ff80ab" opacity="0.8" />
-                    <circle cx="85" cy="30" r="16" fill="#ffb7c5" opacity="0.9" />
-                    <circle cx="50" cy="15" r="20" fill="#ff80ab" opacity="0.85" />
-                    <circle cx="30" cy="30" r="12" fill="#ffcdd2" />
-                    <!-- Pétale volant -->
-                    <circle class="petale" cx="70" cy="40" r="3" fill="#ff4081" />
-                </g>
-            </svg>`;
+        niveauMax = 6; nomStade = 'Stade 5 : Premières fleurs 🌸';
     } else {
-        nomStade = 'Stade 6 : Cerisier en pleine floraison 🌸✨';
-        svgContent = `
-            <svg width="160" height="160" viewBox="0 0 100 100">
-                <g class="vent-branches">
-                    <path d="M50 95 Q 45 50 50 20" stroke="#3e2723" stroke-width="10" stroke-linecap="round" fill="none" />
-                    <path d="M50 65 Q 20 45 10 50" stroke="#3e2723" stroke-width="5" fill="none" />
-                    <path d="M50 45 Q 80 25 85 30" stroke="#3e2723" stroke-width="5" fill="none" />
-                    <!-- Grosse frondaison rose -->
-                    <circle cx="50" cy="20" r="25" fill="#ffb7c5" />
-                    <circle cx="20" cy="40" r="20" fill="#ff80ab" />
-                    <circle cx="80" cy="30" r="22" fill="#ffcdd2" />
-                    <circle cx="35" cy="25" r="18" fill="#f8bbd0" />
-                    <circle cx="65" cy="20" r="19" fill="#ff4081" opacity="0.7" />
-                    <!-- Pétales volants -->
-                    <circle class="petale" cx="60" cy="30" r="3.5" fill="#ff4081" />
-                    <circle class="petale" cx="40" cy="45" r="2.5" fill="#ff80ab" style="animation-delay: 2s;" />
-                </g>
-            </svg>`;
+        niveauMax = 7; nomStade = 'Stade 6 : Cerisier majestueux 🌸✨';
     }
 
-    conteneur.innerHTML = svgContent;
     badge.textContent = nomStade;
+
+    // Dessin de l'arbre
+    dessinerBranche(180, 250, 48, 0, 10, 1, niveauMax);
+
+    // Animation du vent
+    angleVent += 0.02;
+
+    // Animation des pétales volants dans le vent
+    if (niveauMax >= 5) {
+        petales.forEach(p => {
+            ctx.fillStyle = `rgba(255, 183, 197, ${p.alpha})`;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fill();
+
+            p.x += p.vx + Math.sin(angleVent) * 0.5;
+            p.y += p.vy;
+
+            // Réinitialisation des pétales sortis
+            if (p.x < 0 || p.y > 260) {
+                p.x = Math.random() * 360 + 50;
+                p.y = -10;
+            }
+        });
+    }
+
+    requestAnimationFrame(animerCerisier);
 }
 
-// 3. Navigation
+// -------------------------------------------------------------
+// NAVIGATION
+// -------------------------------------------------------------
 function basculerEcran(ecranAFFICHER) {
     [ecranAccueil, ecranRecettes, ecranSante, ecranFinances, ecranAjout, ecranObjectifs].forEach(e => e.classList.add('masque'));
     ecranAFFICHER.classList.remove('masque');
@@ -154,7 +183,9 @@ navs.forEach(item => {
     });
 });
 
-// 4. Calcul & Gestion Économies
+// -------------------------------------------------------------
+// ÉCONOMIES
+// -------------------------------------------------------------
 function calculerEconomies() {
     const jours = getJoursEcoules();
     const config = JSON.parse(localStorage.getItem('configTabac')) || { cigsJour: 15, prixPaquet: 12.5, cigsPaquet: 20 };
@@ -172,7 +203,6 @@ function calculerEconomies() {
     document.getElementById('dépenses-vape-total').textContent = `${totalDepenses.toFixed(2)} €`;
     document.getElementById('economie-nette-detail').textContent = `${economieNette.toFixed(2)} €`;
 
-    // Pré-remplir le formulaire budget
     document.getElementById('cigs-jour').value = config.cigsJour;
     document.getElementById('prix-paquet').value = config.prixPaquet;
     document.getElementById('cigs-paquet').value = config.cigsPaquet;
@@ -221,7 +251,7 @@ function afficherFinances() {
             <div class="carte item-objectif">
                 <div>
                     <strong>${d.nom}</strong> (${d.cat})
-                    <br><span style="font-size: 0.8rem; color: #7f8c8d;">${d.date}</span>
+                    <br><span style="font-size: 0.8rem; color: #8b949e;">${d.date}</span>
                 </div>
                 <div>
                     <strong>-${d.montant.toFixed(2)} €</strong>
@@ -239,14 +269,16 @@ window.supprimerDepense = function(id) {
     afficherFinances();
 };
 
-// 5. Jalons Santé (Sources SPF / OMS)
+// -------------------------------------------------------------
+// JALONS SANTÉ
+// -------------------------------------------------------------
 const jalonsSanteData = [
-    { jours: 1, titre: '24 Heures', desc: 'Le monoxyde de carbone est totalement éliminé de l\'organisme. Les poumons commencent à éliminer les résidus de fumée.' },
-    { jours: 2, titre: '48 Heures', desc: 'Le goût et l\'odorat s\'améliorent nettement. Les terminaisons nerveuses gustatives commencent à se régénérer.' },
-    { jours: 14, titre: '2 Semaines', desc: 'La respiration devient plus aisée. Le souffle s\'améliore lors des efforts physiques.' },
-    { jours: 30, titre: '1 Mois', desc: 'La toux et l\'essoufflement diminuent. Vous regagnez en énergie générale au quotidien.' },
-    { jours: 90, titre: '3 Mois', desc: 'La fonction pulmonaire continue de s\'améliorer nettement. La circulation sanguine générale s\'est normalisée.' },
-    { jours: 365, titre: '1 An', desc: 'Le risque de maladie cardiovasculaire (AVC, infarctus) est réduit de moitié par rapport à un fumeur.' }
+    { jours: 1, titre: '24 Heures', desc: 'Le monoxyde de carbone est totalement éliminé de l\'organisme.' },
+    { jours: 2, titre: '48 Heures', desc: 'Le goût et l\'odorat s\'améliorent. Les terminaisons nerveuses se régénèrent.' },
+    { jours: 14, titre: '2 Semaines', desc: 'La respiration devient plus aisée. Le souffle s\'améliore à l\'effort.' },
+    { jours: 30, titre: '1 Mois', desc: 'La toux et l\'essoufflement diminuent. Vous regagnez en énergie générale.' },
+    { jours: 90, titre: '3 Mois', desc: 'La fonction pulmonaire s\'améliore nettement. Circulation sanguine normalisée.' },
+    { jours: 365, titre: '1 An', desc: 'Le risque de maladie cardiovasculaire est réduit de moitié par rapport à un fumeur.' }
 ];
 
 function afficherSante() {
@@ -264,11 +296,81 @@ function afficherSante() {
     }).join('');
 }
 
-// Initialisation globale
-function init() {
-    calculerJoursSansTabac();
-    dessinerCerisier();
-    calculerEconomies();
+// -------------------------------------------------------------
+// RECETTES & FLACONS (AFFICHER & GÉRER)
+// -------------------------------------------------------------
+function afficherTout() {
+    const flaconActif = JSON.parse(localStorage.getItem('flaconActif'));
+    const historique = JSON.parse(localStorage.getItem('historiqueFlacons')) || [];
+
+    const nomLiquideEl = document.getElementById('nom-liquide');
+    const detailsNicotineEl = document.getElementById('details-nicotine');
+    const detailsFlaconEl = document.getElementById('details-flacon');
+    const btnTerminer = document.getElementById('btn-terminer');
+    const btnOuvrirAjout = document.getElementById('btn-ouvrir-ajout');
+    const listeHistoriqueEl = document.getElementById('liste-historique');
+
+    if (flaconActif) {
+        const dateDebut = new Date(flaconActif.dateOuverture);
+        const dateFormatee = dateDebut.toLocaleDateString('fr-FR', {
+            day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+
+        nomLiquideEl.textContent = flaconActif.nom;
+        detailsNicotineEl.textContent = `${flaconActif.nicotine} mg/ml ${flaconActif.type === 'DIY' ? `• DIY ${flaconActif.arome}%` : ''}`;
+        detailsFlaconEl.textContent = `${flaconActif.volume} ml au départ • Entamé le ${dateFormatee}`;
+        
+        btnTerminer.style.display = 'block';
+        btnOuvrirAjout.style.display = 'none';
+    } else {
+        nomLiquideEl.textContent = 'Aucun flacon actif';
+        detailsNicotineEl.textContent = '';
+        detailsFlaconEl.textContent = '';
+        btnTerminer.style.display = 'none';
+        btnOuvrirAjout.style.display = 'block';
+    }
+
+    if (historique.length === 0) {
+        listeHistoriqueEl.innerHTML = '<p class="texte-vide">Aucun flacon terminé pour le moment.</p>';
+    } else {
+        listeHistoriqueEl.innerHTML = historique.map(item => `
+            <div class="carte carte-historique">
+                <strong>${item.nom}</strong> (${item.nicotine} mg/ml)
+                <br>
+                <span style="font-size:0.85rem; color:#8b949e;">Durée : ${item.dureeJours} jour(s) • Moyenne : <strong>${item.consommationMoyenne} ml/jour</strong></span>
+            </div>
+        `).join('');
+    }
 }
 
-init();
+function afficherRecettes() {
+    const recettes = JSON.parse(localStorage.getItem('recettesLiquides')) || [];
+    const listeRecettesEl = document.getElementById('liste-recettes');
+    const selectRecette = document.getElementById('select-recette');
+
+    if (recettes.length === 0) {
+        listeRecettesEl.innerHTML = '<p class="texte-vide">Aucun liquide enregistré.</p>';
+    } else {
+        listeRecettesEl.innerHTML = recettes.map(r => `
+            <div class="carte">
+                <strong>${r.nom}</strong> — ${r.nicotine} mg/ml (${r.type}${r.arome ? ` ${r.arome}%` : ''})
+            </div>
+        `).join('');
+    }
+
+    selectRecette.innerHTML = '<option value="">-- Saisie libre --</option>' + 
+        recettes.map(r => `<option value="${r.id}">${r.nom} (${r.nicotine} mg/ml)</option>`).join('');
+}
+
+// Initialisation au chargement
+window.onload = function() {
+    canvas = document.getElementById('canvas-cerisier');
+    if (canvas) {
+        ctx = canvas.getContext('2d');
+        initPetales();
+        animerCerisier();
+    }
+    calculerJoursSansTabac();
+    calculerEconomies();
+    afficherTout();
+};
