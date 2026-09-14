@@ -1,4 +1,4 @@
-// Navigation & Écrans
+// NAVIGATION & ÉCRANS
 const navAccueil = document.getElementById('nav-accueil');
 const navRecettes = document.getElementById('nav-recettes');
 const navSante = document.getElementById('nav-sante');
@@ -15,29 +15,6 @@ const ecranOnboarding = document.getElementById('ecran-onboarding');
 
 const enteteApp = document.getElementById('entete-app');
 const contenuPrincipal = document.getElementById('contenu-principal');
-
-// Formulaires & Boutons
-const formOnboarding = document.getElementById('form-onboarding');
-const formConfigTabac = document.getElementById('form-config-tabac');
-const formDepense = document.getElementById('form-depense');
-const btnOuvrirDepense = document.getElementById('btn-ouvrir-depense');
-const btnAnnulerDepense = document.getElementById('btn-annuler-depense');
-
-// Formulaire & Boutons Mes Liquides / Recettes
-const formRecette = document.getElementById('form-recette');
-const btnOuvrirAjoutRecette = document.getElementById('btn-ouvrir-ajout-recette');
-const btnAnnulerRecette = document.getElementById('btn-annuler-recette');
-
-// Formulaire & Boutons Objectifs
-const formObjectif = document.getElementById('form-objectif');
-const btnOuvrirAjoutObjectif = document.getElementById('btn-ouvrir-ajout-objectif');
-const btnAnnulerObjectif = document.getElementById('btn-annuler-objectif');
-
-// Formulaire & Boutons Flacon
-const formFlacon = document.getElementById('form-flacon');
-const btnOuvrirAjout = document.getElementById('btn-ouvrir-ajout');
-const btnAnnulerFlacon = document.getElementById('btn-annuler');
-const btnTerminerFlacon = document.getElementById('btn-terminer');
 
 // -------------------------------------------------------------
 // PROFILE & DATES DYNAMIQUES
@@ -67,7 +44,7 @@ function calculerJoursSansTabac() {
 }
 
 // -------------------------------------------------------------
-// TABLEAU VECTORIEL JAPONAIS (LUNE, RIVIÈRE, CERISIER)
+// TABLEAU VECTORIEL JAPONAIS (CERISIER)
 // -------------------------------------------------------------
 function mettreAJourCerisierHD() {
     const jours = getJoursEcoules();
@@ -203,48 +180,44 @@ const navs = [
 ];
 
 navs.forEach(item => {
-    item.btn.addEventListener('click', () => {
-        navs.forEach(n => n.btn.classList.remove('actif'));
-        item.btn.classList.add('actif');
-        basculerEcran(item.ecran);
-        if (item.action) item.action();
-    });
+    if (item.btn) {
+        item.btn.addEventListener('click', () => {
+            navs.forEach(n => n.btn.classList.remove('actif'));
+            item.btn.classList.add('actif');
+            basculerEcran(item.ecran);
+            if (item.action) item.action();
+        });
+    }
 });
 
 // -------------------------------------------------------------
-// GESTION DES RECETTES / LIQUIDEE
+// ÉCONOMIES
 // -------------------------------------------------------------
-if (btnOuvrirAjoutRecette) {
-    btnOuvrirAjoutRecette.addEventListener('click', () => {
-        formRecette.classList.remove('masque');
-    });
+function calculerEconomies() {
+    const jours = getJoursEcoules();
+    const config = JSON.parse(localStorage.getItem('configTabac')) || { cigsJour: 15, prixPaquet: 12.5, cigsPaquet: 20 };
+    
+    const coutParCig = config.prixPaquet / config.cigsPaquet;
+    const tabacEvite = jours * config.cigsJour * coutParCig;
+
+    const depenses = JSON.parse(localStorage.getItem('depensesVape')) || [];
+    const totalDepenses = depenses.reduce((sum, d) => sum + d.montant, 0);
+
+    const economieNette = tabacEvite - totalDepenses;
+
+    document.getElementById('economie-accueil').textContent = `${economieNette.toFixed(2)} €`;
+    document.getElementById('tabac-evite-total').textContent = `${tabacEvite.toFixed(2)} €`;
+    document.getElementById('dépenses-vape-total').textContent = `${totalDepenses.toFixed(2)} €`;
+    document.getElementById('economie-nette-detail').textContent = `${economieNette.toFixed(2)} €`;
+
+    document.getElementById('cigs-jour').value = config.cigsJour;
+    document.getElementById('prix-paquet').value = config.prixPaquet;
+    document.getElementById('cigs-paquet').value = config.cigsPaquet;
 }
 
-if (btnAnnulerRecette) {
-    btnAnnulerRecette.addEventListener('click', () => {
-        formRecette.classList.add('masque');
-    });
-}
-
-if (formRecette) {
-    formRecette.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const recettes = JSON.parse(localStorage.getItem('recettesLiquides')) || [];
-        const nouvelleRecette = {
-            id: Date.now(),
-            nom: document.getElementById('recette-nom').value,
-            type: document.getElementById('recette-type').value,
-            nicotine: parseFloat(document.getElementById('recette-nicotine').value),
-            arome: parseFloat(document.getElementById('recette-arome').value) || 0
-        };
-        recettes.push(nouvelleRecette);
-        localStorage.setItem('recettesLiquides', JSON.stringify(recettes));
-        formRecette.reset();
-        formRecette.classList.add('masque');
-        afficherRecettes();
-    });
-}
-
+// -------------------------------------------------------------
+// AFFICHAGE RECETTES & INTERACTION
+// -------------------------------------------------------------
 function afficherRecettes() {
     const recettes = JSON.parse(localStorage.getItem('recettesLiquides')) || [];
     const listeRecettesEl = document.getElementById('liste-recettes');
@@ -277,144 +250,6 @@ window.supprimerRecette = function(id) {
     afficherRecettes();
 };
 
-// -------------------------------------------------------------
-// GESTION DES FLACONS (ENTAMER / TERMINER)
-// -------------------------------------------------------------
-if (btnOuvrirAjout) {
-    btnOuvrirAjout.addEventListener('click', () => {
-        basculerEcran(ecranAjout);
-    });
-}
-
-if (btnAnnulerFlacon) {
-    btnAnnulerFlacon.addEventListener('click', () => {
-        basculerEcran(ecranAccueil);
-    });
-}
-
-const selectRecetteEl = document.getElementById('select-recette');
-if (selectRecetteEl) {
-    selectRecetteEl.addEventListener('change', (e) => {
-        const id = parseInt(e.target.value);
-        if (!id) return;
-        const recettes = JSON.parse(localStorage.getItem('recettesLiquides')) || [];
-        const recette = recettes.find(r => r.id === id);
-        if (recette) {
-            document.getElementById('nom').value = recette.nom;
-            document.getElementById('type').value = recette.type;
-            document.getElementById('nicotine').value = recette.nicotine;
-            if (recette.arome) document.getElementById('arome').value = recette.arome;
-        }
-    });
-}
-
-if (formFlacon) {
-    formFlacon.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const dateSaisie = document.getElementById('date-ouverture').value;
-        const dateOuverture = dateSaisie ? new Date(dateSaisie).toISOString() : new Date().toISOString();
-
-        const nouveauFlacon = {
-            nom: document.getElementById('nom').value,
-            type: document.getElementById('type').value,
-            volume: parseFloat(document.getElementById('volume').value),
-            nicotine: parseFloat(document.getElementById('nicotine').value),
-            arome: parseFloat(document.getElementById('arome').value) || 0,
-            dateOuverture: dateOuverture
-        };
-
-        localStorage.setItem('flaconActif', JSON.stringify(nouveauFlacon));
-        formFlacon.reset();
-        basculerEcran(ecranAccueil);
-        afficherTout();
-    });
-}
-
-if (btnTerminerFlacon) {
-    btnTerminerFlacon.addEventListener('click', () => {
-        const flaconActif = JSON.parse(localStorage.getItem('flaconActif'));
-        if (!flaconActif) return;
-
-        const dateFin = new Date();
-        const dateDebut = new Date(flaconActif.dateOuverture);
-        const diffHeures = Math.max(1, (dateFin - dateDebut) / (1000 * 3600));
-        const dureeJours = Math.max(1, Math.round(diffHeures / 24));
-        const consoMoyenne = (flaconActif.volume / (diffHeures / 24)).toFixed(1);
-
-        const historique = JSON.parse(localStorage.getItem('historiqueFlacons')) || [];
-        historique.unshift({
-            ...flaconActif,
-            dateFin: dateFin.toISOString(),
-            dureeJours: dureeJours,
-            consommationMoyenne: consoMoyenne
-        });
-
-        localStorage.setItem('historiqueFlacons', JSON.stringify(historique));
-        localStorage.removeItem('flaconActif');
-        afficherTout();
-    });
-}
-
-// -------------------------------------------------------------
-// ÉCONOMIES & FINANCES
-// -------------------------------------------------------------
-function calculerEconomies() {
-    const jours = getJoursEcoules();
-    const config = JSON.parse(localStorage.getItem('configTabac')) || { cigsJour: 15, prixPaquet: 12.5, cigsPaquet: 20 };
-    
-    const coutParCig = config.prixPaquet / config.cigsPaquet;
-    const tabacEvite = jours * config.cigsJour * coutParCig;
-
-    const depenses = JSON.parse(localStorage.getItem('depensesVape')) || [];
-    const totalDepenses = depenses.reduce((sum, d) => sum + d.montant, 0);
-
-    const economieNette = tabacEvite - totalDepenses;
-
-    document.getElementById('economie-accueil').textContent = `${economieNette.toFixed(2)} €`;
-    document.getElementById('tabac-evite-total').textContent = `${tabacEvite.toFixed(2)} €`;
-    document.getElementById('dépenses-vape-total').textContent = `${totalDepenses.toFixed(2)} €`;
-    document.getElementById('economie-nette-detail').textContent = `${economieNette.toFixed(2)} €`;
-
-    document.getElementById('cigs-jour').value = config.cigsJour;
-    document.getElementById('prix-paquet').value = config.prixPaquet;
-    document.getElementById('cigs-paquet').value = config.cigsPaquet;
-}
-
-if (formConfigTabac) {
-    formConfigTabac.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const config = {
-            cigsJour: parseFloat(document.getElementById('cigs-jour').value) || 0,
-            prixPaquet: parseFloat(document.getElementById('prix-paquet').value) || 0,
-            cigsPaquet: parseFloat(document.getElementById('cigs-paquet').value) || 20
-        };
-        localStorage.setItem('configTabac', JSON.stringify(config));
-        calculerEconomies();
-    });
-}
-
-if (btnOuvrirDepense) btnOuvrirDepense.addEventListener('click', () => formDepense.classList.remove('masque'));
-if (btnAnnulerDepense) btnAnnulerDepense.addEventListener('click', () => formDepense.classList.add('masque'));
-
-if (formDepense) {
-    formDepense.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const depenses = JSON.parse(localStorage.getItem('depensesVape')) || [];
-        const nouvelleDepense = {
-            id: Date.now(),
-            cat: document.getElementById('dep-cat').value,
-            montant: parseFloat(document.getElementById('dep-montant').value),
-            nom: document.getElementById('dep-nom').value || 'Achat Vape',
-            date: new Date().toLocaleDateString('fr-FR')
-        };
-        depenses.unshift(nouvelleDepense);
-        localStorage.setItem('depensesVape', JSON.stringify(depenses));
-        formDepense.reset();
-        formDepense.classList.add('masque');
-        afficherFinances();
-    });
-}
-
 function afficherFinances() {
     calculerEconomies();
     const depenses = JSON.parse(localStorage.getItem('depensesVape')) || [];
@@ -445,9 +280,6 @@ window.supprimerDepense = function(id) {
     afficherFinances();
 };
 
-// -------------------------------------------------------------
-// JALONS SANTÉ
-// -------------------------------------------------------------
 const jalonsSanteData = [
     { jours: 1, titre: '24 Heures', desc: 'Le monoxyde de carbone est totalement éliminé de l\'organisme.' },
     { jours: 2, titre: '48 Heures', desc: 'Le goût et l\'odorat s\'améliorent. Les terminaisons nerveuses se régénèrent.' },
@@ -460,6 +292,7 @@ const jalonsSanteData = [
 function afficherSante() {
     const joursActuels = getJoursEcoules();
     const container = document.getElementById('timeline-sante');
+    if (!container) return;
 
     container.innerHTML = jalonsSanteData.map(j => {
         const atteint = joursActuels >= j.jours;
@@ -472,32 +305,10 @@ function afficherSante() {
     }).join('');
 }
 
-// -------------------------------------------------------------
-// GESTION DES OBJECTIFS
-// -------------------------------------------------------------
-if (btnOuvrirAjoutObjectif) btnOuvrirAjoutObjectif.addEventListener('click', () => formObjectif.classList.remove('masque'));
-if (btnAnnulerObjectif) btnAnnulerObjectif.addEventListener('click', () => formObjectif.classList.add('masque'));
-
-if (formObjectif) {
-    formObjectif.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const objectifs = JSON.parse(localStorage.getItem('objectifsVape')) || [];
-        const nouvelObj = {
-            id: Date.now(),
-            date: document.getElementById('obj-date').value,
-            titre: document.getElementById('obj-titre').value
-        };
-        objectifs.push(nouvelObj);
-        localStorage.setItem('objectifsVape', JSON.stringify(objectifs));
-        formObjectif.reset();
-        formObjectif.classList.add('masque');
-        afficherObjectifs();
-    });
-}
-
 function afficherObjectifs() {
     const objectifs = JSON.parse(localStorage.getItem('objectifsVape')) || [];
     const container = document.getElementById('liste-objectifs');
+    if (!container) return;
 
     if (objectifs.length === 0) {
         container.innerHTML = '<p class="texte-vide">Aucune étape enregistrée.</p>';
@@ -521,9 +332,6 @@ window.supprimerObjectif = function(id) {
     afficherObjectifs();
 };
 
-// -------------------------------------------------------------
-// AFFICHAGE GLOBAL ACCUEIL ET HISTORIQUE
-// -------------------------------------------------------------
 function afficherTout() {
     const flaconActif = JSON.parse(localStorage.getItem('flaconActif'));
     const historique = JSON.parse(localStorage.getItem('historiqueFlacons')) || [];
@@ -569,10 +377,92 @@ function afficherTout() {
 }
 
 // -------------------------------------------------------------
-// GESTION DU DEBUT (ONBOARDING OU ACCUEIL)
+// ÉCOUTEURS D'ÉVÉNEMENTS GLOBAUX (ROBUSTE)
 // -------------------------------------------------------------
-if (formOnboarding) {
-    formOnboarding.addEventListener('submit', (e) => {
+document.addEventListener('click', function(e) {
+    // Ouvrir formulaire recette
+    if (e.target && e.target.id === 'btn-ouvrir-ajout-recette') {
+        const f = document.getElementById('form-recette');
+        if (f) f.classList.remove('masque');
+    }
+    // Annuler formulaire recette
+    if (e.target && e.target.id === 'btn-annuler-recette') {
+        const f = document.getElementById('form-recette');
+        if (f) f.classList.add('masque');
+    }
+    // Ouvrir dépense
+    if (e.target && e.target.id === 'btn-ouvrir-depense') {
+        const f = document.getElementById('form-depense');
+        if (f) f.classList.remove('masque');
+    }
+    // Annuler dépense
+    if (e.target && e.target.id === 'btn-annuler-depense') {
+        const f = document.getElementById('form-depense');
+        if (f) f.classList.add('masque');
+    }
+    // Ouvrir objectif
+    if (e.target && e.target.id === 'btn-ouvrir-ajout-objectif') {
+        const f = document.getElementById('form-objectif');
+        if (f) f.classList.remove('masque');
+    }
+    // Annuler objectif
+    if (e.target && e.target.id === 'btn-annuler-objectif') {
+        const f = document.getElementById('form-objectif');
+        if (f) f.classList.add('masque');
+    }
+    // Entamer un flacon
+    if (e.target && e.target.id === 'btn-ouvrir-ajout') {
+        basculerEcran(ecranAjout);
+    }
+    // Annuler flacon
+    if (e.target && e.target.id === 'btn-annuler') {
+        basculerEcran(ecranAccueil);
+    }
+    // Terminer flacon
+    if (e.target && e.target.id === 'btn-terminer') {
+        const flaconActif = JSON.parse(localStorage.getItem('flaconActif'));
+        if (!flaconActif) return;
+
+        const dateFin = new Date();
+        const dateDebut = new Date(flaconActif.dateOuverture);
+        const diffHeures = Math.max(1, (dateFin - dateDebut) / (1000 * 3600));
+        const dureeJours = Math.max(1, Math.round(diffHeures / 24));
+        const consoMoyenne = (flaconActif.volume / (diffHeures / 24)).toFixed(1);
+
+        const historique = JSON.parse(localStorage.getItem('historiqueFlacons')) || [];
+        historique.unshift({
+            ...flaconActif,
+            dateFin: dateFin.toISOString(),
+            dureeJours: dureeJours,
+            consommationMoyenne: consoMoyenne
+        });
+
+        localStorage.setItem('historiqueFlacons', JSON.stringify(historique));
+        localStorage.removeItem('flaconActif');
+        afficherTout();
+    }
+});
+
+// Soumission des formulaires
+document.addEventListener('submit', function(e) {
+    if (e.target && e.target.id === 'form-recette') {
+        e.preventDefault();
+        const recettes = JSON.parse(localStorage.getItem('recettesLiquides')) || [];
+        const nouvelleRecette = {
+            id: Date.now(),
+            nom: document.getElementById('recette-nom').value,
+            type: document.getElementById('recette-type').value,
+            nicotine: parseFloat(document.getElementById('recette-nicotine').value),
+            arome: parseFloat(document.getElementById('recette-arome').value) || 0
+        };
+        recettes.push(nouvelleRecette);
+        localStorage.setItem('recettesLiquides', JSON.stringify(recettes));
+        e.target.reset();
+        e.target.classList.add('masque');
+        afficherRecettes();
+    }
+
+    if (e.target && e.target.id === 'form-onboarding') {
         e.preventDefault();
         const prenom = document.getElementById('ob-prenom').value;
         const dateArret = document.getElementById('ob-date-arret').value;
@@ -593,19 +483,81 @@ if (formOnboarding) {
         mettreAJourCerisierHD();
         calculerEconomies();
         afficherTout();
-    });
-}
+    }
 
+    if (e.target && e.target.id === 'form-flacon') {
+        e.preventDefault();
+        const dateSaisie = document.getElementById('date-ouverture').value;
+        const dateOuverture = dateSaisie ? new Date(dateSaisie).toISOString() : new Date().toISOString();
+
+        const nouveauFlacon = {
+            nom: document.getElementById('nom').value,
+            type: document.getElementById('type').value,
+            volume: parseFloat(document.getElementById('volume').value),
+            nicotine: parseFloat(document.getElementById('nicotine').value),
+            arome: parseFloat(document.getElementById('arome').value) || 0,
+            dateOuverture: dateOuverture
+        };
+
+        localStorage.setItem('flaconActif', JSON.stringify(nouveauFlacon));
+        e.target.reset();
+        basculerEcran(ecranAccueil);
+        afficherTout();
+    }
+
+    if (e.target && e.target.id === 'form-depense') {
+        e.preventDefault();
+        const depenses = JSON.parse(localStorage.getItem('depensesVape')) || [];
+        const nouvelleDepense = {
+            id: Date.now(),
+            cat: document.getElementById('dep-cat').value,
+            montant: parseFloat(document.getElementById('dep-montant').value),
+            nom: document.getElementById('dep-nom').value || 'Achat Vape',
+            date: new Date().toLocaleDateString('fr-FR')
+        };
+        depenses.unshift(nouvelleDepense);
+        localStorage.setItem('depensesVape', JSON.stringify(depenses));
+        e.target.reset();
+        e.target.classList.add('masque');
+        afficherFinances();
+    }
+
+    if (e.target && e.target.id === 'form-objectif') {
+        e.preventDefault();
+        const objectifs = JSON.parse(localStorage.getItem('objectifsVape')) || [];
+        const nouvelObj = {
+            id: Date.now(),
+            date: document.getElementById('obj-date').value,
+            titre: document.getElementById('obj-titre').value
+        };
+        objectifs.push(nouvelObj);
+        localStorage.setItem('objectifsVape', JSON.stringify(objectifs));
+        e.target.reset();
+        e.target.classList.add('masque');
+        afficherObjectifs();
+    }
+
+    if (e.target && e.target.id === 'form-config-tabac') {
+        e.preventDefault();
+        const config = {
+            cigsJour: parseFloat(document.getElementById('cigs-jour').value) || 0,
+            prixPaquet: parseFloat(document.getElementById('prix-paquet').value) || 0,
+            cigsPaquet: parseFloat(document.getElementById('cigs-paquet').value) || 20
+        };
+        localStorage.setItem('configTabac', JSON.stringify(config));
+        calculerEconomies();
+    }
+});
+
+// INITIALISATION
 window.addEventListener('DOMContentLoaded', function() {
     const profil = getProfilUtilisateur();
 
     if (!profil) {
-        // Premier lancement
         enteteApp.classList.add('masque');
         contenuPrincipal.classList.add('masque');
         ecranOnboarding.classList.remove('masque');
     } else {
-        // Lancement normal
         ecranOnboarding.classList.add('masque');
         calculerJoursSansTabac();
         mettreAJourCerisierHD();
