@@ -1,37 +1,64 @@
 const dateArretCigarette = new Date('2026-08-17');
 
-// Sélection des éléments HTML
+// Éléments Navigation
+const navAccueil = document.getElementById('nav-accueil');
+const navRecettes = document.getElementById('nav-recettes');
 const ecranAccueil = document.getElementById('ecran-accueil');
+const ecranRecettes = document.getElementById('ecran-recettes');
 const ecranAjout = document.getElementById('ecran-ajout');
-const btnOuvrirAjout = document.getElementById('btn-ouvrir-ajout');
-const btnAnnuler = document.getElementById('btn-annuler');
-const formFlacon = document.getElementById('form-flacon');
-const inputDateOuverture = document.getElementById('date-ouverture');
 
+// Éléments Accueil
 const nomLiquideEl = document.getElementById('nom-liquide');
 const detailsNicotineEl = document.getElementById('details-nicotine');
 const detailsFlaconEl = document.getElementById('details-flacon');
 const btnTerminer = document.getElementById('btn-terminer');
+const btnOuvrirAjout = document.getElementById('btn-ouvrir-ajout');
 const listeHistoriqueEl = document.getElementById('liste-historique');
+
+// Éléments Formulaire Flacon
+const formFlacon = document.getElementById('form-flacon');
+const btnAnnuler = document.getElementById('btn-annuler');
+const inputDateOuverture = document.getElementById('date-ouverture');
+const selectRecette = document.getElementById('select-recette');
+
+// Éléments Écran Recettes
+const btnOuvrirAjoutRecette = document.getElementById('btn-ouvrir-ajout-recette');
+const formRecette = document.getElementById('form-recette');
+const btnAnnulerRecette = document.getElementById('btn-annuler-recette');
+const listeRecettesEl = document.getElementById('liste-recettes');
 
 // 1. Calcul des jours sans tabac
 function calculerJoursSansTabac() {
     const aujourdhui = new Date();
     const differenceTemps = aujourdhui - dateArretCigarette;
     const jours = Math.floor(differenceTemps / (1000 * 3600 * 24));
-
-    const elementCompteur = document.getElementById('compteur-jours');
-    if (elementCompteur) {
-        elementCompteur.textContent = jours;
-    }
+    document.getElementById('compteur-jours').textContent = jours;
 }
 
-// 2. Afficher le flacon actif et l'historique
+// 2. Gestion de la navigation
+function basculerEcran(ecranAFFICHER) {
+    [ecranAccueil, ecranRecettes, ecranAjout].forEach(e => e.classList.add('masque'));
+    ecranAFFICHER.classList.remove('masque');
+}
+
+navAccueil.addEventListener('click', () => {
+    navAccueil.classList.add('actif');
+    navRecettes.classList.remove('actif');
+    basculerEcran(ecranAccueil);
+});
+
+navRecettes.addEventListener('click', () => {
+    navRecettes.classList.add('actif');
+    navAccueil.classList.remove('actif');
+    basculerEcran(ecranRecettes);
+    afficherRecettes();
+});
+
+// 3. Affichage global
 function afficherTout() {
     const flaconActif = JSON.parse(localStorage.getItem('flaconActif'));
     const historique = JSON.parse(localStorage.getItem('historiqueFlacons')) || [];
 
-    // Affichage du flacon actif
     if (flaconActif) {
         const dateDebut = new Date(flaconActif.dateOuverture);
         const dateFormatee = dateDebut.toLocaleDateString('fr-FR', {
@@ -52,7 +79,6 @@ function afficherTout() {
         btnOuvrirAjout.style.display = 'block';
     }
 
-    // Affichage de l'historique
     if (historique.length === 0) {
         listeHistoriqueEl.innerHTML = '<p class="texte-vide">Aucun flacon terminé pour le moment.</p>';
     } else {
@@ -66,23 +92,89 @@ function afficherTout() {
     }
 }
 
-// 3. Bouton "Flacon terminé" et calculs
+// 4. Gestion des Recettes
+function afficherRecettes() {
+    const recettes = JSON.parse(localStorage.getItem('recettesLiquides')) || [];
+
+    if (recettes.length === 0) {
+        listeRecettesEl.innerHTML = '<p class="texte-vide">Aucun liquide enregistré.</p>';
+    } else {
+        listeRecettesEl.innerHTML = recettes.map(r => `
+            <div class="carte">
+                <strong>${r.nom}</strong> — ${r.nicotine} mg/ml (${r.type}${r.arome ? ` ${r.arome}%` : ''})
+            </div>
+        `).join('');
+    }
+
+    // Mettre à jour la liste déroulante du formulaire de flacon
+    selectRecette.innerHTML = '<option value="">-- Saisie libre --</option>' + 
+        recettes.map(r => `<option value="${r.id}">${r.nom} (${r.nicotine} mg/ml)</option>`).join('');
+}
+
+btnOuvrirAjoutRecette.addEventListener('click', () => {
+    formRecette.classList.remove('masque');
+    btnOuvrirAjoutRecette.classList.add('masque');
+});
+
+btnAnnulerRecette.addEventListener('click', () => {
+    formRecette.classList.add('masque');
+    btnOuvrirAjoutRecette.classList.remove('masque');
+});
+
+formRecette.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const recettes = JSON.parse(localStorage.getItem('recettesLiquides')) || [];
+
+    const nouvelleRecette = {
+        id: Date.now(),
+        nom: document.getElementById('recette-nom').value,
+        type: document.getElementById('recette-type').value,
+        nicotine: parseFloat(document.getElementById('recette-nicotine').value),
+        arome: document.getElementById('recette-arome').value ? parseFloat(document.getElementById('recette-arome').value) : null
+    };
+
+    recettes.push(nouvelleRecette);
+    localStorage.setItem('recettesLiquides', JSON.stringify(recettes));
+
+    formRecette.reset();
+    formRecette.classList.add('masque');
+    btnOuvrirAjoutRecette.classList.remove('masque');
+    afficherRecettes();
+});
+
+// Auto-remplissage lors du choix d'une recette
+selectRecette.addEventListener('change', () => {
+    const recettes = JSON.parse(localStorage.getItem('recettesLiquides')) || [];
+    const recetteTrouvee = recettes.find(r => r.id == selectRecette.value);
+
+    if (recetteTrouvee) {
+        document.getElementById('nom').value = recetteTrouvee.nom;
+        document.getElementById('type').value = recetteTrouvee.type;
+        document.getElementById('nicotine').value = recetteTrouvee.nicotine;
+        document.getElementById('arome').value = recetteTrouvee.arome || '';
+    }
+});
+
+// 5. Actions d'ajout/fin de flacon
+btnOuvrirAjout.addEventListener('click', () => {
+    basculerEcran(ecranAjout);
+    afficherRecettes();
+    const maintenant = new Date();
+    maintenant.setMinutes(maintenant.getMinutes() - maintenant.getTimezoneOffset());
+    inputDateOuverture.value = maintenant.toISOString().slice(0, 16);
+});
+
+btnAnnuler.addEventListener('click', () => basculerEcran(ecranAccueil));
+
 btnTerminer.addEventListener('click', () => {
     const flaconActif = JSON.parse(localStorage.getItem('flaconActif'));
     if (!flaconActif) return;
 
     const dateDebut = new Date(flaconActif.dateOuverture);
     const dateFin = new Date();
-
-    // Calcul de la durée en jours (minimum 1 jour pour éviter la division par zéro)
-    const differenceTemps = dateFin - dateDebut;
-    let dureeJours = (differenceTemps / (1000 * 3600 * 24));
-    dureeJours = dureeJours < 0.1 ? 0.1 : dureeJours; // Ajustement si terminé immédiatement
-
-    // Calcul de la moyenne en ml/jour
+    const dureeJours = Math.max(0.1, (dateFin - dateDebut) / (1000 * 3600 * 24));
     const moyenneMlJour = (flaconActif.volume / dureeJours).toFixed(2);
 
-    // Création de l'élément d'historique
     const flaconTermine = {
         ...flaconActif,
         dateFin: dateFin.toISOString(),
@@ -90,37 +182,16 @@ btnTerminer.addEventListener('click', () => {
         consommationMoyenne: moyenneMlJour
     };
 
-    // Sauvegarde dans l'historique
     const historique = JSON.parse(localStorage.getItem('historiqueFlacons')) || [];
-    historique.unshift(flaconTermine); // Ajoute au début du tableau
+    historique.unshift(flaconTermine);
     localStorage.setItem('historiqueFlacons', JSON.stringify(historique));
-
-    // Suppression du flacon actif
     localStorage.removeItem('flaconActif');
 
-    // Rafraîchir l'affichage
     afficherTout();
 });
 
-// 4. Navigation
-btnOuvrirAjout.addEventListener('click', () => {
-    ecranAccueil.classList.add('masque');
-    ecranAjout.classList.remove('masque');
-    
-    const maintenant = new Date();
-    maintenant.setMinutes(maintenant.getMinutes() - maintenant.getTimezoneOffset());
-    inputDateOuverture.value = maintenant.toISOString().slice(0, 16);
-});
-
-btnAnnuler.addEventListener('click', () => {
-    ecranAjout.classList.add('masque');
-    ecranAccueil.classList.remove('masque');
-});
-
-// 5. Formulaire
 formFlacon.addEventListener('submit', (e) => {
     e.preventDefault();
-
     const nouveauFlacon = {
         id: Date.now(),
         nom: document.getElementById('nom').value,
@@ -133,9 +204,7 @@ formFlacon.addEventListener('submit', (e) => {
 
     localStorage.setItem('flaconActif', JSON.stringify(nouveauFlacon));
     formFlacon.reset();
-    ecranAjout.classList.add('masque');
-    ecranAccueil.classList.remove('masque');
-
+    basculerEcran(ecranAccueil);
     afficherTout();
 });
 
