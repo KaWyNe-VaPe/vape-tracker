@@ -58,7 +58,6 @@ function mettreAJourCerisierHD() {
         niveauFleurs = 5;
     }
 
-    // SVG vectoriel complet combinant l'arrière-plan, la rivière, le tronc et la frondaison
     const svgTableau = `
         <svg viewBox="0 0 300 270" preserveAspectRatio="xMidYMid slice">
             <defs>
@@ -98,7 +97,6 @@ function mettreAJourCerisierHD() {
 
             <!-- Rivière sinueuse au pied -->
             <path d="M0 220 C80 215 150 240 300 225 L300 270 L0 270 Z" fill="url(#eau)"/>
-            <!-- Reflets d'eau -->
             <path d="M20 235 Q70 230 120 240" stroke="#ffb7c5" stroke-width="1" opacity="0.4" fill="none"/>
             <path d="M140 245 Q200 235 270 250" stroke="#93c5fd" stroke-width="1.5" opacity="0.3" fill="none"/>
 
@@ -107,14 +105,12 @@ function mettreAJourCerisierHD() {
 
             <!-- Cerisier Japonais -->
             <g class="vent-branches">
-                <!-- Tronc courbé d'estampe -->
                 <path d="M145 250 C120 180 170 120 130 50" stroke="url(#ecorce)" stroke-width="16" stroke-linecap="round" fill="none"/>
                 <path d="M138 160 C85 130 65 110 35 100" stroke="url(#ecorce)" stroke-width="8" stroke-linecap="round" fill="none"/>
                 <path d="M142 110 C185 85 205 75 235 60" stroke="url(#ecorce)" stroke-width="7" stroke-linecap="round" fill="none"/>
                 <path d="M133 75 C100 55 85 45 65 35" stroke="url(#ecorce)" stroke-width="5" stroke-linecap="round" fill="none"/>
 
                 ${niveauFleurs >= 1 ? `
-                    <!-- Jeune feuillage -->
                     <circle cx="65" cy="35" r="12" fill="#34d399" opacity="0.7"/>
                 ` : ''}
 
@@ -128,7 +124,6 @@ function mettreAJourCerisierHD() {
                 ` : ''}
 
                 ${niveauFleurs >= 4 ? `
-                    <!-- Premières fleurs Sakura -->
                     <circle cx="130" cy="50" r="38" fill="#f472b6" opacity="0.75"/>
                     <circle cx="35" cy="100" r="28" fill="#fb7185" opacity="0.8"/>
                     <circle cx="235" cy="60" r="32" fill="#f472b6" opacity="0.75"/>
@@ -136,12 +131,10 @@ function mettreAJourCerisierHD() {
                 ` : ''}
 
                 ${niveauFleurs >= 5 ? `
-                    <!-- Floraison totale féérique -->
                     <circle cx="130" cy="45" r="48" fill="#ffb7c5" opacity="0.85"/>
                     <circle cx="35" cy="95" r="35" fill="#ff80ab" opacity="0.85"/>
                     <circle cx="235" cy="55" r="38" fill="#ffcdd2" opacity="0.85"/>
                     <circle cx="65" cy="30" r="28" fill="#ff4081" opacity="0.8"/>
-                    <!-- Cœurs de fleurs clairs -->
                     <circle cx="130" cy="45" r="15" fill="#ffffff" opacity="0.6"/>
                     <circle cx="235" cy="55" r="10" fill="#ffffff" opacity="0.6"/>
                 ` : ''}
@@ -380,26 +373,10 @@ function afficherRecettes() {
         recettes.map(r => `<option value="${r.id}">${r.nom} (${r.nicotine} mg/ml)</option>`).join('');
 }
 
-// Initialisation
-window.onload = function() {
+// Initialisation au chargement
+window.addEventListener('DOMContentLoaded', function() {
     calculerJoursSansTabac();
     mettreAJourCerisierHD();
     calculerEconomies();
     afficherTout();
-};
-// AFFICHER / MASQUER L'ÉCRAN DE LANCEMENT
-window.addEventListener('load', () => {
-    const splash = document.getElementById('splash-screen');
-    if (splash) {
-        setTimeout(() => {
-            splash.classList.add('fondu-sortie');
-        }, 1800); // Reste affiché 1,8 seconde
-    }
 });
-// FERMETURE AUTOMATIQUE DE L'ÉCRAN DE LANCEMENT (2.5 SECONDES)
-setTimeout(() => {
-    const splash = document.getElementById('splash-screen');
-    if (splash) {
-        splash.classList.add('fondu-sortie');
-    }
-}, 2500);
