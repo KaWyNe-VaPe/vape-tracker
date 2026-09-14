@@ -112,3 +112,23 @@ input, select {
     color: #888;
     font-size: 0.9rem;
 }
+/* Navigation */
+nav {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.btn-nav {
+    background-color: #bdc3c7;
+    color: #333;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin-top: 0;
+}
+
+.btn-nav.actif {
+    background-color: #3498db;
+    color: white;
+}
