@@ -387,3 +387,12 @@ window.onload = function() {
     calculerEconomies();
     afficherTout();
 };
+// AFFICHER / MASQUER L'ÉCRAN DE LANCEMENT
+window.addEventListener('load', () => {
+    const splash = document.getElementById('splash-screen');
+    if (splash) {
+        setTimeout(() => {
+            splash.classList.add('fondu-sortie');
+        }, 1800); // Reste affiché 1,8 seconde
+    }
+});
