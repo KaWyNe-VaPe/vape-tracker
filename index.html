@@ -5,18 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vape Tracker 🌸</title>
     
-    <!-- Typographie d'inspiration asiatique / calligraphique -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
     
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="style.css?v=v110">
+    <link rel="stylesheet" href="style.css?v=v111">
     <meta name="theme-color" content="#0b0e14">
 </head>
 <body>
 
-    <!-- ÉCRAN DE LANCEMENT AUTO-EFFAÇANT (SPLASH SCREEN) -->
+    <!-- ÉCRAN DE LANCEMENT AUTO-EFFAÇANT -->
     <div id="splash-screen">
         <img src="icon.png" alt="Vape Tracker" class="splash-logo" onerror="this.style.display='none'">
         <h1 class="splash-titre">Vape Tracker</h1>
@@ -25,7 +24,7 @@
 
     <div id="app-container">
         
-        <!-- ÉCRAN DE BIENVENUE (ONBOARDING) -->
+        <!-- ÉCRAN DE BIENVENUE -->
         <div id="ecran-onboarding" class="ecran masque">
             <h2>Bienvenue sur Vape Tracker 🌸</h2>
             <p class="texte-secondaire" style="margin-bottom: 20px;">Configure tes informations pour commencer le suivi de ton sevrage et faire grandir ton cerisier.</p>
@@ -80,7 +79,6 @@
                     <div id="nom-stade-arbre" class="badge-stade">Stade 1 : Jeune pousse (0 à 1 mois) 🌿</div>
                 </div>
 
-                <!-- GRILLE DES 4 CARTES DASHBOARD -->
                 <div class="grille-dashboards">
                     <div class="carte-stat stat-verte">
                         <div class="stat-icone">🌿</div>
@@ -128,8 +126,13 @@
                         <p id="details-flacon" class="texte-secondaire"></p>
                     </div>
 
-                    <button id="btn-terminer" class="btn-secondaire" type="button" style="display:none;">Terminer ce flacon 🏁</button>
-                    <button id="btn-ouvrir-ajout" class="btn-primaire" type="button" style="margin-top:10px;">Préparer un flacon 🧪</button>
+                    <button id="btn-terminer" class="btn-secondaire" type="button" style="display:none; margin-bottom:8px;">Terminer ce flacon 🏁</button>
+                    
+                    <!-- DEUX BOUTONS D'ACTION SUR L'ACCUEIL -->
+                    <div style="display:flex; gap:8px; margin-top:10px;">
+                        <button id="btn-ouvrir-utilisation-directe" class="btn-primaire" type="button" style="flex:1; font-size:0.82rem; padding:10px 6px;">Utiliser un flacon prêt 💨</button>
+                        <button id="btn-ouvrir-ajout" class="btn-secondaire" type="button" style="flex:1; font-size:0.82rem; padding:10px 6px; margin-top:0;">Préparer un flacon 🧪</button>
+                    </div>
                 </div>
 
                 <!-- RÉSERVE ET MATURATION -->
@@ -338,9 +341,9 @@
                 <div id="liste-objectifs"></div>
             </section>
 
-            <!-- ÉCRAN FORMULAIRE AJOUT FLACON -->
+            <!-- ÉCRAN FORMULAIRE AJOUT FLACON EN MATURATION -->
             <section id="ecran-ajout" class="ecran masque">
-                <h2>Préparer un flacon 🧪</h2>
+                <h2>Préparer un flacon (avec maturation) 🧪</h2>
                 <form id="form-flacon" class="form-card" onsubmit="return false;">
                     <div class="groupe-champ">
                         <label>Sélectionner une recette enregistrée (Optionnel)</label>
@@ -386,6 +389,44 @@
                 </form>
             </section>
 
+            <!-- ÉCRAN FORMULAIRE UTILISER UN FLACON PRÊT DIRECT -->
+            <section id="ecran-utilisation-directe" class="ecran masque">
+                <h2>Commencer un flacon prêt 💨</h2>
+                <form id="form-utilisation-directe" class="form-card" onsubmit="return false;">
+                    <div class="groupe-champ">
+                        <label>Sélectionner une recette enregistrée (Optionnel)</label>
+                        <select id="select-recette-directe">
+                            <option value="">-- Saisie libre --</option>
+                        </select>
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Nom du produit / liquide</label>
+                        <input type="text" id="nom-direct" placeholder="Ex: Red Astaire" required>
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Type</label>
+                        <select id="type-direct">
+                            <option value="Prêt à vaper">Prêt à vaper (Commercial)</option>
+                            <option value="DIY">DIY (Fait maison)</option>
+                        </select>
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Contenance (ml)</label>
+                        <input type="number" id="volume-direct" placeholder="50" required>
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Nicotine (mg/ml)</label>
+                        <input type="number" step="0.5" id="nicotine-direct" placeholder="3" required>
+                    </div>
+                    <div class="groupe-champ">
+                        <label>Date & Heure de début d'utilisation</label>
+                        <input type="datetime-local" id="date-debut-direct">
+                    </div>
+                    <button type="button" id="btn-sauvegarder-direct" class="btn-primaire">Entamer ce flacon maintenant 💨</button>
+                    <button type="button" id="btn-annuler-direct" class="btn-secondaire">Annuler</button>
+                </form>
+            </section>
+
         </main>
 
         <!-- BARRE DE NAVIGATION BASSE -->
@@ -413,6 +454,6 @@
         </nav>
 
     </div>
-    <script src="app.js?v=v110"></script>
+    <script src="app.js?v=v111"></script>
 </body>
 </html>
