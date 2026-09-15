@@ -705,8 +705,7 @@ function configurerEcouteurs() {
     // SAUVEGARDE ONBOARDING
     const btnValiderOb = document.getElementById('btn-valider-onboarding');
     if (btnValiderOb) {
-        btnValiderOb.onclick = function (e) {
-            if (e) e.preventDefault();
+        btnValiderOb.onclick = function () {
             const prenom = document.getElementById('ob-prenom').value.trim();
             const dateArret = document.getElementById('ob-date-arret').value;
             if (!prenom || !dateArret) {
@@ -731,8 +730,7 @@ function configurerEcouteurs() {
     // SAUVEGARDE CONFIG TABAC
     const btnSauvCfg = document.getElementById('btn-sauvegarder-config');
     if (btnSauvCfg) {
-        btnSauvCfg.onclick = function (e) {
-            if (e) e.preventDefault();
+        btnSauvCfg.onclick = function () {
             if (!configUser) configUser = {};
             configUser.cigsJour = parseFloat(document.getElementById('cigs-jour').value) || 15;
             configUser.prixPaquet = parseFloat(document.getElementById('prix-paquet').value) || 12.5;
@@ -751,9 +749,7 @@ function configurerEcouteurs() {
     // SAUVEGARDE RECETTE
     const btnSauvRecette = document.getElementById('btn-sauvegarder-recette');
     if (btnSauvRecette) {
-        btnSauvRecette.onclick = function (e) {
-            if (e) e.preventDefault();
-
+        btnSauvRecette.onclick = function () {
             const nomEl = document.getElementById('recette-nom');
             const nom = nomEl ? nomEl.value.trim() : '';
 
@@ -782,19 +778,17 @@ function configurerEcouteurs() {
             recettes.unshift(nouvelleRecette);
             localStorage.setItem('vt_recettes', JSON.stringify(recettes));
 
-            document.getElementById('form-recette').reset();
+            document.getElementById('recette-nom').value = '';
             document.getElementById('form-recette').classList.add('masque');
             
             mettreAJourTout();
         };
     }
 
-    // SAUVEGARDE FLACON PRÉPARÉ (EN MATURATION)
+    // SAUVEGARDE FLACON PRÉPARÉ
     const btnSauvFlacon = document.getElementById('btn-sauvegarder-flacon');
     if (btnSauvFlacon) {
-        btnSauvFlacon.onclick = function (e) {
-            if (e) e.preventDefault();
-
+        btnSauvFlacon.onclick = function () {
             const nomEl = document.getElementById('nom');
             const nom = nomEl ? nomEl.value.trim() : '';
             if (!nom) {
@@ -837,18 +831,16 @@ function configurerEcouteurs() {
                 programmerNotificationSteep(nouveauFlacon);
             }
 
-            document.getElementById('form-flacon').reset();
+            document.getElementById('nom').value = '';
             mettreAJourTout();
             afficherEcran('ecran-accueil');
         };
     }
 
-    // SAUVEGARDE FLACON PRÊT EN DIRECT
+    // SAUVEGARDE FLACON PRÊT DIRECT
     const btnSauvDirect = document.getElementById('btn-sauvegarder-direct');
     if (btnSauvDirect) {
-        btnSauvDirect.onclick = function (e) {
-            if (e) e.preventDefault();
-
+        btnSauvDirect.onclick = function () {
             const nomEl = document.getElementById('nom-direct');
             const nom = nomEl ? nomEl.value.trim() : '';
             if (!nom) {
@@ -879,42 +871,43 @@ function configurerEcouteurs() {
             flacons.unshift(nouveauFlaconActif);
             localStorage.setItem('vt_flacons', JSON.stringify(flacons));
 
-            document.getElementById('form-utilisation-directe').reset();
+            document.getElementById('nom-direct').value = '';
             mettreAJourTout();
             afficherEcran('ecran-accueil');
         };
     }
 
-    // SAUVEGARDE DÉPENSE VAPE (CORRIGÉ DIRECT)
+    // SAUVEGARDE DÉPENSE VAPE
     const btnSauvDep = document.getElementById('btn-sauvegarder-depense');
     if (btnSauvDep) {
-        btnSauvDep.onclick = function (e) {
-            if (e) e.preventDefault();
+        btnSauvDep.onclick = function () {
             const montant = parseFloat(document.getElementById('dep-montant').value) || 0;
             if (montant <= 0) {
                 alert('Veuillez entrer un montant valide.');
                 return;
             }
+            const nomSaisi = document.getElementById('dep-nom').value.trim();
             const nouvelleDepense = {
                 id: Date.now().toString(),
                 categorie: document.getElementById('dep-cat').value,
-                nom: document.getElementById('dep-nom').value.trim() || document.getElementById('dep-cat').value,
+                nom: nomSaisi || document.getElementById('dep-cat').value,
                 montant: montant,
                 date: new Date().toISOString()
             };
             depenses.unshift(nouvelleDepense);
             localStorage.setItem('vt_depenses', JSON.stringify(depenses));
-            document.getElementById('form-depense').reset();
+            
+            document.getElementById('dep-montant').value = '';
+            document.getElementById('dep-nom').value = '';
             document.getElementById('form-depense').classList.add('masque');
             mettreAJourTout();
         };
     }
 
-    // SAUVEGARDE OBJECTIF (CORRIGÉ DIRECT)
+    // SAUVEGARDE OBJECTIF
     const btnSauvObj = document.getElementById('btn-sauvegarder-objectif');
     if (btnSauvObj) {
-        btnSauvObj.onclick = function (e) {
-            if (e) e.preventDefault();
+        btnSauvObj.onclick = function () {
             const titre = document.getElementById('obj-titre').value.trim();
             const date = document.getElementById('obj-date').value;
             if (!titre || !date) {
@@ -928,7 +921,9 @@ function configurerEcouteurs() {
             };
             objectifs.unshift(nouvelObjectif);
             localStorage.setItem('vt_objectifs', JSON.stringify(objectifs));
-            document.getElementById('form-objectif').reset();
+            
+            document.getElementById('obj-titre').value = '';
+            document.getElementById('obj-date').value = '';
             document.getElementById('form-objectif').classList.add('masque');
             mettreAJourTout();
         };
@@ -940,6 +935,14 @@ function configurerEcouteurs() {
 
     document.getElementById('btn-ouvrir-utilisation-directe').onclick = () => afficherEcran('ecran-utilisation-directe');
     document.getElementById('btn-annuler-direct').onclick = () => afficherEcran('ecran-accueil');
+
+    document.getElementById('btn-annuler-depense').onclick = () => {
+        document.getElementById('form-depense').classList.add('masque');
+    };
+
+    document.getElementById('btn-annuler-objectif').onclick = () => {
+        document.getElementById('form-objectif').classList.add('masque');
+    };
 
     // SELECTEURS DE RECETTES AUTOMATIQUES
     document.getElementById('select-recette').onchange = (e) => {
@@ -994,15 +997,9 @@ function configurerEcouteurs() {
     document.getElementById('btn-ouvrir-depense').onclick = () => {
         document.getElementById('form-depense').classList.remove('masque');
     };
-    document.getElementById('btn-annuler-depense').onclick = () => {
-        document.getElementById('form-depense').classList.add('masque');
-    };
 
     document.getElementById('btn-ouvrir-ajout-objectif').onclick = () => {
         document.getElementById('form-objectif').classList.remove('masque');
-    };
-    document.getElementById('btn-annuler-objectif').onclick = () => {
-        document.getElementById('form-objectif').classList.add('masque');
     };
 
     document.getElementById('btn-notifications').onclick = () => {
