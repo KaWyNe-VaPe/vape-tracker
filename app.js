@@ -322,7 +322,7 @@ function calculerAjustementDIY() {
 }
 
 // =============================================================
-// FONCTIONS DIRECTES DE SAUVEGARDE (INLINE ONCLICK)
+// FONCTIONS DIRECTES DE SAUVEGARDE
 // =============================================================
 function sauvegarderOnboarding() {
     const prenom = document.getElementById('ob-prenom').value.trim();
@@ -831,12 +831,23 @@ function afficherEcran(idEcran) {
 }
 
 function configurerEcouteurs() {
-    document.getElementById('nav-accueil').onclick = () => afficherEcran('ecran-accueil');
-    document.getElementById('nav-recettes').onclick = () => afficherEcran('ecran-recettes');
-    document.getElementById('nav-sante').onclick = () => afficherEcran('ecran-sante');
-    document.getElementById('nav-finances').onclick = () => afficherEcran('ecran-finances');
-    document.getElementById('nav-objectifs').onclick = () => afficherEcran('ecran-objectifs');
+    // SÉCURISATION : Navigation principale avec vérification d'existence
+    const navAccueil = document.getElementById('nav-accueil');
+    if (navAccueil) navAccueil.onclick = () => afficherEcran('ecran-accueil');
 
+    const navRecettes = document.getElementById('nav-recettes');
+    if (navRecettes) navRecettes.onclick = () => afficherEcran('ecran-recettes');
+
+    const navSante = document.getElementById('nav-sante');
+    if (navSante) navSante.onclick = () => afficherEcran('ecran-sante');
+
+    const navFinances = document.getElementById('nav-finances');
+    if (navFinances) navFinances.onclick = () => afficherEcran('ecran-finances');
+
+    const navObjectifs = document.getElementById('nav-objectifs');
+    if (navObjectifs) navObjectifs.onclick = () => afficherEcran('ecran-objectifs');
+
+    // Écouteurs de calcul DIY en direct
     const champsDIY = ['recette-volume', 'recette-nicotine', 'recette-arome', 'recette-taux-booster'];
     champsDIY.forEach(id => {
         const el = document.getElementById(id);
@@ -857,12 +868,13 @@ function configurerEcouteurs() {
         }
     });
 
+    // Basculement onglets DIY
     const tabCreer = document.getElementById('tab-mode-creer');
     const tabAjuster = document.getElementById('tab-mode-ajuster');
     const formRecette = document.getElementById('form-recette');
     const formAjustement = document.getElementById('form-ajustement');
 
-    if (tabCreer && tabAjuster) {
+    if (tabCreer && tabAjuster && formRecette && formAjustement) {
         tabCreer.onclick = () => {
             tabCreer.classList.add('actif');
             tabAjuster.classList.remove('actif');
@@ -880,10 +892,13 @@ function configurerEcouteurs() {
         };
     }
 
-    document.getElementById('btn-fermer-ajustement').onclick = () => {
-        formAjustement.classList.add('masque');
-        tabAjuster.classList.remove('actif');
-    };
+    const btnFermerAjust = document.getElementById('btn-fermer-ajustement');
+    if (btnFermerAjust && formAjustement && tabAjuster) {
+        btnFermerAjust.onclick = () => {
+            formAjustement.classList.add('masque');
+            tabAjuster.classList.remove('actif');
+        };
+    }
 
     const selectObVapote = document.getElementById('ob-vapote');
     const grpObNicotine = document.getElementById('groupe-ob-nicotine');
@@ -903,90 +918,128 @@ function configurerEcouteurs() {
         });
     }
 
-    // BOUTONS NAVIGATION ACCUEIL
-    document.getElementById('btn-ouvrir-ajout').onclick = () => afficherEcran('ecran-ajout');
-    document.getElementById('btn-annuler').onclick = () => afficherEcran('ecran-accueil');
+    // BOUTONS DE NAVIGATION INTERNE (SÉCURISÉS)
+    const btnOuvAjout = document.getElementById('btn-ouvrir-ajout');
+    if (btnOuvAjout) btnOuvAjout.onclick = () => afficherEcran('ecran-ajout');
 
-    document.getElementById('btn-ouvrir-utilisation-directe').onclick = () => afficherEcran('ecran-utilisation-directe');
-    document.getElementById('btn-annuler-direct').onclick = () => afficherEcran('ecran-accueil');
+    const btnAnnulerAjout = document.getElementById('btn-annuler');
+    if (btnAnnulerAjout) btnAnnulerAjout.onclick = () => afficherEcran('ecran-accueil');
 
-    document.getElementById('btn-annuler-depense').onclick = () => {
-        document.getElementById('form-depense').classList.add('masque');
-    };
+    const btnOuvDirect = document.getElementById('btn-ouvrir-utilisation-directe');
+    if (btnOuvDirect) btnOuvDirect.onclick = () => afficherEcran('ecran-utilisation-directe');
 
-    document.getElementById('btn-annuler-objectif').onclick = () => {
-        document.getElementById('form-objectif').classList.add('masque');
-    };
+    const btnAnnulerDirect = document.getElementById('btn-annuler-direct');
+    if (btnAnnulerDirect) btnAnnulerDirect.onclick = () => afficherEcran('ecran-accueil');
 
-    // SELECTEURS AUTOMATIQUES
-    document.getElementById('select-recette').onchange = (e) => {
-        const idRecette = e.target.value;
-        if (idRecette) {
-            const r = recettes.find(item => item.id === idRecette);
-            if (r) {
-                document.getElementById('nom').value = r.nom;
-                document.getElementById('type').value = r.type || 'DIY';
-                document.getElementById('nicotine').value = r.nicotine;
-                document.getElementById('volume').value = r.volumeTotal || 50;
-                document.getElementById('arome').value = r.arome || 0;
-                if (document.getElementById('flacon-steep-days')) {
-                    document.getElementById('flacon-steep-days').value = r.steepDays || 0;
+    const btnAnnulerDep = document.getElementById('btn-annuler-depense');
+    if (btnAnnulerDep) {
+        btnAnnulerDep.onclick = () => {
+            const formDep = document.getElementById('form-depense');
+            if (formDep) formDep.classList.add('masque');
+        };
+    }
+
+    const btnAnnulerObj = document.getElementById('btn-annuler-objectif');
+    if (btnAnnulerObj) {
+        btnAnnulerObj.onclick = () => {
+            const formObj = document.getElementById('form-objectif');
+            if (formObj) formObj.classList.add('masque');
+        };
+    }
+
+    const btnOuvDep = document.getElementById('btn-ouvrir-depense');
+    if (btnOuvDep) {
+        btnOuvDep.onclick = () => {
+            const formDep = document.getElementById('form-depense');
+            if (formDep) formDep.classList.remove('masque');
+        };
+    }
+
+    const btnOuvObj = document.getElementById('btn-ouvrir-ajout-objectif');
+    if (btnOuvObj) {
+        btnOuvObj.onclick = () => {
+            const formObj = document.getElementById('form-objectif');
+            if (formObj) formObj.classList.remove('masque');
+        };
+    }
+
+    const btnOuvRec = document.getElementById('btn-ouvrir-ajout-recette');
+    if (btnOuvRec && tabCreer) {
+        btnOuvRec.onclick = () => {
+            tabCreer.click();
+        };
+    }
+
+    const btnAnnulerRec = document.getElementById('btn-annuler-recette');
+    if (btnAnnulerRec && formRecette) {
+        btnAnnulerRec.onclick = () => {
+            formRecette.classList.add('masque');
+        };
+    }
+
+    // SELECTEURS AUTOMATIQUES DE RECETTES
+    const selRecette = document.getElementById('select-recette');
+    if (selRecette) {
+        selRecette.onchange = (e) => {
+            const idRecette = e.target.value;
+            if (idRecette) {
+                const r = recettes.find(item => item.id === idRecette);
+                if (r) {
+                    if (document.getElementById('nom')) document.getElementById('nom').value = r.nom;
+                    if (document.getElementById('type')) document.getElementById('type').value = r.type || 'DIY';
+                    if (document.getElementById('nicotine')) document.getElementById('nicotine').value = r.nicotine;
+                    if (document.getElementById('volume')) document.getElementById('volume').value = r.volumeTotal || 50;
+                    if (document.getElementById('arome')) document.getElementById('arome').value = r.arome || 0;
+                    if (document.getElementById('flacon-steep-days')) document.getElementById('flacon-steep-days').value = r.steepDays || 0;
                 }
             }
-        }
-    };
+        };
+    }
 
-    document.getElementById('select-recette-directe').onchange = (e) => {
-        const idRecette = e.target.value;
-        if (idRecette) {
-            const r = recettes.find(item => item.id === idRecette);
-            if (r) {
-                document.getElementById('nom-direct').value = r.nom;
-                document.getElementById('type-direct').value = r.type || 'DIY';
-                document.getElementById('nicotine-direct').value = r.nicotine;
-                document.getElementById('volume-direct').value = r.volumeTotal || 50;
-            }
-        }
-    };
-
-    document.getElementById('btn-terminer').onclick = () => {
-        const actif = flacons.find(f => f.actif);
-        if (actif) {
-            actif.actif = false;
-            actif.termine = true;
-            actif.dateFermeture = new Date().toISOString();
-            localStorage.setItem('vt_flacons', JSON.stringify(flacons));
-            mettreAJourTout();
-        }
-    };
-
-    document.getElementById('btn-ouvrir-ajout-recette').onclick = () => {
-        tabCreer.click();
-    };
-    
-    document.getElementById('btn-annuler-recette').onclick = () => {
-        document.getElementById('form-recette').classList.add('masque');
-    };
-
-    document.getElementById('btn-ouvrir-depense').onclick = () => {
-        document.getElementById('form-depense').classList.remove('masque');
-    };
-
-    document.getElementById('btn-ouvrir-ajout-objectif').onclick = () => {
-        document.getElementById('form-objectif').classList.remove('masque');
-    };
-
-    document.getElementById('btn-notifications').onclick = () => {
-        if ('Notification' in window) {
-            Notification.requestPermission().then(permission => {
-                if (permission === 'granted') {
-                    alert('Notifications activées avec succès ! 🌸');
-                    new Notification('Vape Tracker 🌸', {
-                        body: 'Félicitations pour ton engagement ! Tu seras notifié lorsque tes préparations DIY seront prêtes.',
-                        icon: 'icon.png'
-                    });
+    const selRecetteDirecte = document.getElementById('select-recette-directe');
+    if (selRecetteDirecte) {
+        selRecetteDirecte.onchange = (e) => {
+            const idRecette = e.target.value;
+            if (idRecette) {
+                const r = recettes.find(item => item.id === idRecette);
+                if (r) {
+                    if (document.getElementById('nom-direct')) document.getElementById('nom-direct').value = r.nom;
+                    if (document.getElementById('type-direct')) document.getElementById('type-direct').value = r.type || 'DIY';
+                    if (document.getElementById('nicotine-direct')) document.getElementById('nicotine-direct').value = r.nicotine;
+                    if (document.getElementById('volume-direct')) document.getElementById('volume-direct').value = r.volumeTotal || 50;
                 }
-            });
-        }
-    };
+            }
+        };
+    }
+
+    const btnTerminer = document.getElementById('btn-terminer');
+    if (btnTerminer) {
+        btnTerminer.onclick = () => {
+            const actif = flacons.find(f => f.actif);
+            if (actif) {
+                actif.actif = false;
+                actif.termine = true;
+                actif.dateFermeture = new Date().toISOString();
+                localStorage.setItem('vt_flacons', JSON.stringify(flacons));
+                mettreAJourTout();
+            }
+        };
+    }
+
+    const btnNotifs = document.getElementById('btn-notifications');
+    if (btnNotifs) {
+        btnNotifs.onclick = () => {
+            if ('Notification' in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        alert('Notifications activées avec succès ! 🌸');
+                        new Notification('Vape Tracker 🌸', {
+                            body: 'Félicitations pour ton engagement ! Tu seras notifié lorsque tes préparations DIY seront prêtes.',
+                            icon: 'icon.png'
+                        });
+                    }
+                });
+            }
+        };
+    }
 }
