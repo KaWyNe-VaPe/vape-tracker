@@ -1,10 +1,18 @@
-// Service Worker Neutre pour restaurer le chargement direct
-self.addEventListener('install', (e) => {
+// Changement de version pour forcer la mise à jour mobile
+const CACHE_NAME = 'vape-tracker-v99';
+
+self.addEventListener('install', (event) => {
     self.skipWaiting();
 });
 
-self.addEventListener('activate', (e) => {
-    return self.clients.claim();
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cache) => caches.delete(cache))
+            );
+        }).then(() => self.clients.claim())
+    );
 });
 
 self.addEventListener('fetch', (event) => {
