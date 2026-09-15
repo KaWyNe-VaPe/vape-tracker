@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vape-tracker-v101';
+const CACHE_NAME = 'vape-tracker-v102';
 
 self.addEventListener('install', (event) => {
     self.skipWaiting();
