@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
     
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="style.css?v=diy_ajustement">
+    <link rel="stylesheet" href="style.css?v=diy_math_fix">
     <meta name="theme-color" content="#0b0e14">
 </head>
 <body>
@@ -197,7 +197,7 @@
                     <div class="grille-champs-2col">
                         <div class="groupe-champ">
                             <label>Volume actuel (ml)</label>
-                            <input type="number" id="ajust-vol-actuel" placeholder="75" value="75" required>
+                            <input type="number" id="ajust-vol-actuel" placeholder="75" value="75" step="0.1" required>
                         </div>
                         <div class="groupe-champ">
                             <label>Nicotine actuelle (mg/ml)</label>
@@ -207,18 +207,23 @@
 
                     <div class="grille-champs-2col">
                         <div class="groupe-champ">
-                            <label>Nicotine visée (mg/ml)</label>
-                            <input type="number" step="0.5" id="ajust-nico-visee" placeholder="10" value="10" required>
+                            <label>Arôme actuel (%)</label>
+                            <input type="number" step="0.1" id="ajust-arome-actuel" placeholder="9" value="9" required>
                         </div>
                         <div class="groupe-champ">
-                            <label>Arôme à conserver (%)</label>
-                            <input type="number" step="0.5" id="ajust-arome-pct" placeholder="9" value="9" required>
+                            <label>Nicotine cible (mg/ml)</label>
+                            <input type="number" step="0.1" id="ajust-nico-visee" placeholder="10" value="10" required>
                         </div>
+                    </div>
+
+                    <div class="groupe-champ">
+                        <label>Arôme cible (%)</label>
+                        <input type="number" step="0.1" id="ajust-arome-pct" placeholder="9" value="9" required>
                     </div>
 
                     <div class="box-calcul-live" style="background: rgba(56, 189, 248, 0.08); border-color: rgba(56, 189, 248, 0.3);">
                         <div class="titre-calcul-live" style="color:#38bdf8;">⚖️ Ce qu'il faut AJOUTER au flacon :</div>
-                        <div class="ligne-calcul"><span>Base neutre à verser :</span> <strong id="ajust-calc-base" style="color:#38bdf8;">25.0 ml</strong></div>
+                        <div class="ligne-calcul"><span>Base neutre à verser :</span> <strong id="ajust-calc-base" style="color:#38bdf8;">22.7 ml</strong></div>
                         <div class="ligne-calcul"><span>Arôme concentré à rajouter :</span> <strong id="ajust-calc-arome" style="color:#ffb7c5;">2.25 ml</strong></div>
                         <hr style="border-color: rgba(255,255,255,0.1); margin: 6px 0;">
                         <div class="ligne-calcul"><span>Volume final obtenu :</span> <strong id="ajust-calc-vol-final">100.0 ml</strong></div>
