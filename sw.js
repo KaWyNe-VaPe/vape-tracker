@@ -1,4 +1,7 @@
-const CACHE_NAME = 'vape-tracker-v102';
+const CACHE_NAME = 'vape-tracker-v104';
+
+// Stockage temporaire des minuteurs de maturation
+const minuteriesSteep = {};
 
 self.addEventListener('install', (event) => {
     self.skipWaiting();
@@ -16,4 +19,57 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
     event.respondWith(fetch(event.request));
+});
+
+// ÉCOUTE DES MESSAGES DE PROGRAMMATION DE NOTIFICATION
+self.addEventListener('message', (event) => {
+    const data = event.data;
+    if (!data) return;
+
+    if (data.action === 'PROGRAMMER_STEEP_NOTIF') {
+        const { flaconId, nom, steepDays, delaiMs } = data;
+
+        // Annule un éventuel rappel existant pour ce flacon
+        if (minuteriesSteep[flaconId]) {
+            clearTimeout(minuteriesSteep[flaconId]);
+        }
+
+        // Déclenchement de la notification native
+        minuteriesSteep[flaconId] = setTimeout(() => {
+            self.registration.showNotification('Votre DIY est prêt ! 🌸', {
+                body: `${nom} a terminé ses ${steepDays} jours de maturation. Il est temps de le découvrir !`,
+                icon: 'icon.png',
+                badge: 'icon.png',
+                tag: `steep-${flaconId}`,
+                data: { url: './', flaconId: flaconId }
+            });
+            delete minuteriesSteep[flaconId];
+        }, delaiMs);
+    }
+
+    if (data.action === 'ANNULER_STEEP_NOTIF') {
+        const { flaconId } = data;
+        if (minuteriesSteep[flaconId]) {
+            clearTimeout(minuteriesSteep[flaconId]);
+            delete minuteriesSteep[flaconId];
+        }
+    }
+});
+
+// GESTION DU CLIC SUR LA NOTIFICATION
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+            for (const client of clientList) {
+                if (client.url.includes('./') && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            if (clients.openWindow) {
+                return clients.openWindow('./');
+            }
+        })
+    );
 });
