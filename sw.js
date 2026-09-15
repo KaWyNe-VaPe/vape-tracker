@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vape-tracker-v104';
+const CACHE_NAME = 'vape-tracker-v105';
 
 // Stockage temporaire des minuteurs de maturation
 const minuteriesSteep = {};
