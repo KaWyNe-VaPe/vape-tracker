@@ -391,7 +391,6 @@ function afficherReserveEtMaturation() {
     const conteneur = document.getElementById('liste-flacons-reserve');
     if (!conteneur) return;
 
-    // Tous les flacons non archivés/terminés et qui ne sont pas le flacon actif principal
     const reserve = flacons.filter(f => !f.termine && !f.actif);
 
     if (reserve.length === 0) {
@@ -457,7 +456,6 @@ function afficherReserveEtMaturation() {
     }).join('');
 }
 
-// ACTION DIRECTE : PASSER UN FLACON DE LA RÉSERVE VERS "EN COURS"
 function utiliserCeFlacon(id) {
     flacons.forEach(f => f.actif = false);
     const f = flacons.find(item => item.id === id);
@@ -759,12 +757,19 @@ function configurerEcouteurs() {
         }
     };
 
+    // FORMULAIRE SÉCURISÉ PRÉPARATION FLACON
     document.getElementById('form-flacon').onsubmit = (e) => {
         e.preventDefault();
 
+        const nom = document.getElementById('nom').value.trim();
+        if (!nom) {
+            alert('Veuillez renseigner le nom du liquide.');
+            return;
+        }
+
         const dateFabriqueStr = document.getElementById('date-ouverture').value;
         const dateFabrique = dateFabriqueStr ? new Date(dateFabriqueStr) : new Date();
-        const steepDays = Math.max(0, parseInt(document.getElementById('flacon-steep-days').value || 0));
+        const steepDays = Math.max(0, parseInt(document.getElementById('flacon-steep-days').value || 0, 10));
         let dateFinSteep = null;
 
         if (steepDays > 0) {
@@ -773,10 +778,10 @@ function configurerEcouteurs() {
 
         const nouveauFlacon = {
             id: Date.now().toString(),
-            nom: document.getElementById('nom').value,
+            nom: nom,
             type: document.getElementById('type').value,
-            volume: parseFloat(document.getElementById('volume').value),
-            nicotine: parseFloat(document.getElementById('nicotine').value),
+            volume: parseFloat(document.getElementById('volume').value) || 0,
+            nicotine: parseFloat(document.getElementById('nicotine').value) || 0,
             arome: parseFloat(document.getElementById('arome').value) || 0,
             preparedAt: dateFabrique.toISOString(),
             dateOuverture: dateFabrique.toISOString(),
@@ -786,7 +791,6 @@ function configurerEcouteurs() {
             termine: false
         };
 
-        // Si c'est le tout premier flacon sans autre en cours, on l'active par défaut s'il n'a pas de steep
         if (steepDays === 0 && !flacons.some(f => f.actif)) {
             nouveauFlacon.actif = true;
         }
@@ -798,6 +802,7 @@ function configurerEcouteurs() {
             programmerNotificationSteep(nouveauFlacon);
         }
 
+        document.getElementById('form-flacon').reset();
         mettreAJourTout();
         afficherEcran('ecran-accueil');
     };
@@ -821,20 +826,31 @@ function configurerEcouteurs() {
         document.getElementById('form-recette').classList.add('masque');
     };
 
+    // FORMULAIRE SÉCURISÉ DE CRÉATION DE RECETTE
     document.getElementById('form-recette').onsubmit = (e) => {
         e.preventDefault();
-        const calcs = calculerDosagesDIY();
-        if (!calcs) return;
 
-        const steepDaysInput = parseInt(document.getElementById('recette-steep-days').value || 0);
+        const nom = document.getElementById('recette-nom').value.trim();
+        if (!nom) {
+            alert('Veuillez renseigner un nom pour la recette.');
+            return;
+        }
+
+        const calcs = calculerDosagesDIY();
+        if (!calcs) {
+            alert('Veuillez vérifier les dosages de la recette.');
+            return;
+        }
+
+        const steepDaysInput = parseInt(document.getElementById('recette-steep-days').value || 0, 10);
 
         const nouvelleRecette = {
             id: Date.now().toString(),
-            nom: document.getElementById('recette-nom').value,
+            nom: nom,
             type: document.getElementById('recette-type').value,
-            nicotine: parseFloat(document.getElementById('recette-nicotine').value),
+            nicotine: parseFloat(document.getElementById('recette-nicotine').value) || 0,
             arome: parseFloat(document.getElementById('recette-arome').value) || 0,
-            steepDays: Math.max(0, steepDaysInput),
+            steepDays: Math.max(0, isNaN(steepDaysInput) ? 0 : steepDaysInput),
             volumeTotal: calcs.volTotal,
             volArome: calcs.volArome,
             volBooster: calcs.volBooster,
@@ -844,8 +860,10 @@ function configurerEcouteurs() {
 
         recettes.unshift(nouvelleRecette);
         localStorage.setItem('vt_recettes', JSON.stringify(recettes));
+
         document.getElementById('form-recette').reset();
         document.getElementById('form-recette').classList.add('masque');
+        
         mettreAJourTout();
     };
 
