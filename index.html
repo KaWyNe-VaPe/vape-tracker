@@ -5,17 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vape Tracker 🌸</title>
     
+    <!-- Typographie d'inspiration asiatique / calligraphique -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
     
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="style.css?v=v109">
+    <link rel="stylesheet" href="style.css?v=v110">
     <meta name="theme-color" content="#0b0e14">
 </head>
 <body>
 
-    <!-- ÉCRAN DE LANCEMENT AUTO-EFFAÇANT -->
+    <!-- ÉCRAN DE LANCEMENT AUTO-EFFAÇANT (SPLASH SCREEN) -->
     <div id="splash-screen">
         <img src="icon.png" alt="Vape Tracker" class="splash-logo" onerror="this.style.display='none'">
         <h1 class="splash-titre">Vape Tracker</h1>
@@ -24,11 +25,11 @@
 
     <div id="app-container">
         
-        <!-- ÉCRAN DE BIENVENUE -->
+        <!-- ÉCRAN DE BIENVENUE (ONBOARDING) -->
         <div id="ecran-onboarding" class="ecran masque">
             <h2>Bienvenue sur Vape Tracker 🌸</h2>
             <p class="texte-secondaire" style="margin-bottom: 20px;">Configure tes informations pour commencer le suivi de ton sevrage et faire grandir ton cerisier.</p>
-            <form id="form-onboarding" class="form-card">
+            <form id="form-onboarding" class="form-card" onsubmit="return false;">
                 <div class="groupe-champ">
                     <label>Ton prénom</label>
                     <input type="text" id="ob-prenom" placeholder="Ex: Alex" required>
@@ -58,7 +59,7 @@
                     <input type="number" step="0.5" id="ob-nicotine-actuelle" placeholder="Ex: 12" value="12">
                 </div>
 
-                <button type="submit" class="btn-primaire">Commencer l'aventure ⛩️</button>
+                <button type="button" id="btn-valider-onboarding" class="btn-primaire">Commencer l'aventure ⛩️</button>
             </form>
         </div>
 
@@ -79,6 +80,7 @@
                     <div id="nom-stade-arbre" class="badge-stade">Stade 1 : Jeune pousse (0 à 1 mois) 🌿</div>
                 </div>
 
+                <!-- GRILLE DES 4 CARTES DASHBOARD -->
                 <div class="grille-dashboards">
                     <div class="carte-stat stat-verte">
                         <div class="stat-icone">🌿</div>
@@ -279,7 +281,7 @@
                         <label>Montant (€)</label>
                         <input type="number" step="0.01" id="dep-montant" placeholder="15.90" required>
                     </div>
-                    <button type="submit" class="btn-primaire">Enregistrer la dépense</button>
+                    <button type="button" id="btn-sauvegarder-depense" class="btn-primaire">Enregistrer la dépense</button>
                     <button type="button" id="btn-annuler-depense" class="btn-secondaire">Annuler</button>
                 </form>
 
@@ -311,7 +313,7 @@
                         <label>Dosage actuel en nicotine (mg/ml)</label>
                         <input type="number" step="0.5" id="config-nicotine">
                     </div>
-                    <button type="submit" class="btn-secondaire">Mettre à jour les paramètres</button>
+                    <button type="button" id="btn-sauvegarder-config" class="btn-secondaire">Mettre à jour les paramètres</button>
                 </form>
             </section>
 
@@ -329,7 +331,7 @@
                         <label>Date cible</label>
                         <input type="date" id="obj-date" required>
                     </div>
-                    <button type="submit" class="btn-primaire">Ajouter</button>
+                    <button type="button" id="btn-sauvegarder-objectif" class="btn-primaire">Ajouter</button>
                     <button type="button" id="btn-annuler-objectif" class="btn-secondaire">Annuler</button>
                 </form>
 
@@ -411,6 +413,6 @@
         </nav>
 
     </div>
-    <script src="app.js?v=v109"></script>
+    <script src="app.js?v=v110"></script>
 </body>
 </html>
