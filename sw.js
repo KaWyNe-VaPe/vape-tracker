@@ -1,5 +1,4 @@
-// Changement de version pour forcer la mise à jour mobile
-const CACHE_NAME = 'vape-tracker-v99';
+const CACHE_NAME = 'vape-tracker-v100';
 
 self.addEventListener('install', (event) => {
     self.skipWaiting();
