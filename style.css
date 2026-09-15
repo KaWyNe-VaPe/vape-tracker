@@ -92,6 +92,10 @@ main {
     display: none !important;
 }
 
+.masque-champ {
+    display: none !important;
+}
+
 @keyframes apparition {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
@@ -265,6 +269,9 @@ h2 {
     font-weight: 600;
     position: relative;
     z-index: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .stat-verte { border-color: rgba(63, 185, 80, 0.3); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(63, 185, 80, 0.05); }
@@ -408,10 +415,7 @@ nav {
 .texte-vide { font-size: 0.85rem; color: #6e7681; text-align: center; padding: 12px; }
 
 /* =============================================================
-   ÉCRAN DE LANCEMENT (SPLASH SCREEN STYLISÉ JAPONAIS)
-   ============================================================= */
-/* =============================================================
-   ÉCRAN DE LANCEMENT AUTO-EFFACANT (CSS PUR)
+   ÉCRAN DE LANCEMENT AUTO-EFFAÇANT (CSS PUR)
    ============================================================= */
 #splash-screen {
     position: fixed;
@@ -425,25 +429,13 @@ nav {
     justify-content: center;
     align-items: center;
     z-index: 999999;
-    
-    /* Animation automatique : reste 2s puis disparaît en 0.5s */
     animation: masqueAutoSplash 0.5s ease-out 2.5s forwards;
 }
 
 @keyframes masqueAutoSplash {
-    0% {
-        opacity: 1;
-        visibility: visible;
-    }
-    99% {
-        opacity: 0;
-        visibility: visible;
-    }
-    100% {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-    }
+    0% { opacity: 1; visibility: visible; }
+    99% { opacity: 0; visibility: visible; }
+    100% { opacity: 0; visibility: hidden; pointer-events: none; }
 }
 
 .splash-logo {
