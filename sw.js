@@ -1,6 +1,5 @@
-const CACHE_NAME = 'vape-tracker-v106';
+const CACHE_NAME = 'vape-tracker-v107';
 
-// Stockage temporaire des minuteurs de maturation
 const minuteriesSteep = {};
 
 self.addEventListener('install', (event) => {
@@ -21,7 +20,6 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(fetch(event.request));
 });
 
-// ÉCOUTE DES MESSAGES DE PROGRAMMATION DE NOTIFICATION
 self.addEventListener('message', (event) => {
     const data = event.data;
     if (!data) return;
@@ -29,12 +27,10 @@ self.addEventListener('message', (event) => {
     if (data.action === 'PROGRAMMER_STEEP_NOTIF') {
         const { flaconId, nom, steepDays, delaiMs } = data;
 
-        // Annule un éventuel rappel existant pour ce flacon
         if (minuteriesSteep[flaconId]) {
             clearTimeout(minuteriesSteep[flaconId]);
         }
 
-        // Déclenchement de la notification native
         minuteriesSteep[flaconId] = setTimeout(() => {
             self.registration.showNotification('Votre DIY est prêt ! 🌸', {
                 body: `${nom} a terminé ses ${steepDays} jours de maturation. Il est temps de le découvrir !`,
@@ -56,7 +52,6 @@ self.addEventListener('message', (event) => {
     }
 });
 
-// GESTION DU CLIC SUR LA NOTIFICATION
 self.addEventListener('notificationclick', (event) => {
     event.notification.close();
 
