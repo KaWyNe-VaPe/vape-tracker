@@ -86,6 +86,7 @@ function mettreAJourTout() {
     mettreAJourDashboard();
     mettreAJourCerisierHD();
     afficherFlaconActif();
+    afficherReserveEtMaturation();
     afficherHistoriqueFlacons();
     afficherRecettes();
     afficherTimelineSante();
@@ -155,9 +156,6 @@ function mettreAJourDashboard() {
     }
 }
 
-// =============================================================
-// GESTION DE L'ARBRE (RETOUR À L'IMAGE PNG D'ORIGINE)
-// =============================================================
 function mettreAJourCerisierHD() {
     const jours = getJoursEcoules();
     const badge = document.getElementById('nom-stade-arbre');
@@ -218,7 +216,7 @@ function genererParticules() {
 }
 
 // =============================================================
-// MODE 1 : CALCULATEUR DIY CRÉATION (SÉCURISÉ & RIGOUREUX)
+// MODE 1 : CALCULATEUR DIY CRÉATION
 // =============================================================
 function calculerDosagesDIY() {
     const volTotal = parseFloat(document.getElementById('recette-volume').value);
@@ -270,7 +268,7 @@ function calculerDosagesDIY() {
 }
 
 // =============================================================
-// MODE 2 : CALCULATEUR D'AJUSTEMENT / DILUTION (CORRIGÉ STRICT)
+// MODE 2 : CALCULATEUR D'AJUSTEMENT / DILUTION
 // =============================================================
 function calculerAjustementDIY() {
     const V0 = parseFloat(document.getElementById('ajust-vol-actuel').value);
@@ -283,7 +281,6 @@ function calculerAjustementDIY() {
     const elArome = document.getElementById('ajust-calc-arome');
     const elVolFinal = document.getElementById('ajust-calc-vol-final');
 
-    // Validation des entrées numériques
     if (isNaN(V0) || V0 <= 0 ||
         isNaN(N0) || N0 <= 0 ||
         isNaN(N1) || N1 <= 0 ||
@@ -295,7 +292,6 @@ function calculerAjustementDIY() {
         return;
     }
 
-    // Validation logique de dilution
     if (N1 >= N0) {
         if (elBase) elBase.textContent = "Nico cible doit être < actuelle";
         if (elArome) elArome.textContent = "---";
@@ -303,13 +299,8 @@ function calculerAjustementDIY() {
         return;
     }
 
-    // ÉTAPE 1 : Volume final imposé par la nicotine
     const Vf = (V0 * N0) / N1;
-
-    // ÉTAPE 2 : Volume total à ajouter
     const ajoutTotal = Vf - V0;
-
-    // ÉTAPE 3 : Arôme déjà présent et arôme final souhaité
     const F0 = (V0 * A0) / 100;
     const F1 = (Vf * A1) / 100;
     const aromeAAjouter = F1 - F0;
@@ -321,7 +312,6 @@ function calculerAjustementDIY() {
         return;
     }
 
-    // ÉTAPE 4 : Base neutre à ajouter (Ajout total - Arôme à ajouter)
     const baseAAjouter = ajoutTotal - aromeAAjouter;
 
     if (baseAAjouter < 0) {
@@ -331,10 +321,152 @@ function calculerAjustementDIY() {
         return;
     }
 
-    // Affichage exact avec arrondis d'affichage uniquement (1 ou 2 décimales)
     if (elBase) elBase.textContent = `${baseAAjouter.toFixed(1)} ml`;
     if (elArome) elArome.textContent = `${aromeAAjouter.toFixed(2)} ml`;
     if (elVolFinal) elVolFinal.textContent = `${Vf.toFixed(1)} ml`;
+}
+
+// =============================================================
+// GESTION ET PROGRAMMATION DES NOTIFICATIONS PWA HORS-LIGNE
+// =============================================================
+function programmerNotificationSteep(flacon) {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    if (!flacon.steepReadyAt) return;
+
+    const dateFin = new Date(flacon.steepReadyAt).getTime();
+    const maintenant = new Date().getTime();
+    const delaiMs = dateFin - maintenant;
+
+    if (delaiMs <= 0) return;
+
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+            action: 'PROGRAMMER_STEEP_NOTIF',
+            flaconId: flacon.id,
+            nom: flacon.nom,
+            steepDays: flacon.steepDays,
+            steepReadyAt: flacon.steepReadyAt,
+            delaiMs: delaiMs
+        });
+    }
+}
+
+function annulerNotificationSteep(flaconId) {
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+            action: 'ANNULER_STEEP_NOTIF',
+            flaconId: flaconId
+        });
+    }
+}
+
+// =============================================================
+// AFFICHAGE DU FLACON ACTIF "EN COURS" SUR L'ACCUEIL
+// =============================================================
+function afficherFlaconActif() {
+    const actif = flacons.find(f => f.actif);
+    const btnTerminer = document.getElementById('btn-terminer');
+
+    if (actif) {
+        if (document.getElementById('nom-liquide')) document.getElementById('nom-liquide').textContent = `💨 ${actif.nom}`;
+        if (document.getElementById('details-nicotine')) document.getElementById('details-nicotine').textContent = `Nicotine : ${actif.nicotine} mg/ml | Type : ${actif.type}`;
+        
+        const dateOuv = new Date(actif.dateOuverture || actif.preparedAt);
+        if (document.getElementById('details-flacon')) {
+            document.getElementById('details-flacon').textContent = `En cours d'utilisation (${actif.volume} ml)`;
+        }
+        if (btnTerminer) btnTerminer.style.display = 'block';
+    } else {
+        if (document.getElementById('nom-liquide')) document.getElementById('nom-liquide').textContent = 'Aucun flacon en cours';
+        if (document.getElementById('details-nicotine')) document.getElementById('details-nicotine').textContent = 'Sélectionne un flacon prêt dans ta réserve ci-dessous.';
+        if (document.getElementById('details-flacon')) document.getElementById('details-flacon').textContent = '';
+        if (btnTerminer) btnTerminer.style.display = 'none';
+    }
+}
+
+// =============================================================
+// AFFICHAGE DE LA RÉSERVE ET MATURATION (FLACONS NON-ACTIFS)
+// =============================================================
+function afficherReserveEtMaturation() {
+    const conteneur = document.getElementById('liste-flacons-reserve');
+    if (!conteneur) return;
+
+    // Tous les flacons non archivés/terminés et qui ne sont pas le flacon actif principal
+    const reserve = flacons.filter(f => !f.termine && !f.actif);
+
+    if (reserve.length === 0) {
+        conteneur.innerHTML = '<p class="texte-vide">Aucun flacon en réserve ou en maturation.</p>';
+        return;
+    }
+
+    const maintenant = new Date().getTime();
+
+    conteneur.innerHTML = reserve.map(f => {
+        const steepDays = parseFloat(f.steepDays) || 0;
+        const dateFinSteep = f.steepReadyAt ? new Date(f.steepReadyAt).getTime() : 0;
+        const estEnMaturation = steepDays > 0 && dateFinSteep > 0 && maintenant < dateFinSteep;
+
+        let moduleVisuel = '';
+
+        if (estEnMaturation) {
+            const tempsEcouleMs = maintenant - new Date(f.preparedAt).getTime();
+            const tempsTotalMs = dateFinSteep - new Date(f.preparedAt).getTime();
+            const pct = Math.min(100, Math.max(0, (tempsEcouleMs / tempsTotalMs) * 100));
+
+            const resteMs = dateFinSteep - maintenant;
+            const resteJours = Math.floor(resteMs / (1000 * 60 * 60 * 24));
+            const resteHeures = Math.floor((resteMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const joursEcoules = Math.floor(tempsEcouleMs / (1000 * 60 * 60 * 24));
+
+            let texteReste = `Encore ${resteJours}j ${resteHeures}h`;
+            if (resteJours === 0 && resteHeures === 0) texteReste = "Prêt dans quelques minutes !";
+
+            moduleVisuel = `
+                <div class="box-steep-live">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                        <span class="badge-steep">🧪 En maturation</span>
+                        <span class="texte-steep-compteur">${joursEcoules} / ${steepDays} jours</span>
+                    </div>
+                    <div class="barre-steep-fond">
+                        <div class="barre-steep-progression" style="width: ${pct}%;"></div>
+                    </div>
+                    <p class="texte-secondaire" style="margin-top:6px; font-weight:600; color:#ffb7c5;">${texteReste}</p>
+                </div>
+            `;
+        } else {
+            moduleVisuel = `
+                <div style="margin-top:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <span class="badge-steep pret">🌸 Prêt ! Maturation terminée</span>
+                    <button class="btn-primaire" style="width:auto; padding:6px 14px; font-size:0.8rem;" onclick="utiliserCeFlacon('${f.id}')">
+                        Utiliser ce flacon 💨
+                    </button>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="carte">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <strong>${f.nom} (${f.nicotine} mg)</strong>
+                    <button class="btn-suppr" onclick="supprimerFlacon('${f.id}')">🗑️</button>
+                </div>
+                <p class="texte-secondaire">Préparé le ${new Date(f.preparedAt || f.dateOuverture).toLocaleDateString()} (${f.volume} ml)</p>
+                ${moduleVisuel}
+            </div>
+        `;
+    }).join('');
+}
+
+// ACTION DIRECTE : PASSER UN FLACON DE LA RÉSERVE VERS "EN COURS"
+function utiliserCeFlacon(id) {
+    flacons.forEach(f => f.actif = false);
+    const f = flacons.find(item => item.id === id);
+    if (f) {
+        f.actif = true;
+        f.dateOuverture = new Date().toISOString();
+        localStorage.setItem('vt_flacons', JSON.stringify(flacons));
+        mettreAJourTout();
+    }
 }
 
 function afficherRecettes() {
@@ -353,6 +485,7 @@ function afficherRecettes() {
             </div>
             <p class="texte-secondaire" style="margin-top:4px;">
                 <strong>Volume Total : ${r.volumeTotal || 50} ml</strong> | Nicotine : ${r.nicotine} mg/ml
+                ${r.steepDays ? ' | Steep : ' + r.steepDays + 'j' : ''}
             </p>
             <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 8px; margin-top: 8px; font-size: 0.8rem;">
                 <div style="display:flex; justify-content:space-between;"><span>🧪 Concentré (${r.arome}%) :</span> <strong>${(r.volArome || 0).toFixed(1)} ml</strong></div>
@@ -368,7 +501,7 @@ function remplirSelectRecettes() {
     if (!select) return;
     select.innerHTML = '<option value="">-- Saisie libre --</option>';
     recettes.forEach(r => {
-        select.innerHTML += `<option value="${r.id}">${r.nom} (${r.volumeTotal}ml - ${r.nicotine}mg)</option>`;
+        select.innerHTML += `<option value="${r.id}">${r.nom} (${r.volumeTotal}ml - ${r.nicotine}mg${r.steepDays ? ' - ' + r.steepDays + 'j steep' : ''})</option>`;
     });
 }
 
@@ -378,32 +511,10 @@ function supprimerRecette(id) {
     mettreAJourTout();
 }
 
-function afficherFlaconActif() {
-    const actif = flacons.find(f => f.actif);
-    const btnTerminer = document.getElementById('btn-terminer');
-
-    if (actif) {
-        if (document.getElementById('nom-liquide')) document.getElementById('nom-liquide').textContent = actif.nom;
-        if (document.getElementById('details-nicotine')) document.getElementById('details-nicotine').textContent = `Nicotine : ${actif.nicotine} mg/ml | Type : ${actif.type}`;
-        
-        const dateOuv = new Date(actif.dateOuverture);
-        const heuresUtilisation = Math.floor((new Date() - dateOuv) / (1000 * 60 * 60));
-        if (document.getElementById('details-flacon')) {
-            document.getElementById('details-flacon').textContent = `Ouvert le ${dateOuv.toLocaleDateString()} (${heuresUtilisation}h d'utilisation)`;
-        }
-        if (btnTerminer) btnTerminer.style.display = 'block';
-    } else {
-        if (document.getElementById('nom-liquide')) document.getElementById('nom-liquide').textContent = 'Aucun flacon en cours';
-        if (document.getElementById('details-nicotine')) document.getElementById('details-nicotine').textContent = 'Enregistre un flacon pour suivre ta consommation.';
-        if (document.getElementById('details-flacon')) document.getElementById('details-flacon').textContent = '';
-        if (btnTerminer) btnTerminer.style.display = 'none';
-    }
-}
-
 function afficherHistoriqueFlacons() {
     const conteneur = document.getElementById('liste-historique');
     if (!conteneur) return;
-    const termines = flacons.filter(f => !f.actif);
+    const termines = flacons.filter(f => f.termine);
 
     if (termines.length === 0) {
         conteneur.innerHTML = '<p class="texte-vide">Aucun flacon terminé pour le moment.</p>';
@@ -413,15 +524,16 @@ function afficherHistoriqueFlacons() {
     conteneur.innerHTML = termines.map(f => `
         <div class="carte">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <strong>${f.nom} (${f.nicotine} mg)</strong>
+                <strong>🏁 ${f.nom} (${f.nicotine} mg)</strong>
                 <button class="btn-suppr" onclick="supprimerFlacon('${f.id}')">🗑️</button>
             </div>
-            <p class="texte-secondaire">Ouvert le ${new Date(f.dateOuverture).toLocaleDateString()} (${f.volume} ml)</p>
+            <p class="texte-secondaire">Préparé le ${new Date(f.preparedAt || f.dateOuverture).toLocaleDateString()} (${f.volume} ml)</p>
         </div>
     `).join('');
 }
 
 function supprimerFlacon(id) {
+    annulerNotificationSteep(id);
     flacons = flacons.filter(f => f.id !== id);
     localStorage.setItem('vt_flacons', JSON.stringify(flacons));
     mettreAJourTout();
@@ -529,7 +641,6 @@ function configurerEcouteurs() {
     document.getElementById('nav-finances').onclick = () => afficherEcran('ecran-finances');
     document.getElementById('nav-objectifs').onclick = () => afficherEcran('ecran-objectifs');
 
-    // ÉCOUTEURS DES DEUX CALCULATEURS DIY EN DIRECT
     const champsDIY = ['recette-volume', 'recette-nicotine', 'recette-arome', 'recette-taux-booster'];
     champsDIY.forEach(id => {
         const el = document.getElementById(id);
@@ -550,7 +661,6 @@ function configurerEcouteurs() {
         }
     });
 
-    // BASCULEMENT DES ONGLETS DIY
     const tabCreer = document.getElementById('tab-mode-creer');
     const tabAjuster = document.getElementById('tab-mode-ajuster');
     const formRecette = document.getElementById('form-recette');
@@ -638,17 +748,28 @@ function configurerEcouteurs() {
             const r = recettes.find(item => item.id === idRecette);
             if (r) {
                 document.getElementById('nom').value = r.nom;
-                document.getElementById('type').value = r.type;
+                document.getElementById('type').value = r.type || 'DIY';
                 document.getElementById('nicotine').value = r.nicotine;
                 document.getElementById('volume').value = r.volumeTotal || 50;
                 document.getElementById('arome').value = r.arome || 0;
+                if (document.getElementById('flacon-steep-days')) {
+                    document.getElementById('flacon-steep-days').value = r.steepDays || 0;
+                }
             }
         }
     };
 
     document.getElementById('form-flacon').onsubmit = (e) => {
         e.preventDefault();
-        flacons.forEach(f => f.actif = false);
+
+        const dateFabriqueStr = document.getElementById('date-ouverture').value;
+        const dateFabrique = dateFabriqueStr ? new Date(dateFabriqueStr) : new Date();
+        const steepDays = Math.max(0, parseInt(document.getElementById('flacon-steep-days').value || 0));
+        let dateFinSteep = null;
+
+        if (steepDays > 0) {
+            dateFinSteep = new Date(dateFabrique.getTime() + (steepDays * 24 * 60 * 60 * 1000)).toISOString();
+        }
 
         const nouveauFlacon = {
             id: Date.now().toString(),
@@ -657,12 +778,26 @@ function configurerEcouteurs() {
             volume: parseFloat(document.getElementById('volume').value),
             nicotine: parseFloat(document.getElementById('nicotine').value),
             arome: parseFloat(document.getElementById('arome').value) || 0,
-            dateOuverture: document.getElementById('date-ouverture').value || new Date().toISOString(),
-            actif: true
+            preparedAt: dateFabrique.toISOString(),
+            dateOuverture: dateFabrique.toISOString(),
+            steepDays: steepDays,
+            steepReadyAt: dateFinSteep,
+            actif: false,
+            termine: false
         };
+
+        // Si c'est le tout premier flacon sans autre en cours, on l'active par défaut s'il n'a pas de steep
+        if (steepDays === 0 && !flacons.some(f => f.actif)) {
+            nouveauFlacon.actif = true;
+        }
 
         flacons.unshift(nouveauFlacon);
         localStorage.setItem('vt_flacons', JSON.stringify(flacons));
+
+        if (steepDays > 0) {
+            programmerNotificationSteep(nouveauFlacon);
+        }
+
         mettreAJourTout();
         afficherEcran('ecran-accueil');
     };
@@ -671,6 +806,7 @@ function configurerEcouteurs() {
         const actif = flacons.find(f => f.actif);
         if (actif) {
             actif.actif = false;
+            actif.termine = true;
             actif.dateFermeture = new Date().toISOString();
             localStorage.setItem('vt_flacons', JSON.stringify(flacons));
             mettreAJourTout();
@@ -690,12 +826,15 @@ function configurerEcouteurs() {
         const calcs = calculerDosagesDIY();
         if (!calcs) return;
 
+        const steepDaysInput = parseInt(document.getElementById('recette-steep-days').value || 0);
+
         const nouvelleRecette = {
             id: Date.now().toString(),
             nom: document.getElementById('recette-nom').value,
             type: document.getElementById('recette-type').value,
             nicotine: parseFloat(document.getElementById('recette-nicotine').value),
             arome: parseFloat(document.getElementById('recette-arome').value) || 0,
+            steepDays: Math.max(0, steepDaysInput),
             volumeTotal: calcs.volTotal,
             volArome: calcs.volArome,
             volBooster: calcs.volBooster,
@@ -759,8 +898,8 @@ function configurerEcouteurs() {
             Notification.requestPermission().then(permission => {
                 if (permission === 'granted') {
                     alert('Notifications activées avec succès ! 🌸');
-                    new Notification('Vape Tracker', {
-                        body: 'Félicitations pour ton engagement ! Ton cerisier te remercie 🌸',
+                    new Notification('Vape Tracker 🌸', {
+                        body: 'Félicitations pour ton engagement ! Tu seras notifié lorsque tes préparations DIY seront prêtes.',
                         icon: 'icon.png'
                     });
                 }
