@@ -697,26 +697,75 @@ function configurerEcouteurs() {
         });
     }
 
-    // BOUTON SAUVEGARDER RECETTE DIRECT
+    // SAUVEGARDE ONBOARDING
+    const btnValiderOb = document.getElementById('btn-valider-onboarding');
+    if (btnValiderOb) {
+        btnValiderOb.onclick = function (e) {
+            if (e) e.preventDefault();
+            const prenom = document.getElementById('ob-prenom').value.trim();
+            const dateArret = document.getElementById('ob-date-arret').value;
+            if (!prenom || !dateArret) {
+                alert('Veuillez remplir votre prénom et votre date d\'arrêt.');
+                return;
+            }
+            const estVapoteur = document.getElementById('ob-vapote').value === 'oui';
+            configUser = {
+                prenom: prenom,
+                dateArret: dateArret,
+                cigsJour: parseFloat(document.getElementById('ob-cigs-jour').value) || 15,
+                prixPaquet: parseFloat(document.getElementById('ob-prix-paquet').value) || 12.5,
+                cigsPaquet: 20,
+                vapote: estVapoteur,
+                nicotineActuelle: estVapoteur ? parseFloat(document.getElementById('ob-nicotine-actuelle').value || 0) : 0
+            };
+            localStorage.setItem('vt_config', JSON.stringify(configUser));
+            initialiserInterface();
+        };
+    }
+
+    // SAUVEGARDE CONFIG TABAC
+    const btnSauvCfg = document.getElementById('btn-sauvegarder-config');
+    if (btnSauvCfg) {
+        btnSauvCfg.onclick = function (e) {
+            if (e) e.preventDefault();
+            if (!configUser) configUser = {};
+            configUser.cigsJour = parseFloat(document.getElementById('cigs-jour').value) || 15;
+            configUser.prixPaquet = parseFloat(document.getElementById('prix-paquet').value) || 12.5;
+            configUser.cigsPaquet = parseFloat(document.getElementById('cigs-paquet').value) || 20;
+            
+            const estVapoteur = document.getElementById('config-vapote').value === 'oui';
+            configUser.vapote = estVapoteur;
+            configUser.nicotineActuelle = estVapoteur ? parseFloat(document.getElementById('config-nicotine').value || 0) : 0;
+
+            localStorage.setItem('vt_config', JSON.stringify(configUser));
+            mettreAJourTout();
+            alert('Paramètres mis à jour !');
+        };
+    }
+
+    // SAUVEGARDE RECETTE
     const btnSauvRecette = document.getElementById('btn-sauvegarder-recette');
     if (btnSauvRecette) {
-        btnSauvRecette.onclick = () => {
+        btnSauvRecette.onclick = function (e) {
+            if (e) e.preventDefault();
+
             const nomEl = document.getElementById('recette-nom');
             const nom = nomEl ? nomEl.value.trim() : '';
+
             if (!nom) {
-                alert('Veuillez renseigner un nom pour la recette.');
+                alert('Veuillez donner un nom à votre recette.');
                 return;
             }
 
             const calcs = calculerDosagesDIY();
-            const steepDaysInput = parseInt(document.getElementById('recette-steep-days').value || 0, 10);
+            const steepDaysInput = parseInt(document.getElementById('recette-steep-days')?.value || 0, 10);
 
             const nouvelleRecette = {
                 id: Date.now().toString(),
                 nom: nom,
-                type: document.getElementById('recette-type').value,
-                nicotine: parseFloat(document.getElementById('recette-nicotine').value) || 0,
-                arome: parseFloat(document.getElementById('recette-arome').value) || 0,
+                type: document.getElementById('recette-type')?.value || 'DIY',
+                nicotine: parseFloat(document.getElementById('recette-nicotine')?.value) || 0,
+                arome: parseFloat(document.getElementById('recette-arome')?.value) || 0,
                 steepDays: Math.max(0, isNaN(steepDaysInput) ? 0 : steepDaysInput),
                 volumeTotal: calcs ? calcs.volTotal : 50,
                 volArome: calcs ? calcs.volArome : 0,
@@ -730,14 +779,17 @@ function configurerEcouteurs() {
 
             document.getElementById('form-recette').reset();
             document.getElementById('form-recette').classList.add('masque');
+            
             mettreAJourTout();
         };
     }
 
-    // BOUTON SAUVEGARDER FLACON DIRECT
+    // SAUVEGARDE FLACON
     const btnSauvFlacon = document.getElementById('btn-sauvegarder-flacon');
     if (btnSauvFlacon) {
-        btnSauvFlacon.onclick = () => {
+        btnSauvFlacon.onclick = function (e) {
+            if (e) e.preventDefault();
+
             const nomEl = document.getElementById('nom');
             const nom = nomEl ? nomEl.value.trim() : '';
             if (!nom) {
@@ -783,6 +835,55 @@ function configurerEcouteurs() {
             document.getElementById('form-flacon').reset();
             mettreAJourTout();
             afficherEcran('ecran-accueil');
+        };
+    }
+
+    // SAUVEGARDE DÉPENSE
+    const btnSauvDep = document.getElementById('btn-sauvegarder-depense');
+    if (btnSauvDep) {
+        btnSauvDep.onclick = function (e) {
+            if (e) e.preventDefault();
+            const montant = parseFloat(document.getElementById('dep-montant').value) || 0;
+            if (montant <= 0) {
+                alert('Veuillez entrer un montant valide.');
+                return;
+            }
+            const nouvelleDepense = {
+                id: Date.now().toString(),
+                categorie: document.getElementById('dep-cat').value,
+                nom: document.getElementById('dep-nom').value,
+                montant: montant,
+                date: new Date().toISOString()
+            };
+            depenses.unshift(nouvelleDepense);
+            localStorage.setItem('vt_depenses', JSON.stringify(depenses));
+            document.getElementById('form-depense').reset();
+            document.getElementById('form-depense').classList.add('masque');
+            mettreAJourTout();
+        };
+    }
+
+    // SAUVEGARDE OBJECTIF
+    const btnSauvObj = document.getElementById('btn-sauvegarder-objectif');
+    if (btnSauvObj) {
+        btnSauvObj.onclick = function (e) {
+            if (e) e.preventDefault();
+            const titre = document.getElementById('obj-titre').value.trim();
+            const date = document.getElementById('obj-date').value;
+            if (!titre || !date) {
+                alert('Veuillez renseigner le titre et la date cible.');
+                return;
+            }
+            const nouvelObjectif = {
+                id: Date.now().toString(),
+                titre: titre,
+                date: date
+            };
+            objectifs.unshift(nouvelObjectif);
+            localStorage.setItem('vt_objectifs', JSON.stringify(objectifs));
+            document.getElementById('form-objectif').reset();
+            document.getElementById('form-objectif').classList.add('masque');
+            mettreAJourTout();
         };
     }
 
