@@ -163,17 +163,31 @@ function mettreAJourCerisierHD() {
 
     if (badge) badge.textContent = nomStade;
 
-    const cheminImage = `./arbre-stade-${numStade}.png`;
-
     if (conteneur) {
         conteneur.style.zIndex = '1';
-        conteneur.innerHTML = `
-            <img src="${cheminImage}" 
-                 alt="${nomStade}" 
-                 class="arbre-brise"
-                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px; display: block; position: relative; z-index: 1;"
-                 onerror="console.error('Erreur chargement image:', this.src);">
-        `;
+        
+        // Tentative d'affichage de l'image, sinon fallback SVG immédiat
+        const img = new Image();
+        img.src = `./arbre-stade-${numStade}.png`;
+        img.className = 'arbre-brise';
+        img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; border-radius: 16px; display: block;';
+        
+        img.onload = () => {
+            conteneur.innerHTML = '';
+            conteneur.appendChild(img);
+        };
+        
+        img.onerror = () => {
+            // Dessin SVG de secours si le fichier PNG n'est pas trouvé
+            conteneur.innerHTML = `
+                <svg viewBox="0 0 200 200" class="arbre-brise" style="width:100%; height:100%;">
+                    <circle cx="100" cy="100" r="80" fill="#161b22" />
+                    <path d="M100 160 Q95 120 100 90 T120 50" stroke="#8b5cf6" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <circle cx="120" cy="50" r="18" fill="#ffb7c5" opacity="0.8"/>
+                    <circle cx="90" cy="70" r="14" fill="#ff80ab" opacity="0.7"/>
+                </svg>
+            `;
+        };
     }
 
     genererParticules();
