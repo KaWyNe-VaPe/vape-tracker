@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
     
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="style.css?v=v112">
+    <link rel="stylesheet" href="style.css?v=v113">
     <meta name="theme-color" content="#0b0e14">
 </head>
 <body>
@@ -28,7 +28,7 @@
         <div id="ecran-onboarding" class="ecran masque">
             <h2>Bienvenue sur Vape Tracker 🌸</h2>
             <p class="texte-secondaire" style="margin-bottom: 20px;">Configure tes informations pour commencer le suivi de ton sevrage et faire grandir ton cerisier.</p>
-            <form id="form-onboarding" class="form-card" onsubmit="return false;">
+            <div id="form-onboarding" class="form-card">
                 <div class="groupe-champ">
                     <label>Ton prénom</label>
                     <input type="text" id="ob-prenom" placeholder="Ex: Alex" required>
@@ -59,7 +59,7 @@
                 </div>
 
                 <button type="button" id="btn-valider-onboarding" class="btn-primaire">Commencer l'aventure ⛩️</button>
-            </form>
+            </div>
         </div>
 
         <!-- EN-TÊTE PRINCIPAL -->
@@ -157,7 +157,7 @@
                 </div>
 
                 <!-- MODE 1 : CRÉATION -->
-                <form id="form-recette" class="form-card masque" onsubmit="return false;">
+                <div id="form-recette" class="form-card masque">
                     <h3>Nouvelle recette DIY</h3>
                     <div class="groupe-champ" style="margin-top:10px;">
                         <label>Nom du liquide / de la recette</label>
@@ -200,10 +200,10 @@
 
                     <button type="button" id="btn-sauvegarder-recette" class="btn-primaire">Sauvegarder la recette</button>
                     <button type="button" id="btn-annuler-recette" class="btn-secondaire">Annuler</button>
-                </form>
+                </div>
 
                 <!-- MODE 2 : AJUSTEMENT -->
-                <form id="form-ajustement" class="form-card masque" onsubmit="return false;">
+                <div id="form-ajustement" class="form-card masque">
                     <h3>Ajuster / Diluer un mélange trop fort</h3>
                     <p class="texte-secondaire" style="margin-bottom:12px;">Calcule les ajouts de base et d'arôme pour réduire le taux de nicotine sans perdre le goût.</p>
 
@@ -243,7 +243,7 @@
                     </div>
 
                     <button type="button" id="btn-fermer-ajustement" class="btn-secondaire">Fermer le calculateur</button>
-                </form>
+                </div>
 
                 <div id="liste-recettes"></div>
             </section>
@@ -266,7 +266,7 @@
 
                 <button id="btn-ouvrir-depense" class="btn-primaire" type="button" style="margin-bottom: 14px;">Ajouter un achat vape ➕</button>
 
-                <form id="form-depense" class="form-card masque" onsubmit="return false;">
+                <div id="form-depense" class="form-card masque">
                     <div class="groupe-champ">
                         <label>Catégorie</label>
                         <select id="dep-cat">
@@ -285,13 +285,13 @@
                     </div>
                     <button type="button" id="btn-sauvegarder-depense" class="btn-primaire">Enregistrer la dépense</button>
                     <button type="button" id="btn-annuler-depense" class="btn-secondaire">Annuler</button>
-                </form>
+                </div>
 
                 <h3>Historique des dépenses</h3>
                 <div id="liste-depenses" style="margin-top: 10px;"></div>
                 
                 <h3 style="margin-top: 24px;">Configuration Profil & Vapotage</h3>
-                <form id="form-config-tabac" class="form-card" onsubmit="return false;" style="margin-top: 10px;">
+                <div id="form-config-tabac" class="form-card" style="margin-top: 10px;">
                     <div class="groupe-champ">
                         <label>Cigarettes / jour autrefois</label>
                         <input type="number" id="cigs-jour" required>
@@ -316,7 +316,7 @@
                         <input type="number" step="0.5" id="config-nicotine">
                     </div>
                     <button type="button" id="btn-sauvegarder-config" class="btn-secondaire">Mettre à jour les paramètres</button>
-                </form>
+                </div>
             </section>
 
             <!-- ÉCRAN 5 : OBJECTIFS -->
@@ -324,7 +324,7 @@
                 <h2>Mes Objectifs 🎯</h2>
                 <button id="btn-ouvrir-ajout-objectif" class="btn-primaire" type="button" style="margin-bottom: 14px;">Ajouter un objectif ➕</button>
 
-                <form id="form-objectif" class="form-card masque" onsubmit="return false;">
+                <div id="form-objectif" class="form-card masque">
                     <div class="groupe-champ">
                         <label>Titre de l'objectif</label>
                         <input type="text" id="obj-titre" placeholder="Ex: Passer à 8mg/ml" required>
@@ -333,9 +333,9 @@
                         <label>Date cible</label>
                         <input type="date" id="obj-date" required>
                     </div>
-                    <button type="button" id="btn-sauvegarder-objectif" class="btn-primaire">Ajouter</button>
+                    <button type="button" id="btn-sauvegarder-objectif" class="btn-primaire">Ajouter l'objectif</button>
                     <button type="button" id="btn-annuler-objectif" class="btn-secondaire">Annuler</button>
-                </form>
+                </div>
 
                 <div id="liste-objectifs"></div>
             </section>
@@ -343,7 +343,7 @@
             <!-- ÉCRAN FORMULAIRE AJOUT FLACON EN MATURATION -->
             <section id="ecran-ajout" class="ecran masque">
                 <h2>Préparer un flacon (avec maturation) 🧪</h2>
-                <form id="form-flacon" class="form-card" onsubmit="return false;">
+                <div id="form-flacon" class="form-card">
                     <div class="groupe-champ">
                         <label>Sélectionner une recette enregistrée (Optionnel)</label>
                         <select id="select-recette">
@@ -385,13 +385,13 @@
                     </div>
                     <button type="button" id="btn-sauvegarder-flacon" class="btn-primaire">Mettre en préparation 🧪</button>
                     <button type="button" id="btn-annuler" class="btn-secondaire">Annuler</button>
-                </form>
+                </div>
             </section>
 
             <!-- ÉCRAN FORMULAIRE UTILISER UN FLACON PRÊT DIRECT -->
             <section id="ecran-utilisation-directe" class="ecran masque">
                 <h2>Commencer un flacon prêt 💨</h2>
-                <form id="form-utilisation-directe" class="form-card" onsubmit="return false;">
+                <div id="form-utilisation-directe" class="form-card">
                     <div class="groupe-champ">
                         <label>Sélectionner une recette enregistrée (Optionnel)</label>
                         <select id="select-recette-directe">
@@ -423,7 +423,7 @@
                     </div>
                     <button type="button" id="btn-sauvegarder-direct" class="btn-primaire">Entamer ce flacon maintenant 💨</button>
                     <button type="button" id="btn-annuler-direct" class="btn-secondaire">Annuler</button>
-                </form>
+                </div>
             </section>
 
         </main>
@@ -453,6 +453,6 @@
         </nav>
 
     </div>
-    <script src="app.js?v=v112"></script>
+    <script src="app.js?v=v113"></script>
 </body>
 </html>
