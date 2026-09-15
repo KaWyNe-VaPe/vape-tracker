@@ -843,7 +843,7 @@ function configurerEcouteurs() {
         };
     }
 
-    // SAUVEGARDE FLACON PRÊT EN DIRECT (UTILISER UN FLACON)
+    // SAUVEGARDE FLACON PRÊT EN DIRECT
     const btnSauvDirect = document.getElementById('btn-sauvegarder-direct');
     if (btnSauvDirect) {
         btnSauvDirect.onclick = function (e) {
@@ -859,7 +859,6 @@ function configurerEcouteurs() {
             const dateDebutStr = document.getElementById('date-debut-direct').value;
             const dateDebut = dateDebutStr ? new Date(dateDebutStr) : new Date();
 
-            // Désactive les flacons précédemment actifs
             flacons.forEach(f => f.actif = false);
 
             const nouveauFlaconActif = {
@@ -886,7 +885,7 @@ function configurerEcouteurs() {
         };
     }
 
-    // SAUVEGARDE DÉPENSE
+    // SAUVEGARDE DÉPENSE VAPE (CORRIGÉ DIRECT)
     const btnSauvDep = document.getElementById('btn-sauvegarder-depense');
     if (btnSauvDep) {
         btnSauvDep.onclick = function (e) {
@@ -899,7 +898,7 @@ function configurerEcouteurs() {
             const nouvelleDepense = {
                 id: Date.now().toString(),
                 categorie: document.getElementById('dep-cat').value,
-                nom: document.getElementById('dep-nom').value,
+                nom: document.getElementById('dep-nom').value.trim() || document.getElementById('dep-cat').value,
                 montant: montant,
                 date: new Date().toISOString()
             };
@@ -911,7 +910,7 @@ function configurerEcouteurs() {
         };
     }
 
-    // SAUVEGARDE OBJECTIF
+    // SAUVEGARDE OBJECTIF (CORRIGÉ DIRECT)
     const btnSauvObj = document.getElementById('btn-sauvegarder-objectif');
     if (btnSauvObj) {
         btnSauvObj.onclick = function (e) {
