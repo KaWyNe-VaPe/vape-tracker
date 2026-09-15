@@ -270,31 +270,33 @@ function calculerDosagesDIY() {
 }
 
 // =============================================================
-// MODE 2 : CALCULATEUR D'AJUSTEMENT / DILUTION (EXACTITUDE RIGOUREUSE)
+// MODE 2 : CALCULATEUR D'AJUSTEMENT / DILUTION (CORRIGÉ STRICT)
 // =============================================================
 function calculerAjustementDIY() {
-    const volActuel = parseFloat(document.getElementById('ajust-vol-actuel').value);
-    const nicoActuelle = parseFloat(document.getElementById('ajust-nico-actuelle').value);
-    const aromeActuelPct = parseFloat(document.getElementById('ajust-arome-actuel').value);
-    const nicoVisee = parseFloat(document.getElementById('ajust-nico-visee').value);
-    const aromeCiblePct = parseFloat(document.getElementById('ajust-arome-pct').value);
+    const V0 = parseFloat(document.getElementById('ajust-vol-actuel').value);
+    const N0 = parseFloat(document.getElementById('ajust-nico-actuelle').value);
+    const A0 = parseFloat(document.getElementById('ajust-arome-actuel').value);
+    const N1 = parseFloat(document.getElementById('ajust-nico-visee').value);
+    const A1 = parseFloat(document.getElementById('ajust-arome-pct').value);
 
     const elBase = document.getElementById('ajust-calc-base');
     const elArome = document.getElementById('ajust-calc-arome');
     const elVolFinal = document.getElementById('ajust-calc-vol-final');
 
-    if (isNaN(volActuel) || volActuel <= 0 ||
-        isNaN(nicoActuelle) || nicoActuelle <= 0 ||
-        isNaN(nicoVisee) || nicoVisee <= 0 ||
-        isNaN(aromeActuelPct) || aromeActuelPct < 0 || aromeActuelPct >= 100 ||
-        isNaN(aromeCiblePct) || aromeCiblePct < 0 || aromeCiblePct >= 100) {
+    // Validation des entrées numériques
+    if (isNaN(V0) || V0 <= 0 ||
+        isNaN(N0) || N0 <= 0 ||
+        isNaN(N1) || N1 <= 0 ||
+        isNaN(A0) || A0 < 0 || A0 >= 100 ||
+        isNaN(A1) || A1 < 0 || A1 >= 100) {
         if (elBase) elBase.textContent = "---";
         if (elArome) elArome.textContent = "---";
         if (elVolFinal) elVolFinal.textContent = "---";
         return;
     }
 
-    if (nicoVisee >= nicoActuelle) {
+    // Validation logique de dilution
+    if (N1 >= N0) {
         if (elBase) elBase.textContent = "Nico cible doit être < actuelle";
         if (elArome) elArome.textContent = "---";
         if (elVolFinal) elVolFinal.textContent = "---";
@@ -302,14 +304,15 @@ function calculerAjustementDIY() {
     }
 
     // ÉTAPE 1 : Volume final imposé par la nicotine
-    const volFinal = (volActuel * nicoActuelle) / nicoVisee;
+    const Vf = (V0 * N0) / N1;
 
-    // ÉTAPE 2 : Volume d'arôme déjà présent
-    const aromeInitial = (volActuel * aromeActuelPct) / 100;
+    // ÉTAPE 2 : Volume total à ajouter
+    const ajoutTotal = Vf - V0;
 
-    // ÉTAPE 3 : Volume d'arôme total nécessaire et à ajouter
-    const aromeFinalSouhaite = (volFinal * aromeCiblePct) / 100;
-    const aromeAAjouter = aromeFinalSouhaite - aromeInitial;
+    // ÉTAPE 3 : Arôme déjà présent et arôme final souhaité
+    const F0 = (V0 * A0) / 100;
+    const F1 = (Vf * A1) / 100;
+    const aromeAAjouter = F1 - F0;
 
     if (aromeAAjouter < 0) {
         if (elBase) elBase.textContent = "Impossible";
@@ -318,8 +321,7 @@ function calculerAjustementDIY() {
         return;
     }
 
-    // ÉTAPE 4 : Calcul de la base neutre à ajouter
-    const ajoutTotal = volFinal - volActuel;
+    // ÉTAPE 4 : Base neutre à ajouter (Ajout total - Arôme à ajouter)
     const baseAAjouter = ajoutTotal - aromeAAjouter;
 
     if (baseAAjouter < 0) {
@@ -329,9 +331,10 @@ function calculerAjustementDIY() {
         return;
     }
 
+    // Affichage exact avec arrondis d'affichage uniquement (1 ou 2 décimales)
     if (elBase) elBase.textContent = `${baseAAjouter.toFixed(1)} ml`;
     if (elArome) elArome.textContent = `${aromeAAjouter.toFixed(2)} ml`;
-    if (elVolFinal) elVolFinal.textContent = `${volFinal.toFixed(1)} ml`;
+    if (elVolFinal) elVolFinal.textContent = `${Vf.toFixed(1)} ml`;
 }
 
 function afficherRecettes() {
