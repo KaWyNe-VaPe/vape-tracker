@@ -367,13 +367,15 @@ function afficherFlaconActif() {
         if (document.getElementById('details-nicotine')) document.getElementById('details-nicotine').textContent = `Nicotine : ${actif.nicotine} mg/ml | Type : ${actif.type}`;
         
         const dateOuv = new Date(actif.dateOuverture || actif.preparedAt);
+        const dateFormatee = dateOuv.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        
         if (document.getElementById('details-flacon')) {
-            document.getElementById('details-flacon').textContent = `En cours d'utilisation (${actif.volume} ml)`;
+            document.getElementById('details-flacon').textContent = `Entamé le ${dateFormatee} (${actif.volume} ml)`;
         }
         if (btnTerminer) btnTerminer.style.display = 'block';
     } else {
         if (document.getElementById('nom-liquide')) document.getElementById('nom-liquide').textContent = 'Aucun flacon en cours';
-        if (document.getElementById('details-nicotine')) document.getElementById('details-nicotine').textContent = 'Sélectionne un flacon prêt dans ta réserve ci-dessous.';
+        if (document.getElementById('details-nicotine')) document.getElementById('details-nicotine').textContent = 'Sélectionne ou entame un flacon prêt ci-dessous.';
         if (document.getElementById('details-flacon')) document.getElementById('details-flacon').textContent = '';
         if (btnTerminer) btnTerminer.style.display = 'none';
     }
@@ -487,11 +489,14 @@ function afficherRecettes() {
 }
 
 function remplirSelectRecettes() {
-    const select = document.getElementById('select-recette');
-    if (!select) return;
-    select.innerHTML = '<option value="">-- Saisie libre --</option>';
-    recettes.forEach(r => {
-        select.innerHTML += `<option value="${r.id}">${r.nom} (${r.volumeTotal}ml - ${r.nicotine}mg${r.steepDays ? ' - ' + r.steepDays + 'j steep' : ''})</option>`;
+    const selects = ['select-recette', 'select-recette-directe'];
+    selects.forEach(selectId => {
+        const select = document.getElementById(selectId);
+        if (!select) return;
+        select.innerHTML = '<option value="">-- Saisie libre --</option>';
+        recettes.forEach(r => {
+            select.innerHTML += `<option value="${r.id}">${r.nom} (${r.volumeTotal}ml - ${r.nicotine}mg${r.steepDays ? ' - ' + r.steepDays + 'j steep' : ''})</option>`;
+        });
     });
 }
 
@@ -784,7 +789,7 @@ function configurerEcouteurs() {
         };
     }
 
-    // SAUVEGARDE FLACON
+    // SAUVEGARDE FLACON PRÉPARÉ (EN MATURATION)
     const btnSauvFlacon = document.getElementById('btn-sauvegarder-flacon');
     if (btnSauvFlacon) {
         btnSauvFlacon.onclick = function (e) {
@@ -833,6 +838,49 @@ function configurerEcouteurs() {
             }
 
             document.getElementById('form-flacon').reset();
+            mettreAJourTout();
+            afficherEcran('ecran-accueil');
+        };
+    }
+
+    // SAUVEGARDE FLACON PRÊT EN DIRECT (UTILISER UN FLACON)
+    const btnSauvDirect = document.getElementById('btn-sauvegarder-direct');
+    if (btnSauvDirect) {
+        btnSauvDirect.onclick = function (e) {
+            if (e) e.preventDefault();
+
+            const nomEl = document.getElementById('nom-direct');
+            const nom = nomEl ? nomEl.value.trim() : '';
+            if (!nom) {
+                alert('Veuillez renseigner le nom du liquide.');
+                return;
+            }
+
+            const dateDebutStr = document.getElementById('date-debut-direct').value;
+            const dateDebut = dateDebutStr ? new Date(dateDebutStr) : new Date();
+
+            // Désactive les flacons précédemment actifs
+            flacons.forEach(f => f.actif = false);
+
+            const nouveauFlaconActif = {
+                id: Date.now().toString(),
+                nom: nom,
+                type: document.getElementById('type-direct').value,
+                volume: parseFloat(document.getElementById('volume-direct').value) || 0,
+                nicotine: parseFloat(document.getElementById('nicotine-direct').value) || 0,
+                arome: 0,
+                preparedAt: dateDebut.toISOString(),
+                dateOuverture: dateDebut.toISOString(),
+                steepDays: 0,
+                steepReadyAt: null,
+                actif: true,
+                termine: false
+            };
+
+            flacons.unshift(nouveauFlaconActif);
+            localStorage.setItem('vt_flacons', JSON.stringify(flacons));
+
+            document.getElementById('form-utilisation-directe').reset();
             mettreAJourTout();
             afficherEcran('ecran-accueil');
         };
@@ -887,9 +935,14 @@ function configurerEcouteurs() {
         };
     }
 
+    // BOUTONS NAVIGATION & FORMULAIRES ACCUEIL
     document.getElementById('btn-ouvrir-ajout').onclick = () => afficherEcran('ecran-ajout');
     document.getElementById('btn-annuler').onclick = () => afficherEcran('ecran-accueil');
 
+    document.getElementById('btn-ouvrir-utilisation-directe').onclick = () => afficherEcran('ecran-utilisation-directe');
+    document.getElementById('btn-annuler-direct').onclick = () => afficherEcran('ecran-accueil');
+
+    // SELECTEURS DE RECETTES AUTOMATIQUES
     document.getElementById('select-recette').onchange = (e) => {
         const idRecette = e.target.value;
         if (idRecette) {
@@ -903,6 +956,19 @@ function configurerEcouteurs() {
                 if (document.getElementById('flacon-steep-days')) {
                     document.getElementById('flacon-steep-days').value = r.steepDays || 0;
                 }
+            }
+        }
+    };
+
+    document.getElementById('select-recette-directe').onchange = (e) => {
+        const idRecette = e.target.value;
+        if (idRecette) {
+            const r = recettes.find(item => item.id === idRecette);
+            if (r) {
+                document.getElementById('nom-direct').value = r.nom;
+                document.getElementById('type-direct').value = r.type || 'DIY';
+                document.getElementById('nicotine-direct').value = r.nicotine;
+                document.getElementById('volume-direct').value = r.volumeTotal || 50;
             }
         }
     };
