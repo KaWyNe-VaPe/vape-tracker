@@ -1,6 +1,3 @@
-/* =============================================================
-   REINITIALISATION ET ADAPTATION MOBILE
-   ============================================================= */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -35,9 +32,6 @@ body {
     padding-bottom: 75px;
 }
 
-/* =============================================================
-   EN-TÊTE FIXE (HEADER)
-   ============================================================= */
 header {
     padding: 16px 20px;
     background: rgba(13, 17, 23, 0.85);
@@ -70,13 +64,6 @@ header h1 {
     cursor: pointer;
 }
 
-#btn-notifications:disabled {
-    opacity: 0.6;
-}
-
-/* =============================================================
-   CONTENU & ÉCRANS
-   ============================================================= */
 main {
     padding: 16px;
     flex: 1;
@@ -107,14 +94,12 @@ h2 {
     color: #f0f6fc;
 }
 
-/* =============================================================
-   CADRE DU CERISIER JAPONAIS & ANIMATIONS
-   ============================================================= */
+/* CADRE DU CERISIER JAPONAIS */
 .cadre-arbre {
     position: relative;
     width: 100%;
     height: 250px;
-    background: #0b0e14;
+    background: radial-gradient(circle at center, #1c2128 0%, #0b0e14 100%);
     border-radius: 20px;
     overflow: hidden;
     margin-bottom: 16px;
@@ -127,6 +112,9 @@ h2 {
     height: 100%;
     position: relative;
     z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .arbre-brise {
@@ -135,9 +123,9 @@ h2 {
 }
 
 @keyframes briseDouce {
-    0% { transform: scale(1) rotate(0deg) translateY(0); }
-    50% { transform: scale(1.02) rotate(1.2deg) translateY(-2px); }
-    100% { transform: scale(1.01) rotate(-1deg) translateY(0); }
+    0% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.02) rotate(1.2deg); }
+    100% { transform: scale(1.01) rotate(-1deg); }
 }
 
 #particules {
@@ -169,7 +157,7 @@ h2 {
     position: absolute;
     bottom: 12px;
     left: 12px;
-    background: rgba(13, 17, 23, 0.75);
+    background: rgba(13, 17, 23, 0.85);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.12);
@@ -181,9 +169,7 @@ h2 {
     z-index: 3;
 }
 
-/* =============================================================
-   GRILLE DASHBOARD (GLASSMORPHISM NÉON)
-   ============================================================= */
+/* GRILLE DASHBOARD */
 .grille-dashboards {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -274,29 +260,22 @@ h2 {
     text-overflow: ellipsis;
 }
 
-.stat-verte { border-color: rgba(63, 185, 80, 0.3); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(63, 185, 80, 0.05); }
+.stat-verte { border-color: rgba(63, 185, 80, 0.3); }
 .stat-verte::before { background: #3fb950; }
 .stat-verte .stat-valeur { color: #3fb950; }
-.stat-verte .stat-icone { background: rgba(63, 185, 80, 0.15); border-color: rgba(63, 185, 80, 0.3); }
 
-.stat-bleue { border-color: rgba(56, 189, 248, 0.3); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(56, 189, 248, 0.05); }
+.stat-bleue { border-color: rgba(56, 189, 248, 0.3); }
 .stat-bleue::before { background: #38bdf8; }
 .stat-bleue .stat-valeur { color: #38bdf8; }
-.stat-bleue .stat-icone { background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.3); }
 
-.stat-doree { border-color: rgba(245, 158, 11, 0.3); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(245, 158, 11, 0.05); }
+.stat-doree { border-color: rgba(245, 158, 11, 0.3); }
 .stat-doree::before { background: #f59e0b; }
 .stat-doree .stat-valeur { color: #f59e0b; }
-.stat-doree .stat-icone { background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.3); }
 
-.stat-rose { border-color: rgba(255, 183, 197, 0.3); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(255, 183, 197, 0.05); }
+.stat-rose { border-color: rgba(255, 183, 197, 0.3); }
 .stat-rose::before { background: #ffb7c5; }
 .stat-rose .stat-valeur-texte { color: #ffb7c5; }
-.stat-rose .stat-icone { background: rgba(255, 183, 197, 0.15); border-color: rgba(255, 183, 197, 0.3); }
 
-/* =============================================================
-   CARTES ET FORMULAIRES
-   ============================================================= */
 .carte {
     background: #161b22;
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -308,16 +287,10 @@ h2 {
 .carte-flacon-actif {
     background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%);
     border: 1px solid rgba(255, 183, 197, 0.2);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .contenu-flacon { margin: 12px 0; }
 .texte-secondaire { font-size: 0.82rem; color: #8b949e; margin-top: 4px; }
-
-.item-objectif { display: flex; justify-content: space-between; align-items: center; }
-
-.jalon-sante { opacity: 0.5; transition: all 0.2s ease; }
-.jalon-sante.atteint { opacity: 1; border-color: rgba(63, 185, 80, 0.4); background: rgba(63, 185, 80, 0.05); }
 
 .form-card {
     background: #161b22;
@@ -330,6 +303,12 @@ h2 {
 .groupe-champ { margin-bottom: 14px; }
 .groupe-champ label { display: block; font-size: 0.8rem; color: #8b949e; margin-bottom: 6px; font-weight: 600; }
 
+.grille-champs-2col {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
 input, select {
     width: 100%;
     padding: 10px 14px;
@@ -341,7 +320,30 @@ input, select {
     outline: none;
 }
 
-input:focus, select:focus { border-color: #ffb7c5; }
+/* BOX DE CALCUL LIVE POUR PWA DIY */
+.box-calcul-live {
+    background: rgba(255, 183, 197, 0.06);
+    border: 1px dashed rgba(255, 183, 197, 0.3);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 16px;
+}
+
+.titre-calcul-live {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #ffb7c5;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.ligne-calcul {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #e6edf3;
+    margin-bottom: 4px;
+}
 
 .btn-primaire {
     width: 100%;
@@ -378,24 +380,23 @@ input:focus, select:focus { border-color: #ffb7c5; }
     cursor: pointer;
 }
 
-/* =============================================================
-   NAVIGATION BASSE
-   ============================================================= */
-nav {
+/* NAVIGATION BASSE */
+nav#navigation-basse {
     position: fixed;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
     max-width: 480px;
-    background: rgba(13, 17, 23, 0.92);
+    background: rgba(13, 17, 23, 0.96);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
     justify-content: space-around;
     padding: 8px 0;
-    z-index: 1000;
+    z-index: 99999 !important;
+    pointer-events: auto !important;
 }
 
 .nav-item {
@@ -412,14 +413,8 @@ nav {
 
 .nav-item .icone { font-size: 1.2rem; margin-bottom: 2px; }
 .nav-item.actif { color: #ffb7c5; }
-.texte-vide { font-size: 0.85rem; color: #6e7681; text-align: center; padding: 12px; }
 
-/* =============================================================
-   ÉCRAN DE LANCEMENT AUTO-EFFAÇANT (CSS PUR)
-   ============================================================= */
-/* =============================================================
-   ÉCRAN DE LANCEMENT AUTO-EFFAÇANT (CORRECTION CLICS)
-   ============================================================= */
+/* SPLASH SCREEN */
 #splash-screen {
     position: fixed;
     top: 0;
@@ -436,8 +431,9 @@ nav {
 }
 
 @keyframes masqueAutoSplash {
-    0% { opacity: 1; }
-    100% { opacity: 0; pointer-events: none; display: none; }
+    0% { opacity: 1; visibility: visible; }
+    99% { opacity: 0; visibility: visible; }
+    100% { opacity: 0; visibility: hidden; pointer-events: none; display: none !important; }
 }
 
 .splash-logo {
@@ -456,7 +452,6 @@ nav {
     color: #f0f6fc;
     letter-spacing: 3px;
     text-transform: uppercase;
-    text-shadow: 0 0 12px rgba(255, 183, 197, 0.3);
 }
 
 .splash-sous-titre {
