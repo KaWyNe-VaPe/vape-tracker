@@ -11,12 +11,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
     
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="style.css?v=auto_splash">
+    <link rel="stylesheet" href="style.css?v=vape_card4">
     <meta name="theme-color" content="#0b0e14">
 </head>
 <body>
 
-    <!-- ÉCRAN DE LANCEMENT (SPLASH SCREEN) -->
+    <!-- ÉCRAN DE LANCEMENT AUTO-EFFAÇANT (SPLASH SCREEN) -->
     <div id="splash-screen">
         <img src="icon.png" alt="Vape Tracker" class="splash-logo">
         <h1 class="splash-titre">Vape Tracker</h1>
@@ -46,6 +46,20 @@
                     <label>Prix moyen du paquet (€)</label>
                     <input type="number" step="0.1" id="ob-prix-paquet" placeholder="Ex: 12.50" value="12.5" required>
                 </div>
+                
+                <!-- CHAMPS VAPE INTEGRÉS -->
+                <div class="groupe-champ">
+                    <label>Tu vapotes actuellement ?</label>
+                    <select id="ob-vapote" required>
+                        <option value="oui">Oui</option>
+                        <option value="non">Non</option>
+                    </select>
+                </div>
+                <div class="groupe-champ" id="groupe-ob-nicotine">
+                    <label>Dosage actuel en nicotine (mg/ml)</label>
+                    <input type="number" step="0.5" id="ob-nicotine-actuelle" placeholder="Ex: 12" value="12">
+                </div>
+
                 <button type="submit" class="btn-primaire">Commencer l'aventure ⛩️</button>
             </form>
         </div>
@@ -67,7 +81,7 @@
                     <div id="nom-stade-arbre" class="badge-stade">Jeune pousse</div>
                 </div>
 
-                <!-- GRILLE DES 4 CARTES DASHBOARD STYLÉES -->
+                <!-- GRILLE DES 4 CARTES DASHBOARD -->
                 <div class="grille-dashboards">
                     <div class="carte-stat stat-verte">
                         <div class="stat-icone">🌿</div>
@@ -96,13 +110,14 @@
                         <div class="stat-unite">net d'achats vape</div>
                     </div>
 
+                    <!-- 4. CARTE NICOTINE & OBJECTIF -->
                     <div class="carte-stat stat-rose">
-                        <div class="stat-icone">🫁</div>
+                        <div class="stat-icone">💧</div>
                         <div>
-                            <div class="stat-titre">Prochain Jalon</div>
-                            <div class="stat-valeur-texte" id="card-jalon-titre">...</div>
+                            <div class="stat-titre">Nicotine actuelle</div>
+                            <div class="stat-valeur-texte" id="card-nicotine-valeur">-- mg/ml</div>
                         </div>
-                        <div class="stat-unite" id="card-jalon-desc">...</div>
+                        <div class="stat-unite" id="card-nicotine-objectif">Aucun objectif fixé</div>
                     </div>
                 </div>
 
@@ -163,7 +178,7 @@
                 <div id="timeline-sante"></div>
             </section>
 
-            <!-- ÉCRAN 4 : FINANCES -->
+            <!-- ÉCRAN 4 : FINANCES & PARAMÈTRES -->
             <section id="ecran-finances" class="ecran masque">
                 <h2>Suivi Financier 💰</h2>
                 <div class="carte" style="margin-bottom: 16px;">
@@ -199,7 +214,7 @@
                 <h3>Historique des dépenses</h3>
                 <div id="liste-depenses" style="margin-top: 10px;"></div>
                 
-                <h3 style="margin-top: 24px;">Configuration Tabac</h3>
+                <h3 style="margin-top: 24px;">Configuration Profil & Vapotage</h3>
                 <form id="form-config-tabac" class="form-card" style="margin-top: 10px;">
                     <div class="groupe-champ">
                         <label>Cigarettes / jour autrefois</label>
@@ -213,7 +228,18 @@
                         <label>Cigarettes dans un paquet</label>
                         <input type="number" id="cigs-paquet" value="20" required>
                     </div>
-                    <button type="submit" class="btn-secondaire">Mettre à jour les calculs</button>
+                    <div class="groupe-champ">
+                        <label>Vapotage actuel</label>
+                        <select id="config-vapote">
+                            <option value="oui">Oui</option>
+                            <option value="non">Non</option>
+                        </select>
+                    </div>
+                    <div class="groupe-champ" id="groupe-config-nicotine">
+                        <label>Dosage actuel en nicotine (mg/ml)</label>
+                        <input type="number" step="0.5" id="config-nicotine">
+                    </div>
+                    <button type="submit" class="btn-secondaire">Mettre à jour les paramètres</button>
                 </form>
             </section>
 
@@ -225,7 +251,7 @@
                 <form id="form-objectif" class="form-card masque">
                     <div class="groupe-champ">
                         <label>Titre de l'objectif</label>
-                        <input type="text" id="obj-titre" placeholder="Ex: Passer à 3mg de nicotine" required>
+                        <input type="text" id="obj-titre" placeholder="Ex: Passer à 8mg/ml" required>
                     </div>
                     <div class="groupe-champ">
                         <label>Date cible</label>
