@@ -218,7 +218,7 @@ function genererParticules() {
 }
 
 // =============================================================
-// CALCULATEUR DIY EXACT EN DIRECT & AFFICHAGE RECETTES
+// MODE 1 : CALCULATEUR DIY CRÉATION EN DIRECT
 // =============================================================
 function calculerDosagesDIY() {
     const volTotal = parseFloat(document.getElementById('recette-volume').value) || 0;
@@ -234,26 +234,42 @@ function calculerDosagesDIY() {
     
     if (volBase < 0) {
         volBase = 0;
-        if (document.getElementById('calc-base')) {
-            document.getElementById('calc-base').style.color = '#f85149';
-        }
+        if (document.getElementById('calc-base')) document.getElementById('calc-base').style.color = '#f85149';
     } else {
-        if (document.getElementById('calc-base')) {
-            document.getElementById('calc-base').style.color = '#e6edf3';
-        }
+        if (document.getElementById('calc-base')) document.getElementById('calc-base').style.color = '#e6edf3';
     }
 
-    if (document.getElementById('calc-arome')) {
-        document.getElementById('calc-arome').textContent = `${volArome.toFixed(1)} ml (${pctArome}%)`;
-    }
-    if (document.getElementById('calc-booster')) {
-        document.getElementById('calc-booster').textContent = `${volBooster.toFixed(1)} ml (${nbrFiolesBooster} fiole${nbrFiolesBooster > 1 ? 's' : ''})`;
-    }
-    if (document.getElementById('calc-base')) {
-        document.getElementById('calc-base').textContent = `${volBase.toFixed(1)} ml`;
-    }
+    if (document.getElementById('calc-arome')) document.getElementById('calc-arome').textContent = `${volArome.toFixed(1)} ml (${pctArome}%)`;
+    if (document.getElementById('calc-booster')) document.getElementById('calc-booster').textContent = `${volBooster.toFixed(1)} ml (${nbrFiolesBooster} fiole${nbrFiolesBooster > 1 ? 's' : ''})`;
+    if (document.getElementById('calc-base')) document.getElementById('calc-base').textContent = `${volBase.toFixed(1)} ml`;
 
     return { volTotal, volArome, volBooster, volBase, nbrFiolesBooster };
+}
+
+// =============================================================
+// MODE 2 : CALCULATEUR D'AJUSTEMENT DE LIQUIDE TROP FORT
+// =============================================================
+function calculerAjustementDIY() {
+    const volActuel = parseFloat(document.getElementById('ajust-vol-actuel').value) || 0;
+    const nicoActuelle = parseFloat(document.getElementById('ajust-nico-actuelle').value) || 0;
+    const nicoVisee = parseFloat(document.getElementById('ajust-nico-visee').value) || 0;
+    const pctArome = parseFloat(document.getElementById('ajust-arome-pct').value) || 0;
+
+    if (nicoVisee >= nicoActuelle || nicoVisee <= 0 || volActuel <= 0) {
+        if (document.getElementById('ajust-calc-base')) document.getElementById('ajust-calc-base').textContent = "---";
+        if (document.getElementById('ajust-calc-arome')) document.getElementById('ajust-calc-arome').textContent = "---";
+        if (document.getElementById('ajust-calc-vol-final')) document.getElementById('ajust-calc-vol-final').textContent = "---";
+        return;
+    }
+
+    // Calcul du volume final nécessaire pour réduire le taux
+    const volFinal = volActuel * (nicoActuelle / nicoVisee);
+    const baseAAjouter = volFinal - volActuel;
+    const aromeAAjouter = baseAAjouter * (pctArome / 100);
+
+    if (document.getElementById('ajust-calc-base')) document.getElementById('ajust-calc-base').textContent = `${baseAAjouter.toFixed(1)} ml`;
+    if (document.getElementById('ajust-calc-arome')) document.getElementById('ajust-calc-arome').textContent = `${aromeAAjouter.toFixed(2)} ml`;
+    if (document.getElementById('ajust-calc-vol-final')) document.getElementById('ajust-calc-vol-final').textContent = `${volFinal.toFixed(1)} ml`;
 }
 
 function afficherRecettes() {
@@ -448,7 +464,7 @@ function configurerEcouteurs() {
     document.getElementById('nav-finances').onclick = () => afficherEcran('ecran-finances');
     document.getElementById('nav-objectifs').onclick = () => afficherEcran('ecran-objectifs');
 
-    // ÉCOUTEURS DE CALCUL DIY EN DIRECT (COMPATIBLE WEB ET MOBILE)
+    // ÉCOUTEURS DES DEUX CALCULATEURS DIY EN DIRECT
     const champsDIY = ['recette-volume', 'recette-nicotine', 'recette-arome', 'recette-taux-booster'];
     champsDIY.forEach(id => {
         const el = document.getElementById(id);
@@ -458,6 +474,45 @@ function configurerEcouteurs() {
             });
         }
     });
+
+    const champsAjust = ['ajust-vol-actuel', 'ajust-nico-actuelle', 'ajust-nico-visee', 'ajust-arome-pct'];
+    champsAjust.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            ['input', 'keyup', 'change'].forEach(evt => {
+                el.addEventListener(evt, calculerAjustementDIY);
+            });
+        }
+    });
+
+    // BASCULEMENT DES ONGLETS DIY (CRÉATION VS AJUSTEMENT)
+    const tabCreer = document.getElementById('tab-mode-creer');
+    const tabAjuster = document.getElementById('tab-mode-ajuster');
+    const formRecette = document.getElementById('form-recette');
+    const formAjustement = document.getElementById('form-ajustement');
+
+    if (tabCreer && tabAjuster) {
+        tabCreer.onclick = () => {
+            tabCreer.classList.add('actif');
+            tabAjuster.classList.remove('actif');
+            formRecette.classList.remove('masque');
+            formAjustement.classList.add('masque');
+            calculerDosagesDIY();
+        };
+
+        tabAjuster.onclick = () => {
+            tabAjuster.classList.add('actif');
+            tabCreer.classList.remove('actif');
+            formAjustement.classList.remove('masque');
+            formRecette.classList.add('masque');
+            calculerAjustementDIY();
+        };
+    }
+
+    document.getElementById('btn-fermer-ajustement').onclick = () => {
+        formAjustement.classList.add('masque');
+        tabAjuster.classList.remove('actif');
+    };
 
     const selectObVapote = document.getElementById('ob-vapote');
     const grpObNicotine = document.getElementById('groupe-ob-nicotine');
@@ -557,11 +612,10 @@ function configurerEcouteurs() {
         }
     };
 
-    // FORMULAIRE RECETTE DIY
     document.getElementById('btn-ouvrir-ajout-recette').onclick = () => {
-        document.getElementById('form-recette').classList.remove('masque');
-        calculerDosagesDIY();
+        tabCreer.click();
     };
+    
     document.getElementById('btn-annuler-recette').onclick = () => {
         document.getElementById('form-recette').classList.add('masque');
     };
