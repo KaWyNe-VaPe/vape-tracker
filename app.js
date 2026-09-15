@@ -1,7 +1,13 @@
 // =============================================================
 // VAPE TRACKER PWA - CODE PRINCIPAL APPLICATION
 // =============================================================
-
+// SUPPRESSION PHYSIQUE DU SPLASH SCREEN POUR DÉBLOQUER LES CLICS
+setTimeout(() => {
+    const splash = document.getElementById('splash-screen');
+    if (splash) {
+        splash.remove(); // Supprime complètement l'élément du code HTML
+    }
+}, 3000);
 const JALONS_SANTE = [
     { delaiHeures: 20, titre: "Pression sanguine", desc: "La pression sanguine et le pouls redeviennent normaux." },
     { delaiHeures: 8, titre: "Oxygénation", desc: "La quantité de monoxyde de carbone dans le sang diminue de moitié." },
