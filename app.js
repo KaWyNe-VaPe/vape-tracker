@@ -4,7 +4,7 @@
 setTimeout(() => {
     const splash = document.getElementById('splash-screen');
     if (splash) splash.remove();
-}, 3000);
+}, 2500);
 
 // =============================================================
 // VAPE TRACKER PWA - CODE PRINCIPAL APPLICATION
@@ -219,17 +219,16 @@ function genererParticules() {
 // MODE 1 : CALCULATEUR DIY CRÉATION
 // =============================================================
 function calculerDosagesDIY() {
-    const volTotal = parseFloat(document.getElementById('recette-volume').value);
-    const nicoVisee = parseFloat(document.getElementById('recette-nicotine').value);
-    const pctArome = parseFloat(document.getElementById('recette-arome').value);
-    const tauxBooster = parseFloat(document.getElementById('recette-taux-booster').value);
+    const volTotal = parseFloat(document.getElementById('recette-volume').value) || 0;
+    const nicoVisee = parseFloat(document.getElementById('recette-nicotine').value) || 0;
+    const pctArome = parseFloat(document.getElementById('recette-arome').value) || 0;
+    const tauxBooster = parseFloat(document.getElementById('recette-taux-booster').value) || 20;
 
     const elArome = document.getElementById('calc-arome');
     const elBooster = document.getElementById('calc-booster');
     const elBase = document.getElementById('calc-base');
 
-    if (isNaN(volTotal) || volTotal <= 0 || isNaN(nicoVisee) || nicoVisee < 0 ||
-        isNaN(pctArome) || pctArome < 0 || pctArome >= 100 || isNaN(tauxBooster) || tauxBooster <= 0) {
+    if (volTotal <= 0 || nicoVisee < 0 || pctArome < 0 || pctArome >= 100 || tauxBooster <= 0) {
         if (elArome) elArome.textContent = "---";
         if (elBooster) elBooster.textContent = "---";
         if (elBase) elBase.textContent = "---";
@@ -271,21 +270,17 @@ function calculerDosagesDIY() {
 // MODE 2 : CALCULATEUR D'AJUSTEMENT / DILUTION
 // =============================================================
 function calculerAjustementDIY() {
-    const V0 = parseFloat(document.getElementById('ajust-vol-actuel').value);
-    const N0 = parseFloat(document.getElementById('ajust-nico-actuelle').value);
-    const A0 = parseFloat(document.getElementById('ajust-arome-actuel').value);
-    const N1 = parseFloat(document.getElementById('ajust-nico-visee').value);
-    const A1 = parseFloat(document.getElementById('ajust-arome-pct').value);
+    const V0 = parseFloat(document.getElementById('ajust-vol-actuel').value) || 0;
+    const N0 = parseFloat(document.getElementById('ajust-nico-actuelle').value) || 0;
+    const A0 = parseFloat(document.getElementById('ajust-arome-actuel').value) || 0;
+    const N1 = parseFloat(document.getElementById('ajust-nico-visee').value) || 0;
+    const A1 = parseFloat(document.getElementById('ajust-arome-pct').value) || 0;
 
     const elBase = document.getElementById('ajust-calc-base');
     const elArome = document.getElementById('ajust-calc-arome');
     const elVolFinal = document.getElementById('ajust-calc-vol-final');
 
-    if (isNaN(V0) || V0 <= 0 ||
-        isNaN(N0) || N0 <= 0 ||
-        isNaN(N1) || N1 <= 0 ||
-        isNaN(A0) || A0 < 0 || A0 >= 100 ||
-        isNaN(A1) || A1 < 0 || A1 >= 100) {
+    if (V0 <= 0 || N0 <= 0 || N1 <= 0 || A0 < 0 || A0 >= 100 || A1 < 0 || A1 >= 100) {
         if (elBase) elBase.textContent = "---";
         if (elArome) elArome.textContent = "---";
         if (elVolFinal) elVolFinal.textContent = "---";
@@ -327,7 +322,7 @@ function calculerAjustementDIY() {
 }
 
 // =============================================================
-// GESTION ET PROGRAMMATION DES NOTIFICATIONS PWA HORS-LIGNE
+// GESTION DES NOTIFICATIONS
 // =============================================================
 function programmerNotificationSteep(flacon) {
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
@@ -361,7 +356,7 @@ function annulerNotificationSteep(flaconId) {
 }
 
 // =============================================================
-// AFFICHAGE DU FLACON ACTIF "EN COURS" SUR L'ACCUEIL
+// AFFICHAGE ACCUEIL & RÉSERVE
 // =============================================================
 function afficherFlaconActif() {
     const actif = flacons.find(f => f.actif);
@@ -384,9 +379,6 @@ function afficherFlaconActif() {
     }
 }
 
-// =============================================================
-// AFFICHAGE DE LA RÉSERVE ET MATURATION (FLACONS NON-ACTIFS)
-// =============================================================
 function afficherReserveEtMaturation() {
     const conteneur = document.getElementById('liste-flacons-reserve');
     if (!conteneur) return;
@@ -436,7 +428,7 @@ function afficherReserveEtMaturation() {
             moduleVisuel = `
                 <div style="margin-top:8px; display:flex; justify-content:space-between; align-items:center;">
                     <span class="badge-steep pret">🌸 Prêt ! Maturation terminée</span>
-                    <button class="btn-primaire" style="width:auto; padding:6px 14px; font-size:0.8rem;" onclick="utiliserCeFlacon('${f.id}')">
+                    <button type="button" class="btn-primaire" style="width:auto; padding:6px 14px; font-size:0.8rem;" onclick="utiliserCeFlacon('${f.id}')">
                         Utiliser ce flacon 💨
                     </button>
                 </div>
@@ -447,7 +439,7 @@ function afficherReserveEtMaturation() {
             <div class="carte">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <strong>${f.nom} (${f.nicotine} mg)</strong>
-                    <button class="btn-suppr" onclick="supprimerFlacon('${f.id}')">🗑️</button>
+                    <button type="button" class="btn-suppr" onclick="supprimerFlacon('${f.id}')">🗑️</button>
                 </div>
                 <p class="texte-secondaire">Préparé le ${new Date(f.preparedAt || f.dateOuverture).toLocaleDateString()} (${f.volume} ml)</p>
                 ${moduleVisuel}
@@ -479,7 +471,7 @@ function afficherRecettes() {
         <div class="carte">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <strong>🧪 ${r.nom}</strong>
-                <button class="btn-suppr" onclick="supprimerRecette('${r.id}')">🗑️</button>
+                <button type="button" class="btn-suppr" onclick="supprimerRecette('${r.id}')">🗑️</button>
             </div>
             <p class="texte-secondaire" style="margin-top:4px;">
                 <strong>Volume Total : ${r.volumeTotal || 50} ml</strong> | Nicotine : ${r.nicotine} mg/ml
@@ -523,7 +515,7 @@ function afficherHistoriqueFlacons() {
         <div class="carte">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <strong>🏁 ${f.nom} (${f.nicotine} mg)</strong>
-                <button class="btn-suppr" onclick="supprimerFlacon('${f.id}')">🗑️</button>
+                <button type="button" class="btn-suppr" onclick="supprimerFlacon('${f.id}')">🗑️</button>
             </div>
             <p class="texte-secondaire">Préparé le ${new Date(f.preparedAt || f.dateOuverture).toLocaleDateString()} (${f.volume} ml)</p>
         </div>
@@ -585,7 +577,7 @@ function afficherFinances() {
             </div>
             <div style="display:flex; align-items:center; gap:10px;">
                 <span style="color:#f85149; font-weight:bold;">-${d.montant.toFixed(2)} €</span>
-                <button class="btn-suppr" onclick="supprimerDepense('${d.id}')">🗑️</button>
+                <button type="button" class="btn-suppr" onclick="supprimerDepense('${d.id}')">🗑️</button>
             </div>
         </div>
     `).join('');
@@ -611,7 +603,7 @@ function afficherObjectifs() {
                 <strong>${o.titre}</strong>
                 <p class="texte-secondaire">Cible : ${new Date(o.date).toLocaleDateString()}</p>
             </div>
-            <button class="btn-suppr" onclick="supprimerObjectif('${o.id}')">🗑️</button>
+            <button type="button" class="btn-suppr" onclick="supprimerObjectif('${o.id}')">🗑️</button>
         </div>
     `).join('');
 }
@@ -757,14 +749,16 @@ function configurerEcouteurs() {
         }
     };
 
-    // FORMULAIRE SÉCURISÉ PRÉPARATION FLACON
-    document.getElementById('form-flacon').onsubmit = (e) => {
+    // FORMULAIRE PRÉPARATION FLACON
+    document.getElementById('form-flacon').addEventListener('submit', function(e) {
         e.preventDefault();
+        e.stopPropagation();
 
-        const nom = document.getElementById('nom').value.trim();
+        const nomEl = document.getElementById('nom');
+        const nom = nomEl ? nomEl.value.trim() : '';
         if (!nom) {
             alert('Veuillez renseigner le nom du liquide.');
-            return;
+            return false;
         }
 
         const dateFabriqueStr = document.getElementById('date-ouverture').value;
@@ -805,7 +799,8 @@ function configurerEcouteurs() {
         document.getElementById('form-flacon').reset();
         mettreAJourTout();
         afficherEcran('ecran-accueil');
-    };
+        return false;
+    });
 
     document.getElementById('btn-terminer').onclick = () => {
         const actif = flacons.find(f => f.actif);
@@ -826,20 +821,22 @@ function configurerEcouteurs() {
         document.getElementById('form-recette').classList.add('masque');
     };
 
-    // FORMULAIRE SÉCURISÉ DE CRÉATION DE RECETTE
-    document.getElementById('form-recette').onsubmit = (e) => {
+    // FORMULAIRE CRÉATION RECETTE
+    document.getElementById('form-recette').addEventListener('submit', function(e) {
         e.preventDefault();
+        e.stopPropagation();
 
-        const nom = document.getElementById('recette-nom').value.trim();
+        const nomEl = document.getElementById('recette-nom');
+        const nom = nomEl ? nomEl.value.trim() : '';
         if (!nom) {
             alert('Veuillez renseigner un nom pour la recette.');
-            return;
+            return false;
         }
 
         const calcs = calculerDosagesDIY();
         if (!calcs) {
             alert('Veuillez vérifier les dosages de la recette.');
-            return;
+            return false;
         }
 
         const steepDaysInput = parseInt(document.getElementById('recette-steep-days').value || 0, 10);
@@ -865,7 +862,8 @@ function configurerEcouteurs() {
         document.getElementById('form-recette').classList.add('masque');
         
         mettreAJourTout();
-    };
+        return false;
+    });
 
     document.getElementById('btn-ouvrir-depense').onclick = () => {
         document.getElementById('form-depense').classList.remove('masque');
