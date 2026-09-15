@@ -218,58 +218,120 @@ function genererParticules() {
 }
 
 // =============================================================
-// MODE 1 : CALCULATEUR DIY CRÉATION EN DIRECT
+// MODE 1 : CALCULATEUR DIY CRÉATION (SÉCURISÉ & RIGOUREUX)
 // =============================================================
 function calculerDosagesDIY() {
-    const volTotal = parseFloat(document.getElementById('recette-volume').value) || 0;
-    const nicoVisee = parseFloat(document.getElementById('recette-nicotine').value) || 0;
-    const pctArome = parseFloat(document.getElementById('recette-arome').value) || 0;
-    const tauxBooster = parseFloat(document.getElementById('recette-taux-booster').value) || 20;
+    const volTotal = parseFloat(document.getElementById('recette-volume').value);
+    const nicoVisee = parseFloat(document.getElementById('recette-nicotine').value);
+    const pctArome = parseFloat(document.getElementById('recette-arome').value);
+    const tauxBooster = parseFloat(document.getElementById('recette-taux-booster').value);
 
-    const volArome = (volTotal * pctArome) / 100;
-    const volBooster = tauxBooster > 0 ? (volTotal * nicoVisee) / tauxBooster : 0;
-    const nbrFiolesBooster = (volBooster / 10).toFixed(1);
+    const elArome = document.getElementById('calc-arome');
+    const elBooster = document.getElementById('calc-booster');
+    const elBase = document.getElementById('calc-base');
 
-    let volBase = volTotal - volArome - volBooster;
-    
-    if (volBase < 0) {
-        volBase = 0;
-        if (document.getElementById('calc-base')) document.getElementById('calc-base').style.color = '#f85149';
-    } else {
-        if (document.getElementById('calc-base')) document.getElementById('calc-base').style.color = '#e6edf3';
+    if (isNaN(volTotal) || volTotal <= 0 || isNaN(nicoVisee) || nicoVisee < 0 ||
+        isNaN(pctArome) || pctArome < 0 || pctArome >= 100 || isNaN(tauxBooster) || tauxBooster <= 0) {
+        if (elArome) elArome.textContent = "---";
+        if (elBooster) elBooster.textContent = "---";
+        if (elBase) elBase.textContent = "---";
+        return null;
     }
 
-    if (document.getElementById('calc-arome')) document.getElementById('calc-arome').textContent = `${volArome.toFixed(1)} ml (${pctArome}%)`;
-    if (document.getElementById('calc-booster')) document.getElementById('calc-booster').textContent = `${volBooster.toFixed(1)} ml (${nbrFiolesBooster} fiole${nbrFiolesBooster > 1 ? 's' : ''})`;
-    if (document.getElementById('calc-base')) document.getElementById('calc-base').textContent = `${volBase.toFixed(1)} ml`;
+    const volBooster = (volTotal * nicoVisee) / tauxBooster;
+    const volArome = (volTotal * pctArome) / 100;
+    const volBase = volTotal - volBooster - volArome;
 
-    return { volTotal, volArome, volBooster, volBase, nbrFiolesBooster };
+    if (volBase < 0) {
+        if (elArome) elArome.textContent = `${volArome.toFixed(2)} ml (${pctArome}%)`;
+        if (elBooster) elBooster.textContent = `${volBooster.toFixed(2)} ml`;
+        if (elBase) {
+            elBase.textContent = "Impossible (surdosage)";
+            elBase.style.color = '#f85149';
+        }
+        return null;
+    }
+
+    const nbrFiolesBooster = (volBooster / 10).toFixed(1);
+    if (elArome) elArome.textContent = `${volArome.toFixed(2)} ml (${pctArome}%)`;
+    if (elBooster) elBooster.textContent = `${volBooster.toFixed(2)} ml (${nbrFiolesBooster} fiole${nbrFiolesBooster > 1 ? 's' : ''})`;
+    if (elBase) {
+        elBase.textContent = `${volBase.toFixed(2)} ml`;
+        elBase.style.color = '#e6edf3';
+    }
+
+    return {
+        volTotal: volTotal,
+        volArome: volArome,
+        volBooster: volBooster,
+        volBase: volBase,
+        nbrFiolesBooster: nbrFiolesBooster
+    };
 }
 
 // =============================================================
-// MODE 2 : CALCULATEUR D'AJUSTEMENT DE LIQUIDE TROP FORT
+// MODE 2 : CALCULATEUR D'AJUSTEMENT / DILUTION (EXACTITUDE RIGOUREUSE)
 // =============================================================
 function calculerAjustementDIY() {
-    const volActuel = parseFloat(document.getElementById('ajust-vol-actuel').value) || 0;
-    const nicoActuelle = parseFloat(document.getElementById('ajust-nico-actuelle').value) || 0;
-    const nicoVisee = parseFloat(document.getElementById('ajust-nico-visee').value) || 0;
-    const pctArome = parseFloat(document.getElementById('ajust-arome-pct').value) || 0;
+    const volActuel = parseFloat(document.getElementById('ajust-vol-actuel').value);
+    const nicoActuelle = parseFloat(document.getElementById('ajust-nico-actuelle').value);
+    const aromeActuelPct = parseFloat(document.getElementById('ajust-arome-actuel').value);
+    const nicoVisee = parseFloat(document.getElementById('ajust-nico-visee').value);
+    const aromeCiblePct = parseFloat(document.getElementById('ajust-arome-pct').value);
 
-    if (nicoVisee >= nicoActuelle || nicoVisee <= 0 || volActuel <= 0) {
-        if (document.getElementById('ajust-calc-base')) document.getElementById('ajust-calc-base').textContent = "---";
-        if (document.getElementById('ajust-calc-arome')) document.getElementById('ajust-calc-arome').textContent = "---";
-        if (document.getElementById('ajust-calc-vol-final')) document.getElementById('ajust-calc-vol-final').textContent = "---";
+    const elBase = document.getElementById('ajust-calc-base');
+    const elArome = document.getElementById('ajust-calc-arome');
+    const elVolFinal = document.getElementById('ajust-calc-vol-final');
+
+    if (isNaN(volActuel) || volActuel <= 0 ||
+        isNaN(nicoActuelle) || nicoActuelle <= 0 ||
+        isNaN(nicoVisee) || nicoVisee <= 0 ||
+        isNaN(aromeActuelPct) || aromeActuelPct < 0 || aromeActuelPct >= 100 ||
+        isNaN(aromeCiblePct) || aromeCiblePct < 0 || aromeCiblePct >= 100) {
+        if (elBase) elBase.textContent = "---";
+        if (elArome) elArome.textContent = "---";
+        if (elVolFinal) elVolFinal.textContent = "---";
         return;
     }
 
-    // Calcul du volume final nécessaire pour réduire le taux
-    const volFinal = volActuel * (nicoActuelle / nicoVisee);
-    const baseAAjouter = volFinal - volActuel;
-    const aromeAAjouter = baseAAjouter * (pctArome / 100);
+    if (nicoVisee >= nicoActuelle) {
+        if (elBase) elBase.textContent = "Nico cible doit être < actuelle";
+        if (elArome) elArome.textContent = "---";
+        if (elVolFinal) elVolFinal.textContent = "---";
+        return;
+    }
 
-    if (document.getElementById('ajust-calc-base')) document.getElementById('ajust-calc-base').textContent = `${baseAAjouter.toFixed(1)} ml`;
-    if (document.getElementById('ajust-calc-arome')) document.getElementById('ajust-calc-arome').textContent = `${aromeAAjouter.toFixed(2)} ml`;
-    if (document.getElementById('ajust-calc-vol-final')) document.getElementById('ajust-calc-vol-final').textContent = `${volFinal.toFixed(1)} ml`;
+    // ÉTAPE 1 : Volume final imposé par la nicotine
+    const volFinal = (volActuel * nicoActuelle) / nicoVisee;
+
+    // ÉTAPE 2 : Volume d'arôme déjà présent
+    const aromeInitial = (volActuel * aromeActuelPct) / 100;
+
+    // ÉTAPE 3 : Volume d'arôme total nécessaire et à ajouter
+    const aromeFinalSouhaite = (volFinal * aromeCiblePct) / 100;
+    const aromeAAjouter = aromeFinalSouhaite - aromeInitial;
+
+    if (aromeAAjouter < 0) {
+        if (elBase) elBase.textContent = "Impossible";
+        if (elArome) elArome.textContent = "Cible arôme trop basse";
+        if (elVolFinal) elVolFinal.textContent = "---";
+        return;
+    }
+
+    // ÉTAPE 4 : Calcul de la base neutre à ajouter
+    const ajoutTotal = volFinal - volActuel;
+    const baseAAjouter = ajoutTotal - aromeAAjouter;
+
+    if (baseAAjouter < 0) {
+        if (elBase) elBase.textContent = "Impossible (base < 0)";
+        if (elArome) elArome.textContent = "---";
+        if (elVolFinal) elVolFinal.textContent = "---";
+        return;
+    }
+
+    if (elBase) elBase.textContent = `${baseAAjouter.toFixed(1)} ml`;
+    if (elArome) elArome.textContent = `${aromeAAjouter.toFixed(2)} ml`;
+    if (elVolFinal) elVolFinal.textContent = `${volFinal.toFixed(1)} ml`;
 }
 
 function afficherRecettes() {
@@ -475,7 +537,7 @@ function configurerEcouteurs() {
         }
     });
 
-    const champsAjust = ['ajust-vol-actuel', 'ajust-nico-actuelle', 'ajust-nico-visee', 'ajust-arome-pct'];
+    const champsAjust = ['ajust-vol-actuel', 'ajust-nico-actuelle', 'ajust-arome-actuel', 'ajust-nico-visee', 'ajust-arome-pct'];
     champsAjust.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
@@ -485,7 +547,7 @@ function configurerEcouteurs() {
         }
     });
 
-    // BASCULEMENT DES ONGLETS DIY (CRÉATION VS AJUSTEMENT)
+    // BASCULEMENT DES ONGLETS DIY
     const tabCreer = document.getElementById('tab-mode-creer');
     const tabAjuster = document.getElementById('tab-mode-ajuster');
     const formRecette = document.getElementById('form-recette');
@@ -623,6 +685,7 @@ function configurerEcouteurs() {
     document.getElementById('form-recette').onsubmit = (e) => {
         e.preventDefault();
         const calcs = calculerDosagesDIY();
+        if (!calcs) return;
 
         const nouvelleRecette = {
             id: Date.now().toString(),
