@@ -697,37 +697,45 @@ function configurerEcouteurs() {
         });
     }
 
-    document.getElementById('form-onboarding').onsubmit = (e) => {
-        e.preventDefault();
-        const estVapoteur = document.getElementById('ob-vapote').value === 'oui';
-        configUser = {
-            prenom: document.getElementById('ob-prenom').value,
-            dateArret: document.getElementById('ob-date-arret').value,
-            cigsJour: parseFloat(document.getElementById('ob-cigs-jour').value),
-            prixPaquet: parseFloat(document.getElementById('ob-prix-paquet').value),
-            cigsPaquet: 20,
-            vapote: estVapoteur,
-            nicotineActuelle: estVapoteur ? parseFloat(document.getElementById('ob-nicotine-actuelle').value || 0) : 0
-        };
-        localStorage.setItem('vt_config', JSON.stringify(configUser));
-        initialiserInterface();
-    };
+    const formOb = document.getElementById('form-onboarding');
+    if (formOb) {
+        formOb.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const estVapoteur = document.getElementById('ob-vapote').value === 'oui';
+            configUser = {
+                prenom: document.getElementById('ob-prenom').value,
+                dateArret: document.getElementById('ob-date-arret').value,
+                cigsJour: parseFloat(document.getElementById('ob-cigs-jour').value),
+                prixPaquet: parseFloat(document.getElementById('ob-prix-paquet').value),
+                cigsPaquet: 20,
+                vapote: estVapoteur,
+                nicotineActuelle: estVapoteur ? parseFloat(document.getElementById('ob-nicotine-actuelle').value || 0) : 0
+            };
+            localStorage.setItem('vt_config', JSON.stringify(configUser));
+            initialiserInterface();
+            return false;
+        });
+    }
 
-    document.getElementById('form-config-tabac').onsubmit = (e) => {
-        e.preventDefault();
-        if (!configUser) configUser = {};
-        configUser.cigsJour = parseFloat(document.getElementById('cigs-jour').value);
-        configUser.prixPaquet = parseFloat(document.getElementById('prix-paquet').value);
-        configUser.cigsPaquet = parseFloat(document.getElementById('cigs-paquet').value);
-        
-        const estVapoteur = document.getElementById('config-vapote').value === 'oui';
-        configUser.vapote = estVapoteur;
-        configUser.nicotineActuelle = estVapoteur ? parseFloat(document.getElementById('config-nicotine').value || 0) : 0;
+    const formCfg = document.getElementById('form-config-tabac');
+    if (formCfg) {
+        formCfg.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!configUser) configUser = {};
+            configUser.cigsJour = parseFloat(document.getElementById('cigs-jour').value);
+            configUser.prixPaquet = parseFloat(document.getElementById('prix-paquet').value);
+            configUser.cigsPaquet = parseFloat(document.getElementById('cigs-paquet').value);
+            
+            const estVapoteur = document.getElementById('config-vapote').value === 'oui';
+            configUser.vapote = estVapoteur;
+            configUser.nicotineActuelle = estVapoteur ? parseFloat(document.getElementById('config-nicotine').value || 0) : 0;
 
-        localStorage.setItem('vt_config', JSON.stringify(configUser));
-        mettreAJourTout();
-        alert('Paramètres mis à jour !');
-    };
+            localStorage.setItem('vt_config', JSON.stringify(configUser));
+            mettreAJourTout();
+            alert('Paramètres mis à jour !');
+            return false;
+        });
+    }
 
     document.getElementById('btn-ouvrir-ajout').onclick = () => afficherEcran('ecran-ajout');
     document.getElementById('btn-annuler').onclick = () => afficherEcran('ecran-accueil');
@@ -749,58 +757,56 @@ function configurerEcouteurs() {
         }
     };
 
-    // FORMULAIRE PRÉPARATION FLACON
-    document.getElementById('form-flacon').addEventListener('submit', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
+    const formFla = document.getElementById('form-flacon');
+    if (formFla) {
+        formFla.addEventListener('submit', (e) => {
+            e.preventDefault();
 
-        const nomEl = document.getElementById('nom');
-        const nom = nomEl ? nomEl.value.trim() : '';
-        if (!nom) {
-            alert('Veuillez renseigner le nom du liquide.');
+            const nomEl = document.getElementById('nom');
+            const nom = nomEl ? nomEl.value.trim() : '';
+            if (!nom) return false;
+
+            const dateFabriqueStr = document.getElementById('date-ouverture').value;
+            const dateFabrique = dateFabriqueStr ? new Date(dateFabriqueStr) : new Date();
+            const steepDays = Math.max(0, parseInt(document.getElementById('flacon-steep-days').value || 0, 10));
+            let dateFinSteep = null;
+
+            if (steepDays > 0) {
+                dateFinSteep = new Date(dateFabrique.getTime() + (steepDays * 24 * 60 * 60 * 1000)).toISOString();
+            }
+
+            const nouveauFlacon = {
+                id: Date.now().toString(),
+                nom: nom,
+                type: document.getElementById('type').value,
+                volume: parseFloat(document.getElementById('volume').value) || 0,
+                nicotine: parseFloat(document.getElementById('nicotine').value) || 0,
+                arome: parseFloat(document.getElementById('arome').value) || 0,
+                preparedAt: dateFabrique.toISOString(),
+                dateOuverture: dateFabrique.toISOString(),
+                steepDays: steepDays,
+                steepReadyAt: dateFinSteep,
+                actif: false,
+                termine: false
+            };
+
+            if (steepDays === 0 && !flacons.some(f => f.actif)) {
+                nouveauFlacon.actif = true;
+            }
+
+            flacons.unshift(nouveauFlacon);
+            localStorage.setItem('vt_flacons', JSON.stringify(flacons));
+
+            if (steepDays > 0) {
+                programmerNotificationSteep(nouveauFlacon);
+            }
+
+            formFla.reset();
+            mettreAJourTout();
+            afficherEcran('ecran-accueil');
             return false;
-        }
-
-        const dateFabriqueStr = document.getElementById('date-ouverture').value;
-        const dateFabrique = dateFabriqueStr ? new Date(dateFabriqueStr) : new Date();
-        const steepDays = Math.max(0, parseInt(document.getElementById('flacon-steep-days').value || 0, 10));
-        let dateFinSteep = null;
-
-        if (steepDays > 0) {
-            dateFinSteep = new Date(dateFabrique.getTime() + (steepDays * 24 * 60 * 60 * 1000)).toISOString();
-        }
-
-        const nouveauFlacon = {
-            id: Date.now().toString(),
-            nom: nom,
-            type: document.getElementById('type').value,
-            volume: parseFloat(document.getElementById('volume').value) || 0,
-            nicotine: parseFloat(document.getElementById('nicotine').value) || 0,
-            arome: parseFloat(document.getElementById('arome').value) || 0,
-            preparedAt: dateFabrique.toISOString(),
-            dateOuverture: dateFabrique.toISOString(),
-            steepDays: steepDays,
-            steepReadyAt: dateFinSteep,
-            actif: false,
-            termine: false
-        };
-
-        if (steepDays === 0 && !flacons.some(f => f.actif)) {
-            nouveauFlacon.actif = true;
-        }
-
-        flacons.unshift(nouveauFlacon);
-        localStorage.setItem('vt_flacons', JSON.stringify(flacons));
-
-        if (steepDays > 0) {
-            programmerNotificationSteep(nouveauFlacon);
-        }
-
-        document.getElementById('form-flacon').reset();
-        mettreAJourTout();
-        afficherEcran('ecran-accueil');
-        return false;
-    });
+        });
+    }
 
     document.getElementById('btn-terminer').onclick = () => {
         const actif = flacons.find(f => f.actif);
@@ -821,93 +827,81 @@ function configurerEcouteurs() {
         document.getElementById('form-recette').classList.add('masque');
     };
 
-    // FORMULAIRE CRÉATION RECETTE
-    document.getElementById('form-recette').addEventListener('submit', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
+    const formRec = document.getElementById('form-recette');
+    if (formRec) {
+        formRec.addEventListener('submit', (e) => {
+            e.preventDefault();
 
-        const nomEl = document.getElementById('recette-nom');
-        const nom = nomEl ? nomEl.value.trim() : '';
-        if (!nom) {
-            alert('Veuillez renseigner un nom pour la recette.');
+            const nomEl = document.getElementById('recette-nom');
+            const nom = nomEl ? nomEl.value.trim() : '';
+            if (!nom) return false;
+
+            const calcs = calculerDosagesDIY();
+            if (!calcs) return false;
+
+            const steepDaysInput = parseInt(document.getElementById('recette-steep-days').value || 0, 10);
+
+            const nouvelleRecette = {
+                id: Date.now().toString(),
+                nom: nom,
+                type: document.getElementById('recette-type').value,
+                nicotine: parseFloat(document.getElementById('recette-nicotine').value) || 0,
+                arome: parseFloat(document.getElementById('recette-arome').value) || 0,
+                steepDays: Math.max(0, isNaN(steepDaysInput) ? 0 : steepDaysInput),
+                volumeTotal: calcs.volTotal,
+                volArome: calcs.volArome,
+                volBooster: calcs.volBooster,
+                nbrFioles: calcs.nbrFiolesBooster,
+                volBase: calcs.volBase
+            };
+
+            recettes.unshift(nouvelleRecette);
+            localStorage.setItem('vt_recettes', JSON.stringify(recettes));
+
+            formRec.reset();
+            document.getElementById('form-recette').classList.add('masque');
+            mettreAJourTout();
             return false;
-        }
+        });
+    }
 
-        const calcs = calculerDosagesDIY();
-        if (!calcs) {
-            alert('Veuillez vérifier les dosages de la recette.');
+    const formDep = document.getElementById('form-depense');
+    if (formDep) {
+        formDep.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nouvelleDepense = {
+                id: Date.now().toString(),
+                categorie: document.getElementById('dep-cat').value,
+                nom: document.getElementById('dep-nom').value,
+                montant: parseFloat(document.getElementById('dep-montant').value),
+                date: new Date().toISOString()
+            };
+            depenses.unshift(nouvelleDepense);
+            localStorage.setItem('vt_depenses', JSON.stringify(depenses));
+            formDep.reset();
+            document.getElementById('form-depense').classList.add('masque');
+            mettreAJourTout();
             return false;
-        }
+        });
+    }
 
-        const steepDaysInput = parseInt(document.getElementById('recette-steep-days').value || 0, 10);
-
-        const nouvelleRecette = {
-            id: Date.now().toString(),
-            nom: nom,
-            type: document.getElementById('recette-type').value,
-            nicotine: parseFloat(document.getElementById('recette-nicotine').value) || 0,
-            arome: parseFloat(document.getElementById('recette-arome').value) || 0,
-            steepDays: Math.max(0, isNaN(steepDaysInput) ? 0 : steepDaysInput),
-            volumeTotal: calcs.volTotal,
-            volArome: calcs.volArome,
-            volBooster: calcs.volBooster,
-            nbrFioles: calcs.nbrFiolesBooster,
-            volBase: calcs.volBase
-        };
-
-        recettes.unshift(nouvelleRecette);
-        localStorage.setItem('vt_recettes', JSON.stringify(recettes));
-
-        document.getElementById('form-recette').reset();
-        document.getElementById('form-recette').classList.add('masque');
-        
-        mettreAJourTout();
-        return false;
-    });
-
-    document.getElementById('btn-ouvrir-depense').onclick = () => {
-        document.getElementById('form-depense').classList.remove('masque');
-    };
-    document.getElementById('btn-annuler-depense').onclick = () => {
-        document.getElementById('form-depense').classList.add('masque');
-    };
-
-    document.getElementById('form-depense').onsubmit = (e) => {
-        e.preventDefault();
-        const nouvelleDepense = {
-            id: Date.now().toString(),
-            categorie: document.getElementById('dep-cat').value,
-            nom: document.getElementById('dep-nom').value,
-            montant: parseFloat(document.getElementById('dep-montant').value),
-            date: new Date().toISOString()
-        };
-        depenses.unshift(nouvelleDepense);
-        localStorage.setItem('vt_depenses', JSON.stringify(depenses));
-        document.getElementById('form-depense').reset();
-        document.getElementById('form-depense').classList.add('masque');
-        mettreAJourTout();
-    };
-
-    document.getElementById('btn-ouvrir-ajout-objectif').onclick = () => {
-        document.getElementById('form-objectif').classList.remove('masque');
-    };
-    document.getElementById('btn-annuler-objectif').onclick = () => {
-        document.getElementById('form-objectif').classList.add('masque');
-    };
-
-    document.getElementById('form-objectif').onsubmit = (e) => {
-        e.preventDefault();
-        const nouvelObjectif = {
-            id: Date.now().toString(),
-            titre: document.getElementById('obj-titre').value,
-            date: document.getElementById('obj-date').value
-        };
-        objectifs.unshift(nouvelObjectif);
-        localStorage.setItem('vt_objectifs', JSON.stringify(objectifs));
-        document.getElementById('form-objectif').reset();
-        document.getElementById('form-objectif').classList.add('masque');
-        mettreAJourTout();
-    };
+    const formObj = document.getElementById('form-objectif');
+    if (formObj) {
+        formObj.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nouvelObjectif = {
+                id: Date.now().toString(),
+                titre: document.getElementById('obj-titre').value,
+                date: document.getElementById('obj-date').value
+            };
+            objectifs.unshift(nouvelObjectif);
+            localStorage.setItem('vt_objectifs', JSON.stringify(objectifs));
+            formObj.reset();
+            document.getElementById('form-objectif').classList.add('masque');
+            mettreAJourTout();
+            return false;
+        });
+    }
 
     document.getElementById('btn-notifications').onclick = () => {
         if ('Notification' in window) {
