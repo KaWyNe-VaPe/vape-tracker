@@ -183,18 +183,12 @@ function mettreAJourCerisierHD() {
     if (badge) badge.textContent = nomStade;
 
     if (conteneur) {
+        // Chargement direct de l'image PNG
         conteneur.innerHTML = `
-            <svg viewBox="0 0 200 200" class="arbre-brise" style="width:100%; height:100%;">
-                <circle cx="100" cy="80" r="45" fill="#e63946" opacity="0.25" />
-                <path d="M100 170 Q95 120 100 90 T115 45" stroke="#7f5539" stroke-width="8" fill="none" stroke-linecap="round"/>
-                <path d="M100 110 Q120 95 130 80" stroke="#7f5539" stroke-width="5" fill="none" stroke-linecap="round"/>
-                <path d="M98 125 Q80 110 70 95" stroke="#7f5539" stroke-width="4" fill="none" stroke-linecap="round"/>
-                ${numStade >= 1 ? '<circle cx="115" cy="45" r="12" fill="#ffb7c5" opacity="0.8"/>' : ''}
-                ${numStade >= 2 ? '<circle cx="130" cy="80" r="14" fill="#ff80ab" opacity="0.8"/><circle cx="70" cy="95" r="12" fill="#ffb7c5" opacity="0.8"/>' : ''}
-                ${numStade >= 3 ? '<circle cx="100" cy="65" r="18" fill="#ffb7c5" opacity="0.85"/>' : ''}
-                ${numStade >= 4 ? '<circle cx="125" cy="55" r="16" fill="#ff80ab" opacity="0.9"/><circle cx="85" cy="75" r="15" fill="#ffb7c5" opacity="0.9"/>' : ''}
-                ${numStade >= 5 ? '<circle cx="100" cy="40" r="22" fill="#ff80ab" opacity="0.95"/><circle cx="140" cy="70" r="18" fill="#ffb7c5" opacity="0.95"/>' : ''}
-            </svg>
+            <img src="./arbre-stade-${numStade}.png" 
+                 alt="${nomStade}" 
+                 class="arbre-brise"
+                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px; display: block;">
         `;
     }
 
