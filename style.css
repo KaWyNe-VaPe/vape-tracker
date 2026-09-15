@@ -432,26 +432,12 @@ nav {
     justify-content: center;
     align-items: center;
     z-index: 999999;
-    
-    /* Animation automatique : s'efface au bout de 2.5s et disparaît du DOM */
     animation: masqueAutoSplash 0.5s ease-out 2.5s forwards;
 }
 
 @keyframes masqueAutoSplash {
-    0% {
-        opacity: 1;
-        visibility: visible;
-    }
-    99% {
-        opacity: 0;
-        visibility: visible;
-    }
-    100% {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        display: none !important; /* Libère complètement les clics sous l'écran */
-    }
+    0% { opacity: 1; }
+    100% { opacity: 0; pointer-events: none; display: none; }
 }
 
 .splash-logo {
