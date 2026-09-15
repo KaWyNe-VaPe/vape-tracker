@@ -155,6 +155,9 @@ function mettreAJourDashboard() {
     }
 }
 
+// =============================================================
+// GESTION DE L'ARBRE (RETOUR À L'IMAGE PNG D'ORIGINE)
+// =============================================================
 function mettreAJourCerisierHD() {
     const jours = getJoursEcoules();
     const badge = document.getElementById('nom-stade-arbre');
@@ -183,12 +186,13 @@ function mettreAJourCerisierHD() {
     if (badge) badge.textContent = nomStade;
 
     if (conteneur) {
-        // Chargement direct de l'image PNG
+        const urlImage = `./arbre-stade-${numStade}.png`;
         conteneur.innerHTML = `
-            <img src="./arbre-stade-${numStade}.png" 
+            <img src="${urlImage}" 
                  alt="${nomStade}" 
                  class="arbre-brise"
-                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px; display: block;">
+                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px; display: block;"
+                 onerror="this.onerror=null; this.src='icon.png';">
         `;
     }
 
@@ -214,7 +218,7 @@ function genererParticules() {
 }
 
 // =============================================================
-// CALCULATEUR DIY EN DIRECT & AFFICHAGE RECETTES
+// CALCULATEUR DIY EXACT EN DIRECT & AFFICHAGE RECETTES
 // =============================================================
 function calculerDosagesDIY() {
     const volTotal = parseFloat(document.getElementById('recette-volume').value) || 0;
@@ -222,15 +226,12 @@ function calculerDosagesDIY() {
     const pctArome = parseFloat(document.getElementById('recette-arome').value) || 0;
     const tauxBooster = parseFloat(document.getElementById('recette-taux-booster').value) || 20;
 
-    // 1. Calcul exact des ingrédients en millilitres
     const volArome = (volTotal * pctArome) / 100;
     const volBooster = tauxBooster > 0 ? (volTotal * nicoVisee) / tauxBooster : 0;
     const nbrFiolesBooster = (volBooster / 10).toFixed(1);
 
-    // 2. La base complète le reste du flacon
     let volBase = volTotal - volArome - volBooster;
     
-    // Alerte visuelle si le mélange est physiquement impossible (trop d'arôme/booster pour le volume)
     if (volBase < 0) {
         volBase = 0;
         if (document.getElementById('calc-base')) {
@@ -242,7 +243,6 @@ function calculerDosagesDIY() {
         }
     }
 
-    // 3. Affichage dynamique en temps réel
     if (document.getElementById('calc-arome')) {
         document.getElementById('calc-arome').textContent = `${volArome.toFixed(1)} ml (${pctArome}%)`;
     }
@@ -255,6 +255,7 @@ function calculerDosagesDIY() {
 
     return { volTotal, volArome, volBooster, volBase, nbrFiolesBooster };
 }
+
 function afficherRecettes() {
     const conteneur = document.getElementById('liste-recettes');
     if (!conteneur) return;
@@ -296,7 +297,6 @@ function supprimerRecette(id) {
     mettreAJourTout();
 }
 
-// AUTRES FONCTIONS (FLACONS, SANTE, FINANCES, OBJECTIFS)
 function afficherFlaconActif() {
     const actif = flacons.find(f => f.actif);
     const btnTerminer = document.getElementById('btn-terminer');
@@ -448,10 +448,15 @@ function configurerEcouteurs() {
     document.getElementById('nav-finances').onclick = () => afficherEcran('ecran-finances');
     document.getElementById('nav-objectifs').onclick = () => afficherEcran('ecran-objectifs');
 
-    // Écouteurs de calcul DIY en direct
-    ['recette-volume', 'recette-nicotine', 'recette-arome', 'recette-taux-booster'].forEach(id => {
+    // ÉCOUTEURS DE CALCUL DIY EN DIRECT (COMPATIBLE WEB ET MOBILE)
+    const champsDIY = ['recette-volume', 'recette-nicotine', 'recette-arome', 'recette-taux-booster'];
+    champsDIY.forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.addEventListener('input', calculerDosagesDIY);
+        if (el) {
+            ['input', 'keyup', 'change'].forEach(evt => {
+                el.addEventListener(evt, calculerDosagesDIY);
+            });
+        }
     });
 
     const selectObVapote = document.getElementById('ob-vapote');
