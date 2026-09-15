@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
     
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="style.css?v=v102">
+    <link rel="stylesheet" href="style.css?v=v104_steep_flux">
     <meta name="theme-color" content="#0b0e14">
 </head>
 <body>
@@ -119,16 +119,23 @@
                     </div>
                 </div>
 
-                <!-- CARTE FLACON EN COURS -->
-                <div class="carte carte-flacon-actif">
-                    <h2>Flacon en cours 🧪</h2>
+                <!-- CARTE FLACON EN COURS DU MOMENT -->
+                <div class="carte carte-flacon-actif" id="carte-flacon-principal">
+                    <h2>Flacon en cours 💨</h2>
                     <div class="contenu-flacon">
                         <h3 id="nom-liquide">Aucun flacon actif</h3>
                         <p id="details-nicotine" class="texte-secondaire"></p>
                         <p id="details-flacon" class="texte-secondaire"></p>
                     </div>
+
                     <button id="btn-terminer" class="btn-secondaire" style="display:none;">Terminer ce flacon 🏁</button>
-                    <button id="btn-ouvrir-ajout" class="btn-primaire" style="margin-top:10px;">Enregistrer un flacon ➕</button>
+                    <button id="btn-ouvrir-ajout" class="btn-primaire" style="margin-top:10px;">Préparer un flacon 🧪</button>
+                </div>
+
+                <!-- SECTION DES FLACONS EN MATURATION / PRÊTS -->
+                <div id="section-flacons-reserve" style="margin-top: 20px;">
+                    <h2>Réserve & Maturation 🧪</h2>
+                    <div id="liste-flacons-reserve"></div>
                 </div>
 
                 <!-- HISTORIQUE -->
@@ -138,7 +145,7 @@
                 </div>
             </section>
 
-            <!-- ÉCRAN 2 : DIY (RECETTES CALCULÉES & AJUSTEMENT) -->
+            <!-- ÉCRAN 2 : DIY (RECETTES CALCULÉES & AJUSTEMENT & MATURATION) -->
             <section id="ecran-recettes" class="ecran masque">
                 <h2>Laboratoire DIY 🧪</h2>
                 
@@ -153,7 +160,7 @@
                     <h3>Nouvelle recette DIY</h3>
                     <div class="groupe-champ" style="margin-top:10px;">
                         <label>Nom du liquide / de la recette</label>
-                        <input type="text" id="recette-nom" placeholder="Ex: Red Astaire Maison" required>
+                        <input type="text" id="recette-nom" placeholder="Ex: Alucard" required>
                     </div>
 
                     <div class="grille-champs-2col">
@@ -176,6 +183,11 @@
                             <label>Taux Booster (mg/ml)</label>
                             <input type="number" step="1" id="recette-taux-booster" placeholder="20" value="20">
                         </div>
+                    </div>
+
+                    <div class="groupe-champ">
+                        <label>Temps de maturation / steep (Jours) - <i>Optionnel</i></label>
+                        <input type="number" id="recette-steep-days" placeholder="Ex: 10 (laisser vide si aucun)" min="0" step="1">
                     </div>
 
                     <div class="box-calcul-live">
@@ -329,7 +341,7 @@
 
             <!-- ÉCRAN FORMULAIRE AJOUT FLACON -->
             <section id="ecran-ajout" class="ecran masque">
-                <h2>Commencer un flacon 🧪</h2>
+                <h2>Préparer un flacon 🧪</h2>
                 <form id="form-flacon" class="form-card">
                     <div class="groupe-champ">
                         <label>Sélectionner une recette enregistrée (Optionnel)</label>
@@ -338,14 +350,14 @@
                         </select>
                     </div>
                     <div class="groupe-champ">
-                        <label>Nom du produit</label>
-                        <input type="text" id="nom" placeholder="Ex: Fruits Rouges" required>
+                        <label>Nom du produit / liquide</label>
+                        <input type="text" id="nom" placeholder="Ex: Alucard" required>
                     </div>
                     <div class="groupe-champ">
                         <label>Type</label>
                         <select id="type">
-                            <option value="Prêt à vaper">Prêt à vaper</option>
                             <option value="DIY">DIY (Fait maison)</option>
+                            <option value="Prêt à vaper">Prêt à vaper (Commercial)</option>
                         </select>
                     </div>
                     <div class="groupe-champ">
@@ -360,11 +372,17 @@
                         <label>Pourcentage d'arôme (%)</label>
                         <input type="number" step="0.5" id="arome" placeholder="0">
                     </div>
+
+                    <div class="groupe-champ" id="groupe-flacon-steep">
+                        <label>Durée de maturation prévue (Jours)</label>
+                        <input type="number" id="flacon-steep-days" placeholder="0 pour aucun" min="0" step="1">
+                    </div>
+
                     <div class="groupe-champ">
-                        <label>Date & Heure d'ouverture</label>
+                        <label>Date & Heure de fabrication</label>
                         <input type="datetime-local" id="date-ouverture">
                     </div>
-                    <button type="submit" class="btn-primaire">Démarrer le flacon</button>
+                    <button type="submit" class="btn-primaire">Mettre en préparation 🧪</button>
                     <button type="button" id="btn-annuler" class="btn-secondaire">Annuler</button>
                 </form>
             </section>
