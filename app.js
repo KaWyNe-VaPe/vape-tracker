@@ -1,15 +1,4 @@
 // =============================================================
-// FERMETURE GARANTIE DU SPLASH SCREEN (2.5 SECONDES)
-// =============================================================
-function fermerSplashScreen() {
-    const splash = document.getElementById('splash-screen');
-    if (splash) {
-        splash.classList.add('masque-splash');
-    }
-}
-setTimeout(fermerSplashScreen, 2500);
-
-// =============================================================
 // VAPE TRACKER PWA - CODE PRINCIPAL APPLICATION
 // =============================================================
 
@@ -52,8 +41,20 @@ function initialiserInterface() {
     document.getElementById('entete-app').style.display = 'flex';
     document.querySelector('nav').style.display = 'flex';
     
+    // Champs de config profil/finances
     document.getElementById('cigs-jour').value = configUser.cigsJour || 15;
     document.getElementById('prix-paquet').value = configUser.prixPaquet || 12.5;
+    document.getElementById('config-vapote').value = configUser.vapote ? 'oui' : 'non';
+    document.getElementById('config-nicotine').value = configUser.nicotineActuelle ?? 12;
+
+    const grpNic = document.getElementById('groupe-config-nicotine');
+    if (grpNic) {
+        if (configUser.vapote) {
+            grpNic.classList.remove('masque-champ');
+        } else {
+            grpNic.classList.add('masque-champ');
+        }
+    }
 
     mettreAJourTout();
     afficherEcran('ecran-accueil');
@@ -105,13 +106,27 @@ function mettreAJourDashboard() {
     document.getElementById('card-cigs').textContent = cigsEvitees;
     document.getElementById('card-economies').textContent = `${economieNette.toFixed(2)} €`;
 
-    const prochainJalon = JALONS_SANTE.find(j => j.delaiHeures > heures);
-    if (prochainJalon) {
-        document.getElementById('card-jalon-titre').textContent = prochainJalon.titre;
-        document.getElementById('card-jalon-desc').textContent = prochainJalon.desc;
+    // Carte 4 : Nicotine actuelle & Prochain Objectif
+    const cardNicotineVal = document.getElementById('card-nicotine-valeur');
+    const cardNicotineObj = document.getElementById('card-nicotine-objectif');
+
+    if (configUser.vapote && configUser.nicotineActuelle !== undefined) {
+        cardNicotineVal.textContent = `${configUser.nicotineActuelle} mg/ml`;
     } else {
-        document.getElementById('card-jalon-titre').textContent = 'Santé au top !';
-        document.getElementById('card-jalon-desc').textContent = 'Tous les jalons initiaux sont validés ! 🌸';
+        cardNicotineVal.textContent = '0 mg/ml (Non vapoteur)';
+    }
+
+    const maintenant = new Date();
+    const objectifsFuturs = objectifs
+        .filter(o => new Date(o.date) >= maintenant)
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    if (objectifsFuturs.length > 0) {
+        const pro = objectifsFuturs[0];
+        const dateFormatee = new Date(pro.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        cardNicotineObj.textContent = `${pro.titre} le ${dateFormatee}`;
+    } else {
+        cardNicotineObj.textContent = 'Aucun objectif futur';
     }
 }
 
@@ -352,33 +367,70 @@ function afficherEcran(idEcran) {
 }
 
 function configurerEcouteurs() {
+    // Navigation basse
     document.getElementById('nav-accueil').onclick = () => afficherEcran('ecran-accueil');
     document.getElementById('nav-recettes').onclick = () => afficherEcran('ecran-recettes');
     document.getElementById('nav-sante').onclick = () => afficherEcran('ecran-sante');
     document.getElementById('nav-finances').onclick = () => afficherEcran('ecran-finances');
     document.getElementById('nav-objectifs').onclick = () => afficherEcran('ecran-objectifs');
 
+    // Onboarding : dynamique Oui/Non Vape
+    const selectObVapote = document.getElementById('ob-vapote');
+    const grpObNicotine = document.getElementById('groupe-ob-nicotine');
+    if (selectObVapote && grpObNicotine) {
+        selectObVapote.addEventListener('change', (e) => {
+            if (e.target.value === 'non') {
+                grpObNicotine.classList.add('masque-champ');
+            } else {
+                grpObNicotine.classList.remove('masque-champ');
+            }
+        });
+    }
+
+    // Config Finances : dynamique Oui/Non Vape
+    const selectCfgVapote = document.getElementById('config-vapote');
+    const grpCfgNicotine = document.getElementById('groupe-config-nicotine');
+    if (selectCfgVapote && grpCfgNicotine) {
+        selectCfgVapote.addEventListener('change', (e) => {
+            if (e.target.value === 'non') {
+                grpCfgNicotine.classList.add('masque-champ');
+            } else {
+                grpCfgNicotine.classList.remove('masque-champ');
+            }
+        });
+    }
+
+    // Soumission Onboarding Form
     document.getElementById('form-onboarding').onsubmit = (e) => {
         e.preventDefault();
+        const estVapoteur = document.getElementById('ob-vapote').value === 'oui';
         configUser = {
             prenom: document.getElementById('ob-prenom').value,
             dateArret: document.getElementById('ob-date-arret').value,
             cigsJour: parseFloat(document.getElementById('ob-cigs-jour').value),
             prixPaquet: parseFloat(document.getElementById('ob-prix-paquet').value),
-            cigsPaquet: 20
+            cigsPaquet: 20,
+            vapote: estVapoteur,
+            nicotineActuelle: estVapoteur ? parseFloat(document.getElementById('ob-nicotine-actuelle').value || 0) : 0
         };
         localStorage.setItem('vt_config', JSON.stringify(configUser));
         initialiserInterface();
     };
 
+    // Soumission Configuration Tabac / Vape Form
     document.getElementById('form-config-tabac').onsubmit = (e) => {
         e.preventDefault();
         configUser.cigsJour = parseFloat(document.getElementById('cigs-jour').value);
         configUser.prixPaquet = parseFloat(document.getElementById('prix-paquet').value);
         configUser.cigsPaquet = parseFloat(document.getElementById('cigs-paquet').value);
+        
+        const estVapoteur = document.getElementById('config-vapote').value === 'oui';
+        configUser.vapote = estVapoteur;
+        configUser.nicotineActuelle = estVapoteur ? parseFloat(document.getElementById('config-nicotine').value || 0) : 0;
+
         localStorage.setItem('vt_config', JSON.stringify(configUser));
         mettreAJourTout();
-        alert('Configuration enregistrée !');
+        alert('Paramètres mis à jour !');
     };
 
     document.getElementById('btn-ouvrir-ajout').onclick = () => afficherEcran('ecran-ajout');
