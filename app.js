@@ -228,18 +228,39 @@ function calculerDosagesDIY() {
     const pctArome = parseFloat(document.getElementById('recette-arome').value) || 0;
     const tauxBooster = parseFloat(document.getElementById('recette-taux-booster').value) || 20;
 
+    // 1. Calcul exact des ingrédients en millilitres
     const volArome = (volTotal * pctArome) / 100;
     const volBooster = tauxBooster > 0 ? (volTotal * nicoVisee) / tauxBooster : 0;
     const nbrFiolesBooster = (volBooster / 10).toFixed(1);
-    const volBase = Math.max(0, volTotal - volArome - volBooster);
 
-    if (document.getElementById('calc-arome')) document.getElementById('calc-arome').textContent = `${volArome.toFixed(1)} ml`;
-    if (document.getElementById('calc-booster')) document.getElementById('calc-booster').textContent = `${volBooster.toFixed(1)} ml (${nbrFiolesBooster} fiole${nbrFiolesBooster > 1 ? 's' : ''})`;
-    if (document.getElementById('calc-base')) document.getElementById('calc-base').textContent = `${volBase.toFixed(1)} ml`;
+    // 2. La base complète le reste du flacon
+    let volBase = volTotal - volArome - volBooster;
+    
+    // Alerte visuelle si le mélange est physiquement impossible (trop d'arôme/booster pour le volume)
+    if (volBase < 0) {
+        volBase = 0;
+        if (document.getElementById('calc-base')) {
+            document.getElementById('calc-base').style.color = '#f85149';
+        }
+    } else {
+        if (document.getElementById('calc-base')) {
+            document.getElementById('calc-base').style.color = '#e6edf3';
+        }
+    }
+
+    // 3. Affichage dynamique en temps réel
+    if (document.getElementById('calc-arome')) {
+        document.getElementById('calc-arome').textContent = `${volArome.toFixed(1)} ml (${pctArome}%)`;
+    }
+    if (document.getElementById('calc-booster')) {
+        document.getElementById('calc-booster').textContent = `${volBooster.toFixed(1)} ml (${nbrFiolesBooster} fiole${nbrFiolesBooster > 1 ? 's' : ''})`;
+    }
+    if (document.getElementById('calc-base')) {
+        document.getElementById('calc-base').textContent = `${volBase.toFixed(1)} ml`;
+    }
 
     return { volTotal, volArome, volBooster, volBase, nbrFiolesBooster };
 }
-
 function afficherRecettes() {
     const conteneur = document.getElementById('liste-recettes');
     if (!conteneur) return;
